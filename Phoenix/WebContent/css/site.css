@@ -1,0 +1,56 @@
+p.forum-logo{
+  font: 400 35px/0.5 'Great Vibes', Helvetica, sans-serif;
+  color: #fff;
+  text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+  height: 20px;
+}
+
+h4.showTopics {
+	cursor: pointer
+}
+
+h4.enterTopic{
+	cursor: pointer
+}
+
+p.topicInfo{
+	font-size: small;
+	margin-bottom: 0px;
+}
+
+p.commentHeader{
+	font-size: smaller;
+}
+
+div.postDiv{
+	padding-left: 5px;
+	padding-right: 5px;	
+}
+div.topicContent{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: left;
+	color: #000000;
+	font-size: large;
+}
+
+div.commentDiv {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 5px;
+	border-left: 2px solid #d9d9d9;
+}
+
+div.commentWrapper{
+	padding-left: 5px;
+	padding-bottom: 5px;
+	border: 2px solid #d9d9d9;
+	border-radius: 3px;
+	background-color: #f2f2f2;
+}
+
+p.commentTopic{
+	color: #3399ff;
+	font-style: italic;
+	font-size: 20px;
+}
