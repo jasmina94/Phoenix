@@ -1,3 +1,6 @@
+var userRole = "";
+var moderators = null;
+
 $(function(){
 	
 	$(document).on("click", ".commentOnTopic", function(){
@@ -39,6 +42,38 @@ $(function(){
 				leaveCommentOnTopic(topic, subforum, comment);
 			} else {
 				leaveCommentOnComment(topic, subforum, comment, commentId);
+			}
+		}
+	});
+	
+	$(document).on("click", ".deleteComment", function(){
+		var commentId = $(this).attr("id");
+		var subforum = $("#hiddenSubforum").val();		
+		commentId = commentId.split("?");
+		var id = commentId[0];		
+		var commentAuthor = commentId[1];		
+		var user = checkIfUserIsLoggedIn();
+		checkModeratorsForSubforum(subforum);
+		
+		if(user == ""){
+			toastr.warning("Can't delete comment if you're not sign in!");
+			return false;
+		}else {
+			checkUserRole();
+			if(userRole == "USER" && user == commentAuthor){
+				deleteComment(id);
+			} else if(userRole == "ADMINISTRATOR"){
+				deleteComment(id);
+			} else if(userRole == "MODERATOR"){
+				for(var i=0; i< moderators.length; i++){
+					if(moderators[i] === user){
+						deleteComment(id);
+						break;
+					}
+				}
+			} else {
+				toastr.warning("You don't have permission to delete that comment!");
+				return false;
 			}
 		}
 	});
@@ -85,6 +120,21 @@ function leaveCommentOnComment(topic, subforum, comment, commentId){
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		} 
+	});
+}
+
+
+function deleteComment(id){
+	$.ajax({
+		url: 'rest/comments/delete/' + id,
+		type: 'GET',
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			reloadTopic();
+		}, 
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
 	});
 }
 
@@ -208,11 +258,18 @@ function makeOneComment(comment){
 	
 	var $commentWrapper = $("<div>");
 	
-	$commentWrapper.append("<p><a href='#'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
-	$commentWrapper.append("<p>" + comment.content + "</p>");
-	$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
-					   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
-					   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
+	if(!comment.deleted){
+		$commentWrapper.append("<p><a href='#' class='commentAuthor'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
+		$commentWrapper.append("<p class='commentContent'>" + comment.content + "</p>");
+		$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
+				   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
+				   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
+		$commentWrapper.append("<a href='#' class='pull-right deleteComment' id='"+ comment.id + "?"+ comment.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash' ></span></a>");
+	} else {
+		$commentWrapper.append("<p>posted on:  " +  comment.commentDate + "</p>");
+		$commentWrapper.append("<p class='deletedComment'>Comment is deleted.</p>");
+	}
+
 	
 	$commentDiv.addClass("commentDiv");
 	$commentWrapper.addClass("commentWrapper");
@@ -246,4 +303,34 @@ function checkIfUserIsLoggedIn(){
 	} else {
 		return "";
 	}
+}
+
+function checkUserRole(){
+	$.ajax({
+		url: 'rest/users/getRole',
+		type: 'GET',
+		success: function(data){
+			userRole = data;
+		},
+		async: false,
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function checkModeratorsForSubforum(subforum){
+	$.ajax({
+		url: 'rest/subforums/getModerators/' + subforum,
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		success: function(data){
+			moderators = data;
+		},
+		async: false,
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
 }

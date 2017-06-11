@@ -278,11 +278,18 @@ function makeOneComment(comment){
 	
 	var $commentWrapper = $("<div>");
 	
-	$commentWrapper.append("<p><a href='#'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
-	$commentWrapper.append("<p>" + comment.content + "</p>");
-	$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
-					   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
-					   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
+	if(!comment.deleted){
+		$commentWrapper.append("<p><a href='#' class='commentAuthor'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
+		$commentWrapper.append("<p class='commentContent'>" + comment.content + "</p>");
+		$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
+				   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
+				   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
+		$commentWrapper.append("<a href='#' class='pull-right deleteComment' id='"+ comment.id + "?"+ comment.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash' ></span></a>");
+	} else {
+		$commentWrapper.append("<p>posted on:  " +  comment.commentDate + "</p>");
+		$commentWrapper.append("<p class='deletedComment'>Comment is deleted.</p>");
+	}
+	
 	
 	$commentDiv.addClass("commentDiv");
 	$commentWrapper.addClass("commentWrapper");

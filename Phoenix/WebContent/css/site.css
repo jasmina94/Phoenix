@@ -54,3 +54,8 @@ p.commentTopic{
 	font-style: italic;
 	font-size: 20px;
 }
+
+.deletedComment{
+	font-style: italic;
+	text-decoration: line-through;
+}

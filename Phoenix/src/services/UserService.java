@@ -134,6 +134,19 @@ public class UserService {
 		return validUsername;
 	}
 	
+	@GET
+	@Path("/getRole")
+	public String getLoggedUserRole(@Context HttpServletRequest request){
+		String role = "";
+		
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user != null){
+			role = user.getRole().toString();
+		}
+		
+		return role;
+	}
+	
 	
 	
 	
