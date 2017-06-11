@@ -1,0 +1,102 @@
+[
+    {
+        "username": "moderator",
+        "password": "user",
+        "firstname": "Jasmine",
+        "lastname": "Smith",
+        "role": "MODERATOR",
+        "email": "jsmith@gmail.com",
+        "phone": "222333",
+        "registrationDate": "19/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [],
+        "followedComments": [],
+        "votes": [
+            {
+                "type": false,
+                "forComment": true,
+                "votingCommentId": "39e991b6-8eb3-4cc3-bf7d-2d51ed730bcf",
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            }
+        ]
+    },
+    {
+        "username": "admin",
+        "password": "admin",
+        "firstname": "John",
+        "lastname": "Snow",
+        "role": "ADMINISTRATOR",
+        "email": "johnsnow@gmail.com",
+        "phone": "111222",
+        "registrationDate": "17/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [],
+        "followedComments": [],
+        "votes": []
+    },
+    {
+        "username": "jass94",
+        "password": "jass",
+        "firstname": "Jasmina",
+        "lastname": "Eminovski",
+        "role": "USER",
+        "email": "jass94@hotmail.com",
+        "phone": "123456",
+        "registrationDate": "23/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [],
+        "followedComments": [],
+        "votes": [
+            {
+                "type": true,
+                "forComment": false,
+                "votingCommentId": null,
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "001",
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "6bd19b4a-27d0-4685-8b64-5921f197192b",
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "002",
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "ade9e23f-b1ee-48b5-a471-86d310bd5579",
+                "votingTopicTitle": "Interesting things to see in Solun",
+                "topicSubforumName": "Greece"
+            }
+        ]
+    },
+    {
+        "username": "ILoveSerbia",
+        "password": "jass",
+        "firstname": "Tijana",
+        "lastname": "Eminovski",
+        "role": "MODERATOR",
+        "email": "tija04@hotmail.com",
+        "phone": "123456",
+        "registrationDate": "23/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [],
+        "followedComments": [],
+        "votes": []
+    }
+]

@@ -1,0 +1,68 @@
+[
+    {
+        "name": "General",
+        "details": "Forum for general discussion about traveling. You can find informations about visas, transport, organization, recommendations and etc. Also can find helpful tips for online booking accommodation.",
+        "icon": "images/general.png",
+        "rules": [
+            "Do not flame or inslut other members.",
+            "Do not bypass any filters.",
+            "Do not post personally identifiable information.",
+            "Do not post a spam.",
+            "All forum posts must be written in English."
+        ],
+        "responsibleModerator": "moderator",
+        "allModerators": [
+            "moderator"
+        ]
+    },
+    {
+        "name": "Greece",
+        "details": "Forum for general discussion about Greece destinations. Read about accommodation, nature, best places to visit and see in Greece.",
+        "icon": "images/greece.png",
+        "rules": [
+            "Do not flame or inslut other members.",
+            "Do not bypass any filters.",
+            "Do not post personally identifiable information.",
+            "Do not post a spam.",
+            "All forum posts must be written in English."
+        ],
+        "responsibleModerator": "moderator",
+        "allModerators": [
+            "moderator"
+        ]
+    },
+    {
+        "name": "Serbia",
+        "details": "Forum for general discussion about turism in Serbia. Read about nature, accommodation, best places to visit and see in Serbia.",
+        "icon": "images/serbia.png",
+        "rules": [
+            "Do not flame or inslut other members.",
+            "Do not bypass any filters.",
+            "Do not post personally identifiable information.",
+            "Do not post a spam.",
+            "All forum posts must be written in English."
+        ],
+        "responsibleModerator": "ILoveSerbia",
+        "allModerators": [
+            "moderator",
+            "ILoveSerbia"
+        ]
+    },
+    {
+        "name": "Europe",
+        "details": "Destinations in Europe. Read travel diaries from Europe and enjoy photo tours. Feel free to leave your own posts.",
+        "icon": "images/eu.png",
+        "rules": [
+            "Do not flame or inslut other members.",
+            "Do not bypass any filters.",
+            "Do not post personally identifiable information.",
+            "Do not post a spam.",
+            "All forum posts must be written in English."
+        ],
+        "responsibleModerator": "ILoveSerbia",
+        "allModerators": [
+            "moderator",
+            "ILoveSerbia"
+        ]
+    }
+]
