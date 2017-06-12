@@ -104,7 +104,8 @@ function showTopics(data, subforumName){
 	var $topicsPanelHeader = $("#topicsPanelHeader").empty();	
 	
 	$topicsPanelHeader.append("<h3>Topics for subforum " + subforumName + "</h3>" +
-							  "<a href='#' class='backLink'> Back to all subforums </a>"+							  
+							  "<a href='#' class='backLink'> Back to all subforums </a><br/>"+
+							  "<a href='#' class='newTopic'> Make new topic </a>" +
 							  "<input type='text' id='hiddenSubforum' style='display:none'  value='" + subforumName + "' />");
 	
 	if(data.topics.length === 0){

@@ -11,6 +11,7 @@
 <script type="text/javascript" src="js/custom/content.js"></script>
 <script type="text/javascript" src="js/custom/voting.js"></script>
 <script type="text/javascript" src="js/custom/comments.js"></script>
+<script type="text/javascript" src="js/custom/topics.js"></script>
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
 
@@ -76,23 +77,19 @@
 	<div class="container" id="divForLogin">
 		<div class="jumbotron">
 			<h2 id="message">Wellcome!</h2>
-			<p>Join the discussion. Share your experience with others. Learn from your fellow travellers.</p>
+			<p>Join the discussion. Share your experience with others. Learn
+				from your fellow travellers.</p>
 		</div>
 		<div class="panel panel-default">
-			<div class="panel-body" id="subForumsPanel">
-			</div>
+			<div class="panel-body" id="subForumsPanel"></div>
 		</div>
 		<div class="panel panel-default topicsPanel">
-			<div class="panel-heading" id="topicsPanelHeader">
-			</div>
-			<div class="panel-body" id="topicsPanelBody">
-			</div>
+			<div class="panel-heading" id="topicsPanelHeader"></div>
+			<div class="panel-body" id="topicsPanelBody"></div>
 		</div>
 		<div class="panel panel-default oneTopicPanel">
-			<div class="panel-heading" id="oneTopicHeader">
-			</div>
-			<div class="panel-body" id="oneTopicBody">
-			</div>
+			<div class="panel-heading" id="oneTopicHeader"></div>
+			<div class="panel-body" id="oneTopicBody"></div>
 		</div>
 	</div>
 
@@ -208,15 +205,16 @@
 	</div>
 
 	<!-- 	MODAL DIALOG DETAILS -->
-	<div id="modalDetails" class="modal" role="dialog" data-backdrop="false">
+	<div id="modalDetails" class="modal" role="dialog"
+		data-backdrop="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close close_link" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 id="detailsTitle">Details about subforum   </h4>
+					<h4 id="detailsTitle">Details about subforum</h4>
 					<span><img id="subforumIcon"></span>
-				</div>							
+				</div>
 				<div class="modal-body">
 					<b>Rules: </b>
 					<ul id="rulesListing">
@@ -230,28 +228,33 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- 	MODAL COMMENT -->
-	<div id="modalComment" class="modal" role="dialog" data-backdrop="false">
+	<div id="modalComment" class="modal" role="dialog"
+		data-backdrop="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header commentHeader">
 					<button type="button" class="close close_link" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 id="commentTitle">Leave your comment for topic </h4>
+					<h4 id="commentTitle">Leave your comment for topic</h4>
 				</div>
 				<div class="modal-body">
 					<form>
-						<label>Comment:</label><br/>
-						<textarea rows="5" cols="60" id="commentArea" style='resize:none'></textarea><br/>
-						<button type="button" class="btn btn-default submitComment">Submit comment</button>
+						<label>Comment:</label><br />
+						<textarea rows="5" cols="60" id="commentArea" style='resize: none'></textarea>
+						<br />
+						<button type="button" class="btn btn-default submitComment">Submit
+							comment</button>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	<div id="modalEditComment" class="modal" role="dialog" data-backdrop="false">
+
+	<!-- 	MODAL EDIT COMMENT -->
+	<div id="modalEditComment" class="modal" role="dialog"
+		data-backdrop="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header editCommentHeader">
@@ -261,11 +264,71 @@
 				</div>
 				<div class="modal-body">
 					<form id="editCommentForm">
-						<label>Comment:</label><br/>
-						<textarea rows="5" cols="60" id="editCommentArea" style='resize:none'></textarea><br/>
-						<input id="commentId" name="id" type="hidden"/>
-						<input id="changingRole" name="role" type="hidden"/>
+						<label>Comment:</label><br />
+						<textarea rows="5" cols="60" id="editCommentArea"
+							style='resize: none'></textarea>
+						<br /> <input id="commentId" name="id" type="hidden" /> <input
+							id="changingRole" name="role" type="hidden" />
 						<button type="button" class="btn btn-default editCommentSave">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 	MODAL NEW TOPIC -->
+	<div id="modalNewTopic" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header newTopicHeader">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="newTopicTitle">Create new topic</h4>
+				</div>
+				<div class="modal-body">
+					<form id="newTopicForm">
+						<input id="subforum" name="subforum" type="hidden" /> <input
+							id="author" name="author" type="hidden" />
+						<div class="form-group">
+							<label for="title">Title:</label> <input name="title"
+								id="topicTitle" type="text" class="form-control" />
+						</div>
+						<hr />
+						<label>Type:</label>
+						<div class="form-check">
+							<label class="form-check-label"> <input type="radio"
+								class="form-check-input" name="optionsRadios"
+								id="optionsText" value="option1" checked> Text
+							</label>
+						</div>
+						<div class="form-check">
+							<label class="form-check-label"> <input type="radio"
+								class="form-check-input" name="optionsRadios"
+								id="optionsImage" value="option2"> Image
+							</label>
+						</div>
+						<div class="form-check disabled">
+							<label class="form-check-label"> <input type="radio"
+								class="form-check-input" name="optionsRadios"
+								id="optionsLink" value="option3"> Link
+							</label>
+						</div>
+						<label id="topicContentLabel">Content:</label><br/>
+						<textarea rows="5" cols="60" id="topicContentText"
+							style='resize: none'></textarea>
+						<div class="form-group hidden divForImage">
+							<label for="exampleInputFile">File input</label> <input
+								type="file" class="form-control-file" id="exampleInputFile"
+								aria-describedby="fileHelp"> <small id="fileHelp"
+								class="form-text text-muted">Browse imgage you want to post.</small>
+						</div>
+						<div class="form-group hidden divForLink">
+							<label for="title">Link:</label> <input name="link"
+								id="topicContentLink" type="text" class="form-control" />
+						</div>
+						<br />
+						<button type="button" class="btn btn-default createTopic col-lg-offset-5" style='width:100px'>Save</button>
 					</form>
 				</div>
 			</div>

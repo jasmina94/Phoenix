@@ -65,3 +65,7 @@ p.commentTopic{
 	font-size: small;
 	padding-right: 5px;
 }
+
+.hidden{
+	display: none;
+}
