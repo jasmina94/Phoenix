@@ -1,5 +1,6 @@
 var userRole = "";
 var moderators = null;
+var commentGlobal = null;
 
 $(function(){
 	
@@ -64,7 +65,7 @@ $(function(){
 				deleteComment(id);
 			} else if(userRole == "ADMINISTRATOR"){
 				deleteComment(id);
-			} else if(userRole == "MODERATOR"){
+			} else if(userRole == "MODERATOR" || user == commentAuthor){
 				for(var i=0; i< moderators.length; i++){
 					if(moderators[i] === user){
 						deleteComment(id);
@@ -76,6 +77,71 @@ $(function(){
 				return false;
 			}
 		}
+	});
+	
+	$(document).on("click", ".editComment", function(){
+		var commentId = $(this).attr("id");
+		commentId = commentId.split("?");
+		var id = commentId[0];
+		var author = commentId[1];
+		var commentText = "";
+		
+		var subforum = $("#hiddenSubforum").val();
+		checkModeratorsForSubforum(subforum);
+		
+		for(var i=0; i< commentGlobal.length; i++){
+			if(commentGlobal[i].id == id){
+				commentText = commentGlobal[i].content;
+				break;
+			}
+		}
+		
+		var user = checkIfUserIsLoggedIn();
+		if(user == ""){
+			toastr.warning("Can't edit comment if you're not sign in!");
+			return false;
+		}else {
+			checkUserRole();
+			if(user == author){
+				$("#editCommentForm")[0].reset();
+				
+				$("#editCommentArea").val(commentText);
+				$("#commentId").val(id);
+				$("#changingRole").val(userRole);
+				
+				$("#modalEditComment").modal('show');
+				
+			}else if(userRole == "MODERATOR"){
+				for(var i=0; i< moderators.length; i++){
+					if(moderators[i] === user){
+						$("#editCommentForm")[0].reset();
+						
+						$("#editCommentArea").val(commentText);
+						$("#commentId").val(id);
+						$("#changingRole").val(userRole);
+						
+						$("#modalEditComment").modal('show');
+						break;
+					}
+				}
+			}else{
+				toastr.warning("You don't have permission to edit that comment!");
+				return false;
+			}
+		}
+	});
+	
+	$(document).on("click", ".editCommentSave", function(){
+		var text = $("#editCommentArea").val();
+		var author = $("#changingRole").val();
+		var commentId = $("#commentId").val();
+
+		if(text == ""){
+			toastr.error("Comment can not be empty! Please fill it.");
+			return false;
+		}
+		editComment(text, author, commentId);
+		$("#modalEditComment").modal('hide');
 	});
 });
 
@@ -130,8 +196,36 @@ function deleteComment(id){
 		type: 'GET',
 		contentType: 'application/json; charset=UTF-8',
 		success: function(data){
-			reloadTopic();
+			if(data){
+				reloadTopic();
+				return true;
+			}else {
+				toastr.error("Some error occured. Please try again.");
+				return false;
+			}
+			
 		}, 
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function editComment(text, author, id){
+	$.ajax({
+		url: 'rest/comments/edit/' + id + "/" + author,
+		type: 'POST',
+		contentType: "application/json; charset=UTF-8",
+		data: text,
+		success: function(data){
+			if(data){
+				reloadTopic();
+				return true;
+			}else {
+				toastr.error("Some error occured. Please try again.");
+				return false;
+			}
+		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		}
@@ -234,6 +328,7 @@ function commentsDiv(topic){
 		globComments.push(topic.comments[i]);
 	
 	}
+	commentGlobal = globComments;
 	
 	for(var i=0; i<topic.comments.length; i++){
 		var comment = topic.comments[i];
@@ -264,7 +359,14 @@ function makeOneComment(comment){
 		$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
 				   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
 				   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
-		$commentWrapper.append("<a href='#' class='pull-right deleteComment' id='"+ comment.id + "?"+ comment.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash' ></span></a>");
+		$commentWrapper.append("<a href='#' class='pull-right deleteComment' id='"+ comment.id + "?"+ comment.author + "' style='padding-right:5px'><span class='glyphicon glyphicon-trash'></span></a>");
+		
+		if(comment.edited){
+			$commentWrapper.append("<a href='#' class='pull-right editComment' id='"+comment.id + "?"+ comment.author + "' style='padding-right:5px'><span class='glyphicon glyphicon-pencil'></span></a><p class='pull-right editedLabel'>edited</p>");
+		}else {
+			$commentWrapper.append("<a href='#' class='pull-right editComment' id='"+comment.id + "?"+ comment.author + "' style='padding-right:5px'><span class='glyphicon glyphicon-pencil'></span></a>");
+		}		
+				
 	} else {
 		$commentWrapper.append("<p>posted on:  " +  comment.commentDate + "</p>");
 		$commentWrapper.append("<p class='deletedComment'>Comment is deleted.</p>");
@@ -309,10 +411,11 @@ function checkUserRole(){
 	$.ajax({
 		url: 'rest/users/getRole',
 		type: 'GET',
+		async: false,
 		success: function(data){
 			userRole = data;
+			return true;
 		},
-		async: false,
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		}
@@ -325,10 +428,11 @@ function checkModeratorsForSubforum(subforum){
 		type: 'GET',
 		contentType : "application/json; charset=UTF-8",
 		dataType: "json",
+		async: false,
 		success: function(data){
 			moderators = data;
+			return true;
 		},
-		async: false,
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		}

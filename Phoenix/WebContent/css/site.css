@@ -59,3 +59,9 @@ p.commentTopic{
 	font-style: italic;
 	text-decoration: line-through;
 }
+
+.editedLabel{
+	font-style: italic;
+	font-size: small;
+	padding-right: 5px;
+}

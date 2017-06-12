@@ -250,5 +250,26 @@
 			</div>
 		</div>
 	</div>
+	
+	<div id="modalEditComment" class="modal" role="dialog" data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header editCommentHeader">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="commentTitle">Edit comment</h4>
+				</div>
+				<div class="modal-body">
+					<form id="editCommentForm">
+						<label>Comment:</label><br/>
+						<textarea rows="5" cols="60" id="editCommentArea" style='resize:none'></textarea><br/>
+						<input id="commentId" name="id" type="hidden"/>
+						<input id="changingRole" name="role" type="hidden"/>
+						<button type="button" class="btn btn-default editCommentSave">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
