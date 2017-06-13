@@ -126,6 +126,7 @@ function setViewLogged(data) {
 function setViewLoggout() {
 	$defaultBtns.show();
 	$loggedUserBtns.hide();
+	$("h2#message").text("Welcome!");
 }
 
 function logoutUser() {

@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,6 +24,8 @@ import beans.Comments;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
+import dto.TopicDTO;
+import enums.TopicType;
 
 /**
  * @author Jasmina
@@ -183,5 +186,44 @@ public class TopicService {
 			}
 		
 		return success;
+	}
+	
+	@POST
+	@Path("/addText")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean newTextTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+		boolean success = true;
+		
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+		String title = topicDTO.getTitle();
+		String text = topicDTO.getText();
+		String author = topicDTO.getAuthor();
+		String subforum = topicDTO.getSubforum();
+		
+		if(user == null || title.isEmpty() || title == null || text.isEmpty() || text == null
+				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
+			success = false;
+		}
+		
+		if(!user.getUsername().equals(author)){
+			success = false;
+		}
+		
+		for(Topic t : allTopics.getTopics()){
+			if(t.getTitle().equals(title)){
+				success=false;
+			}
+		}
+		
+		if(success){
+			Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, text);
+			allTopics.getTopics().add(newTopic);
+			allTopics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);			
+		}
+		
+		return true;		
 	}
 }
