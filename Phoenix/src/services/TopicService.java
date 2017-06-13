@@ -1,6 +1,7 @@
 package services;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import beans.Comment;
 import beans.Comments;
 import beans.Topic;
@@ -215,11 +215,11 @@ public class TopicService {
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		String title = topicDTO.getTitle();
-		String text = topicDTO.getText();
+		String content = topicDTO.getContent();
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
 		
-		if(user == null || title.isEmpty() || title == null || text.isEmpty() || text == null
+		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
 			success = false;
 		}
@@ -235,7 +235,7 @@ public class TopicService {
 		}
 		
 		if(success){
-			Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, text);
+			Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
 			allTopics.getTopics().add(newTopic);
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
@@ -254,11 +254,11 @@ public class TopicService {
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		String title = topicDTO.getTitle();
-		String text = topicDTO.getText();
+		String content = topicDTO.getContent();
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
 		
-		if(user == null || title.isEmpty() || title == null || text.isEmpty() || text == null
+		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
 			success = false;
 		}
@@ -274,7 +274,7 @@ public class TopicService {
 		}
 		
 		if(success){
-			Topic newTopic = new Topic(subforum, title, TopicType.LINK, author, text);
+			Topic newTopic = new Topic(subforum, title, TopicType.LINK, author, content);
 			allTopics.getTopics().add(newTopic);
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
@@ -282,4 +282,44 @@ public class TopicService {
 		
 		return success;
 	}
+	
+	@POST
+	@Path("/addPhoto")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean newPhotoTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+		boolean success = true;
+		
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+		String title = topicDTO.getTitle();
+		String content = topicDTO.getContent();
+		String author = topicDTO.getAuthor();
+		String subforum = topicDTO.getSubforum();
+		
+		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
+				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
+			success = false;
+		}
+		
+		if(!user.getUsername().equals(author)){
+			success = false;
+		}
+		
+		for(Topic t : allTopics.getTopics()){
+			if(t.getTitle().equals(title)){
+				success=false;
+			}
+		}
+		
+		if(success){
+			Topic newTopic = new Topic(subforum, title, TopicType.PHOTO, author, content);
+			allTopics.getTopics().add(newTopic);
+			allTopics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);			
+		}
+		
+		return success;
+	}
+	
 }

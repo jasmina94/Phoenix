@@ -128,7 +128,7 @@ $(document).on("click", ".backLinkTopic", function(){
 		type : 'GET',
 		dataType: 'json',
 		success: function(data){
-			showTopics(data, subforumName);
+			contentGrid.showTopics(data, subforumName);
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);

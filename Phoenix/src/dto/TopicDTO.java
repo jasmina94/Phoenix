@@ -12,18 +12,18 @@ public class TopicDTO implements Serializable{
 	private String title;
 	private String author;
 	private String subforum;
-	private String text;
+	private String content;
 	
 	public TopicDTO() {
 		super();
 	}
 
-	public TopicDTO(String title, String author, String subforum, String text) {
+	public TopicDTO(String title, String author, String subforum, String content) {
 		super();
 		this.title = title;
 		this.author = author;
 		this.subforum = subforum;
-		this.text = text;
+		this.content = content;
 	}
 
 	public String getTitle() {
@@ -50,11 +50,11 @@ public class TopicDTO implements Serializable{
 		this.subforum = subforum;
 	}
 
-	public String getText() {
-		return text;
+	public String getContent() {
+		return content;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setContent(String content) {
+		this.content = content;
 	}
 }

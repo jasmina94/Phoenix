@@ -1,11 +1,11 @@
 var isUnique = null;
+var newSrc = "";
 
 $(function(){
 	
 	
 	$(document).on("click", ".newTopic", function(){
 		var subforum = $("#hiddenSubforum").val();
-		console.log("nova tema za " + subforum);
 		
 		var user = checkIfUserIsLoggedIn();
 		if(user == ""){
@@ -31,6 +31,7 @@ $(function(){
 			$("#topicContentText").addClass("hidden");
 			$("#topicContentLabel").addClass("hidden");
 			$(".divForLink").addClass("hidden");
+			$(".createTopic").attr("disabled", true);
 		}else if(atr === "optionsLink"){
 			$(".divForLink").removeClass("hidden");
 			$("#topicContentText").addClass("hidden");
@@ -62,20 +63,8 @@ $(function(){
 		}
 		
 		if($('#optionsImage').is(':checked')){
-			var up = $("#imageInputFile");
-			var file = null;
-			if (up.val() != ""){
-				file = up.get(0).files[0];
-				if (file != null && !file.type.match('image.*')){
-					toastr.error("Wrong file format. Please choose only images!");
-					return;
-				}
-				image = "1";
-				console.log("slika okej salji");
-			}else {
-				toastr.warning("Topic image content is required. Please choose image file.");
-				return;
-			}
+			makeImageTopicObject();
+			return true;
 		}
 		
 		if($('#optionsLink').is(':checked')){
@@ -92,7 +81,52 @@ $(function(){
 		}
 	
 	});
+	
+	$(document).on("click", "#addTopicImageBtn", function(){
+		var up = $("#imageInputFile");
+		var file = null;
+		if (up.val() != ""){
+			file = up.get(0).files[0];
+			if (file != null && !file.type.match('image.*')){
+				toastr.error("Wrong file format. Please choose only images!");
+				return;
+			}
+			var data = new FormData();
+			data.append('file', file);
+			uploadTopicImage(data);
+			console.log(newSrc);
+			$("#createTopic").attr("disabled", false);			
+		}
+	});
 });
+function uploadTopicImage(data){
+	$.ajax({
+		url: 'rest/image/uploadTopicImage',
+		data: data,
+		cache: false,
+		contentType: false,
+		processData: false,
+		type: "POST",
+		async: false,
+		success: function(data){
+			if(data != ""){
+				console.log(data);
+				newSrc = "../PhoenixBase/images/topics/" + data;
+				$('#previewTopicImage').attr("src", newSrc);
+				$(".createTopic").attr("disabled", false);
+		    	toastr.success("Photo is successfully uploaded.");
+		    	return true;
+			}else {
+				toastr.error("Photo upload failed. Please try again.");
+				return false;
+			}	    	
+	    },
+	    error : function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
+		}
+	});
+}
 
 function makeTextTopicObject(){
 	var title = $("#topicTitle").val();
@@ -107,7 +141,7 @@ function makeTextTopicObject(){
 		var text = $("#topicContentText").val();
 		var topic = new Object();
 		topic['title'] = title;
-		topic['text'] = text;
+		topic['content'] = text;
 		topic['subforum'] = subforum;
 		topic['author'] = author;
 		addTextTopic(JSON.stringify(topic));
@@ -115,7 +149,23 @@ function makeTextTopicObject(){
 }
 
 function makeImageTopicObject(){
+	var title = $("#topicTitle").val();
+	var subforum = $("#subforum").val();
 	
+	checkTopicUnique(title, subforum);
+	if(!isUnique){
+		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+		return false;
+	}else {
+		var author = $("#author").val();
+		var src = newSrc;
+		var topic = new Object();
+		topic['title'] = title;
+		topic['content'] = src;
+		topic['subforum'] = subforum;
+		topic['author'] = author;
+		addImageTopic(JSON.stringify(topic));		
+	}
 }
 
 function makeLinkTopicObject(){
@@ -131,7 +181,7 @@ function makeLinkTopicObject(){
 		var text = $("#topicContentLink").val();
 		var topic = new Object();
 		topic['title'] = title;
-		topic['text'] = text;
+		topic['content'] = text;
 		topic['subforum'] = subforum;
 		topic['author'] = author;
 		addLinkTopic(JSON.stringify(topic));
@@ -167,6 +217,32 @@ function addTextTopic(topicJSON){
 function addLinkTopic(topicJSON){
 	$.ajax({
 		url: 'rest/topics/addLink',
+		type: 'POST',
+		data: topicJSON,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				$("#newTopicForm")[0].reset();				
+				toastr.success("New topic is created! Go check it.");
+				var content = new ContentGrid();
+				content.reloadSubforum();
+				$("#modalNewTopic").modal('hide');
+				return true;
+			}else {
+				toastr.error("An error occured. Please try again.");
+				return true;
+			}
+			
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function addImageTopic(topicJSON){
+	$.ajax({
+		url: 'rest/topics/addPhoto',
 		type: 'POST',
 		data: topicJSON,
 		contentType: 'application/json; charset=UTF-8',
