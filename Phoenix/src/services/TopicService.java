@@ -189,7 +189,7 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addText")
+	@Path("/addLink")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean newTextTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
@@ -225,5 +225,44 @@ public class TopicService {
 		}
 		
 		return true;		
+	}
+	
+	@POST
+	@Path("/addText")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean newLinkTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+		boolean success = true;
+		
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+		String title = topicDTO.getTitle();
+		String text = topicDTO.getText();
+		String author = topicDTO.getAuthor();
+		String subforum = topicDTO.getSubforum();
+		
+		if(user == null || title.isEmpty() || title == null || text.isEmpty() || text == null
+				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
+			success = false;
+		}
+		
+		if(!user.getUsername().equals(author)){
+			success = false;
+		}
+		
+		for(Topic t : allTopics.getTopics()){
+			if(t.getTitle().equals(title)){
+				success=false;
+			}
+		}
+		
+		if(success){
+			Topic newTopic = new Topic(subforum, title, TopicType.LINK, author, text);
+			allTopics.getTopics().add(newTopic);
+			allTopics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);			
+		}
+		
+		return success;
 	}
 }

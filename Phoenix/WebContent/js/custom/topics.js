@@ -75,14 +75,17 @@ $(function(){
 			}
 		}
 		
-		if($('#optionsLink').is(':checked') && $("#topicContentLink").val() === ""){
-			toastr.warning("Topic link content is required. Plese fill the field for content.");
-			return false;
-		} else if(!validURL($("#topicContentLink").val())){
-			toastr.warning("Link format is not valid.");
-			return false;
-		} else {
-			console.log("link ok salji");
+		if($('#optionsLink').is(':checked')){
+			if($("#topicContentLink").val() === ""){
+				toastr.warning("Topic link content is required. Plese fill the field for content.");
+				return false;
+			}else if(!validURL($("#topicContentLink").val())){
+				toastr.warning("Link format is not valid.");
+				return false;
+			}else {
+				makeLinkTopicObject();
+				return true;
+			}
 		}
 	
 	});
@@ -106,12 +109,47 @@ function makeImageTopicObject(){
 }
 
 function makeLinkTopicObject(){
-	
+	var title = $("#topicTitle").val();
+	var subforum = $("#subforum").val();
+	var author = $("#author").val();
+	var text = $("#topicContentLink").val();
+	var topic = new Object();
+	topic['title'] = title;
+	topic['text'] = text;
+	topic['subforum'] = subforum;
+	topic['author'] = author;
+	addLinkTopic(JSON.stringify(topic));
 }
 
 function addTextTopic(topicJSON){
 	$.ajax({
 		url: 'rest/topics/addText',
+		type: 'POST',
+		data: topicJSON,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				$("#newTopicForm")[0].reset();				
+				toastr.success("New topic is created! Go check it.");
+				var content = new contentGrid();
+				content.reloadSubforum();
+				$("#modalNewTopic").modal('hide');
+				return true;
+			}else {
+				toastr.error("An error occured. Please try again.");
+				return true;
+			}
+			
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function addLinkTopic(topicJSON){
+	$.ajax({
+		url: 'rest/topics/addLink',
 		type: 'POST',
 		data: topicJSON,
 		contentType: 'application/json; charset=UTF-8',
