@@ -189,7 +189,7 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addLink")
+	@Path("/addText")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean newTextTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
@@ -228,7 +228,7 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addText")
+	@Path("/addLink")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean newLinkTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{

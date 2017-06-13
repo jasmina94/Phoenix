@@ -1,4 +1,5 @@
-var contentGrid = function(){
+function ContentGrid(){
+	
 	var topics = null;
 	var commentGlobal = null;
 	var globComments = [];
@@ -103,7 +104,7 @@ var contentGrid = function(){
 		});
 	},
 	
-	this.showTopicWithComments = function(data){
+	this.showTopicWithComments = function(topic){
 		var self = this;
 		
 		$jumbotron.hide();
@@ -121,7 +122,7 @@ var contentGrid = function(){
 								 "<a href='#' class='backLinkTopic'> Back to subforum "+ topic.subforum + "</a>" +
 								 "<input type='text' id='hiddenSubforum' style='display:none'  value='" + topic.subforum + "' />");
 		
-		$topicPanelBody.append(slef.makePostDiv(topic));
+		$topicPanelBody.append(self.makePostDiv(topic));
 	},
 	
 	this.makePostDiv = function(topic){
@@ -140,7 +141,7 @@ var contentGrid = function(){
 						  "<a href='#' class='commentOnTopic' id='"+ topic.title +"?" + topic.subforum +"' data-toggle='modal' data-target='#modalComment'>Reply</a></p>");
 		
 
-		$onlyTopic.append(postDiv(topic));
+		$onlyTopic.append(self.postDiv(topic));
 		
 		$onlyTopic.addClass("topicDiv")
 		
@@ -170,7 +171,7 @@ var contentGrid = function(){
 		return $content;
 	},
 	
-	this.commentDiv = function(topic){
+	this.commentsDiv = function(topic){
 		var self = this;
 		var $comments = $("<div>");
 		var $listing = $("<ul style='list-style:none;padding-left:10px'>");
@@ -190,7 +191,7 @@ var contentGrid = function(){
 		for(var i=0; i<topic.comments.length; i++){
 			var comment = topic.comments[i];
 			if(comment.parentComment == "" || comment.parentComment == null){
-				$listing.append(makeOneComment(comment));
+				$listing.append(self.makeOneComment(comment));
 			}
 		}
 		

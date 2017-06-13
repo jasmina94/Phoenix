@@ -131,7 +131,7 @@ function addTextTopic(topicJSON){
 			if(data){
 				$("#newTopicForm")[0].reset();				
 				toastr.success("New topic is created! Go check it.");
-				var content = new contentGrid();
+				var content = new ContentGrid();
 				content.reloadSubforum();
 				$("#modalNewTopic").modal('hide');
 				return true;
