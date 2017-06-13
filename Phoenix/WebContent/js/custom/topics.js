@@ -1,4 +1,7 @@
+var isUnique = null;
+
 $(function(){
+	
 	
 	$(document).on("click", ".newTopic", function(){
 		var subforum = $("#hiddenSubforum").val();
@@ -93,15 +96,22 @@ $(function(){
 
 function makeTextTopicObject(){
 	var title = $("#topicTitle").val();
-	var text = $("#topicContentText").val();
 	var subforum = $("#subforum").val();
-	var author = $("#author").val();
-	var topic = new Object();
-	topic['title'] = title;
-	topic['text'] = text;
-	topic['subforum'] = subforum;
-	topic['author'] = author;
-	addTextTopic(JSON.stringify(topic));
+	
+	checkTopicUnique(title, subforum);
+	if(!isUnique){
+		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+		return false;
+	}else {
+		var author = $("#author").val();
+		var text = $("#topicContentText").val();
+		var topic = new Object();
+		topic['title'] = title;
+		topic['text'] = text;
+		topic['subforum'] = subforum;
+		topic['author'] = author;
+		addTextTopic(JSON.stringify(topic));
+	}
 }
 
 function makeImageTopicObject(){
@@ -111,14 +121,21 @@ function makeImageTopicObject(){
 function makeLinkTopicObject(){
 	var title = $("#topicTitle").val();
 	var subforum = $("#subforum").val();
-	var author = $("#author").val();
-	var text = $("#topicContentLink").val();
-	var topic = new Object();
-	topic['title'] = title;
-	topic['text'] = text;
-	topic['subforum'] = subforum;
-	topic['author'] = author;
-	addLinkTopic(JSON.stringify(topic));
+	
+	checkTopicUnique(title, subforum);
+	if(!isUnique){
+		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+		return false;
+	}else {
+		var author = $("#author").val();
+		var text = $("#topicContentLink").val();
+		var topic = new Object();
+		topic['title'] = title;
+		topic['text'] = text;
+		topic['subforum'] = subforum;
+		topic['author'] = author;
+		addLinkTopic(JSON.stringify(topic));
+	}
 }
 
 function addTextTopic(topicJSON){
@@ -157,7 +174,7 @@ function addLinkTopic(topicJSON){
 			if(data){
 				$("#newTopicForm")[0].reset();				
 				toastr.success("New topic is created! Go check it.");
-				var content = new contentGrid();
+				var content = new ContentGrid();
 				content.reloadSubforum();
 				$("#modalNewTopic").modal('hide');
 				return true;
@@ -166,6 +183,22 @@ function addLinkTopic(topicJSON){
 				return true;
 			}
 			
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function checkTopicUnique(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/unique/' + subforum,
+		type: 'POST',
+		data: topic,
+		contentType: 'application/json; charset=UTF-8',
+		async: false,
+		success: function(data){
+			isUnique = data;
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);

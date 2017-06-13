@@ -61,6 +61,23 @@ public class TopicService {
 
 		return mapper.writeValueAsString(topics);
 	}
+	
+	@POST
+	@Path("/unique/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean checkUnique(@PathParam("subforum") String subforumName, String topicTitle){
+		boolean unique = true;
+		
+		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+		for(Topic t : allTopics.getTopics()){
+			if(t.getSubforum().equals(subforumName) && t.getTitle().equals(topicTitle)){
+				unique = false;
+			}
+		}
+		
+		return unique;
+	}
 
 	@POST
 	@Path("/loadTopic/{subforum}")
