@@ -1,5 +1,7 @@
 var isUnique = null;
 var newSrc = "";
+var userRole = "";
+var moderators = null;
 
 $(function(){
 	
@@ -37,11 +39,13 @@ $(function(){
 			$("#topicContentText").addClass("hidden");
 			$("#topicContentLabel").addClass("hidden");
 			$(".divForImage").addClass("hidden");
+			$(".createTopic").attr("disabled", false);
 		}else {
 			$("#topicContentText").removeClass("hidden");
 			$("#topicContentLabel").removeClass("hidden");
 			$(".divForLink").addClass("hidden");
 			$(".divForImage").addClass("hidden");
+			$(".createTopic").attr("disabled", false);
 		}
 	});
 	
@@ -98,7 +102,68 @@ $(function(){
 			$("#createTopic").attr("disabled", false);			
 		}
 	});
+	
+	
+	$(document).on("click", ".deleteTopic", function(){
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var topic = id[0];
+		var subforum = id[1];
+		var author = id[2];
+		
+		console.log(topic);
+		console.log(subforum);
+		console.log(author);
+		
+		var user = checkIfUserIsLoggedIn();
+		checkModeratorsForSubforum(subforum);
+		if(user == ""){
+			toastr.warning("Can't create new topic if you're not sign in!");
+			return false;
+		} else {
+			checkUserRole();
+			if(userRole == "USER" && user == author){
+				deleteTopic(topic, subforum);
+			} else if(userRole == "ADMINISTRATOR"){
+				deleteTopic(topic, subforum);
+			} else if(userRole == "MODERATOR" || user == author){
+				for(var i=0; i< moderators.length; i++){
+					if(moderators[i] === user){
+						deleteTopic(topic, subforum)
+						break;
+					}
+				}
+			} else {
+				toastr.warning("You don't have permission to delete that topic!");
+				return false;
+			}
+		}	
+	});
 });
+
+function deleteTopic(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/delete/' + subforum,
+		type: 'POST',
+		data: topic,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				toastr.success("You have successfully deleted this topic.")
+				var content = new ContentGrid();
+				content.reloadSubforum();
+			}else {
+				toastr.error("An error occured. Deleting this topic failed.");
+				return false;
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
+		}
+	});
+}
+
 function uploadTopicImage(data){
 	$.ajax({
 		url: 'rest/image/uploadTopicImage',
@@ -297,11 +362,38 @@ function checkIfUserIsLoggedIn(){
 }
 
 function validURL(str) {
-	var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-			  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
-			  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-			  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-			  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-			  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-	return pattern.test(str);
+    var urlregex = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
+	return urlregex.test(str);
+}
+
+function checkModeratorsForSubforum(subforum){
+	$.ajax({
+		url: 'rest/subforums/getModerators/' + subforum,
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		async: false,
+		success: function(data){
+			moderators = data;
+			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function checkUserRole(){
+	$.ajax({
+		url: 'rest/users/getRole',
+		type: 'GET',
+		async: false,
+		success: function(data){
+			userRole = data;
+			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
 }

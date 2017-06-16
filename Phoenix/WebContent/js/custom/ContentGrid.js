@@ -55,6 +55,8 @@ function ContentGrid(){
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span>" +
+							"<a href='#' class='deleteTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash'></span></a>" +
+							"<a href='#' class='editTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-pencil'></span></a>" +	
 							"<hr></div>")
 				}else if(topic.type === "PHOTO") {
 					$topicsPanelBody.append("<div class='media'>"+
@@ -67,6 +69,8 @@ function ContentGrid(){
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span></a>" +
+							"<a href='#' class='deleteTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash'></span></a>" +
+							"<a href='#' class='editTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-pencil'></span></a>" +	
 							"<hr></div>");
 				}else {
 					$topicsPanelBody.append("<div class='media'>"+
@@ -79,6 +83,8 @@ function ContentGrid(){
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span></a>" +
+							"<a href='#' class='deleteTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-trash'></span></a>" +
+							"<a href='#' class='editTopic pull-right' id='"+topic.title + "?" + topic.subforum + "?" + topic.author + "' style='padding-right:10px'><span class='glyphicon glyphicon-pencil'></span></a>" +	
 							"<hr></div>");
 				}
 			}

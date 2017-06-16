@@ -2,6 +2,7 @@ package services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -318,6 +319,45 @@ public class TopicService {
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
 		}
+		
+		return success;
+	}
+	
+	@POST
+	@Path("/delete/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean deleteTopic(@Context HttpServletRequest request, @PathParam("subforum") String subforum, String topic) throws JsonParseException, JsonMappingException, IOException{
+		boolean success = true;
+		
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null || subforum.isEmpty() || subforum == null || topic.isEmpty() || topic == null){
+			success = false;
+		}
+		
+		if(success){
+			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+			Comments comments = new Comments(ctx.getRealPath(""));
+			
+			for(Topic t : allTopics.getTopics()){
+				if(t.getTitle().equals(topic) && t.getSubforum().equals(subforum)){
+					allTopics.getTopics().remove(t);
+					break;
+				}
+			}
+			ArrayList<Comment> forDelete = new ArrayList<Comment>();			
+			for(Comment c: comments.getComments()){
+				if(c.getSubforum().equals(subforum) && c.getTopic().equals(topic)){
+					forDelete.add(c);
+				}
+			}
+			comments.getComments().removeAll(forDelete);
+			
+			allTopics.writeTopics(ctx.getRealPath(""));
+			comments.writeComments(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);
+		}
+			
 		
 		return success;
 	}
