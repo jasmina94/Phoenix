@@ -1,5 +1,7 @@
 var rules = [];
 var newSrc = "";
+var userRole = "";
+var moderator = "";
 
 $(function (){
 	
@@ -65,7 +67,48 @@ $(function (){
 		subforum['icon'] = newSrc;
 		addNewSubforum(JSON.stringify(subforum));
 	});
+	
+	$(document).on("click", ".deleteSubforum", function(){
+		checkUserRole();
+		
+		if(userRole === "USER"){
+			toastr.warning("You don't have permission to delete subforum.");
+			return false;
+		}else {
+			var subforum = $(this).attr("id");
+			checkModerator(subforum);
+			var user = checkLoggedUserName();
+			if(moderator === user || userRole === "ADMIN"){
+				deleteSubforum(subforum);
+			}else {
+				toastr.warning("You don't have permission to delete subforum.");
+				return false;
+			}
+			
+		}
+		
+	});
 });
+
+function deleteSubforum(subforum){
+	$.ajax({
+		url: 'rest/subforums/delete',
+		type: 'POST',
+		data: subforum,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				$("#subForumsPanel").parent().empty();
+				loadSubforums();
+				location.reload();
+			}else {
+				toastr.error("Delete subforum failed. Please try again.");
+				return false;
+			}
+			
+		}
+	});
+}
 
 function addNewSubforum(subforum){
 	$.ajax({
@@ -84,6 +127,9 @@ function addNewSubforum(subforum){
 				$("#modalNewSubforum").modal("hide");
 				$("#subForumsPanel").parent().empty();
 				loadSubforums();
+			}else {
+				toastr.error("Subforum creation failed. Please try again.");
+				return false;
 			}
 		},
 		error: function(xhr, textStatus, errorThrown) {
@@ -155,4 +201,51 @@ function buildSubforumsPanel(data){
 					"id='"+index + "' class='detailsLink'>Details</a></div>"+					
 					"<hr></div>");
 	});
+}
+
+function checkUserRole() {
+	$.ajax({
+		url: 'rest/users/getRole',
+		type: 'GET',
+		async: false,
+		success: function(data){
+			userRole = data;
+			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+
+function checkModerator(subforum){
+	$.ajax({
+		url: 'rest/subforums/getModerator/' + subforum,
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		async: false,
+		success: function(data){
+			moderator = data;
+			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function checkLoggedUserName(){
+	var cookie = document.cookie;
+	if (cookie.indexOf("=") !== -1) {
+		var splitedCookie = cookie.split("=");
+		if (splitedCookie[1] != "") {
+			return splitedCookie[1];
+		} else {
+			return "";
+		}
+	} else {
+		return "";
+	}
 }

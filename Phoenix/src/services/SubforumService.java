@@ -19,8 +19,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import beans.Comment;
+import beans.Comments;
 import beans.Subforum;
 import beans.Subforums;
+import beans.Topic;
+import beans.Topics;
 import beans.User;
 import dto.SubforumDTO;
 
@@ -74,6 +78,23 @@ public class SubforumService {
 		return ret;
 	}
 	
+	@GET
+	@Path("/getModerator/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getResponsibleModerator(@PathParam("subforum") String subforum) throws JsonProcessingException{
+		String ret = "";
+		
+		Subforums subforums = (Subforums) ctx.getAttribute("subforums");
+		for(Subforum s : subforums.getSubforums()){
+			if(s.getName().equals(subforum)){
+				return mapper.writeValueAsString(s.getResponsibleModerator());
+			}
+		}
+		
+		return ret;
+	}
+	
 	@POST
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -108,6 +129,57 @@ public class SubforumService {
 			
 			subforums.writeSubforums(ctx.getRealPath(""));
 			ctx.setAttribute("subforums", subforums);
+		}
+		
+		return success;
+	}
+	
+
+	@POST
+	@Path("/delete")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean delete(@Context HttpServletRequest request, String subforum) throws JsonGenerationException, JsonMappingException, IOException{
+		boolean success = true;
+		
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null || user.getRole().equals("USER")){
+			success= false;
+		}
+		
+		if(success){
+			Subforums subforums = (Subforums) ctx.getAttribute("subforums");
+			for(Subforum sub : subforums.getSubforums()){
+				if(sub.getName().equals(subforum)){
+					subforums.getSubforums().remove(sub);
+					break;
+				}
+			}
+			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+			ArrayList<Topic> forDelete = new ArrayList<>();
+			for(Topic t : allTopics.getTopics()){
+				if(t.getSubforum().equals(subforum)){
+					forDelete.add(t);
+				}
+			}
+			allTopics.getTopics().removeAll(forDelete);
+			
+			Comments comments = new Comments(ctx.getRealPath(""));
+			ArrayList<Comment> commForDelete = new ArrayList<>();
+			for(Comment c : comments.getComments()){
+				if(c.getSubforum().equals(subforum)){
+					commForDelete.add(c);
+				}
+			}
+			comments.getComments().removeAll(commForDelete);
+			
+			
+			subforums.writeSubforums(ctx.getRealPath(""));
+			allTopics.writeTopics(ctx.getRealPath(""));
+			comments.writeComments(ctx.getRealPath(""));
+			
+			ctx.setAttribute("subforums", subforums);
+			ctx.setAttribute("allTopics", allTopics);
 		}
 		
 		return success;

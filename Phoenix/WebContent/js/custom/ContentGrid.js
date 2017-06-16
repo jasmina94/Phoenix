@@ -3,6 +3,7 @@ function ContentGrid(){
 	var topics = null;
 	var commentGlobal = null;
 	var globComments = [];
+	var userRole = "";
 	
 	this.reloadSubforum = function(){
 		var subforumName = $("#hiddenSubforum").val();
@@ -23,6 +24,9 @@ function ContentGrid(){
 	},
 	
 	this.showTopics = function(data, subforumName){
+		var self = this;
+		self.checkUserRole();
+		
 		$jumbotron.hide();
 		$subforumsPanel.hide();
 		$oneTopicPanel.hide();	
@@ -33,8 +37,12 @@ function ContentGrid(){
 		
 		$topicsPanelHeader.append("<h3>Topics for subforum " + subforumName + "</h3>" +
 								  "<a href='#' class='backLink'> Back to all subforums </a><br/>"+
-								  "<a href='#' class='newTopic'> Make new topic </a>" +
+								  "<a href='#' class='newTopic'> Make new topic </a><br/>" +
 								  "<input type='text' id='hiddenSubforum' style='display:none'  value='" + subforumName + "' />");
+		
+		if(self.userRole === "ADMINISTRATOR" || self.userRole === "MODERATOR"){
+			$topicsPanelHeader.append("<a href='#' class='deleteSubforum' id='"+ subforumName + "'>Delete this subforum</a><br/>");
+		}
 		
 		if(data.topics.length === 0){
 			$topicsPanel.append("<div>" +
@@ -256,5 +264,21 @@ function ContentGrid(){
 		$ul.append($commentDiv);
 		
 		return $ul;
+	},
+	
+	this.checkUserRole = function(){
+		var self = this;
+		$.ajax({
+			url: 'rest/users/getRole',
+			type: 'GET',
+			async: false,
+			success: function(data){
+				self.userRole = data;
+				return true;
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+			}
+		});
 	}
 }
