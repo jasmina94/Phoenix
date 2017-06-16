@@ -89,7 +89,8 @@ public class SubforumService {
 		
 		
 		if(user == null || name.isEmpty() || name == null || descr.isEmpty() || descr == null
-				|| icon.isEmpty() || icon == null || rules.size() == 0) {
+				|| icon.isEmpty() || icon == null || rules.size() == 0 
+				|| user.getRole().equals("USER")) {
 			success = false;
 		}
 		
