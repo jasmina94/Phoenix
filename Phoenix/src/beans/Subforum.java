@@ -22,7 +22,8 @@ public class Subforum implements Serializable{
 	private ArrayList<String> allModerators;
 	
 	public Subforum(){
-		
+		this.rules = new ArrayList<>();
+		this.allModerators = new ArrayList<>();
 	}
 
 	public Subforum(String name, String details, String icon, ArrayList<String> rules, String responsibleModerator) {
@@ -32,6 +33,7 @@ public class Subforum implements Serializable{
 		this.icon = icon;
 		this.rules = rules;
 		this.responsibleModerator = responsibleModerator;
+		this.allModerators = new ArrayList<>();
 	}
 
 	public String getName() {

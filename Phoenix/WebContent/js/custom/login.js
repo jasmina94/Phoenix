@@ -2,6 +2,7 @@ var $loggedUserBtns = null;
 var $defaultBtns = null;
 var $divLog = null;
 var cookie = null;
+var userRole = "";
 
 $(document).ready(function() {
 	$defaultBtns = $("li.notLoggedUserOption");
@@ -121,12 +122,18 @@ function setViewLogged(data) {
 	$("span#usernameLabel").text(data);
 	$divLog.show();
 	$("h2#message").text("Welcome " + data + "!");
+	
+	checkUserRole();
+	if(userRole == "ADMINISTRATOR" || userRole == "MODERATOR"){
+		$("a.newSubforum").removeClass("hidden");
+	}	
 }
 
 function setViewLoggout() {
 	$defaultBtns.show();
 	$loggedUserBtns.hide();
 	$("h2#message").text("Welcome!");
+	$("a.newSubforum").addClass("hidden");
 }
 
 function logoutUser() {
@@ -149,4 +156,19 @@ function logoutUser() {
 		}
 	});
 
+}
+
+function checkUserRole() {
+	$.ajax({
+		url: 'rest/users/getRole',
+		type: 'GET',
+		async: false,
+		success: function(data){
+			userRole = data;
+			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
 }

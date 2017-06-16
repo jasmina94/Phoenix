@@ -14,6 +14,7 @@
 <script type="text/javascript" src="js/custom/voting.js"></script>
 <script type="text/javascript" src="js/custom/comments.js"></script>
 <script type="text/javascript" src="js/custom/topics.js"></script>
+<script type="text/javascript" src="js/custom/subforums.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
@@ -82,7 +83,7 @@
 			<h2 id="message">Wellcome!</h2>
 			<p>Join the discussion. Share your experience with others. Learn
 				from your fellow travellers.</p>
-			<a href="proba.html">Proba upload</a>
+			<a href='#' class='newSubforum'>Create new subforum</a>
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-body" id="subForumsPanel"></div>
@@ -217,7 +218,7 @@
 					<button type="button" class="close close_link" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
 					<h4 id="detailsTitle">Details about subforum</h4>
-					<span><img id="subforumIcon"></span>
+					<span><img id="subforumIcon" width="50" height="50"></span>
 				</div>
 				<div class="modal-body">
 					<b>Rules: </b>
@@ -303,43 +304,110 @@
 						<label>Type:</label>
 						<div class="form-check">
 							<label class="form-check-label"> <input type="radio"
-								class="form-check-input" name="optionsRadios"
-								id="optionsText" value="option1" checked> Text
+								class="form-check-input" name="optionsRadios" id="optionsText"
+								value="option1" checked> Text
 							</label>
 						</div>
 						<div class="form-check">
 							<label class="form-check-label"> <input type="radio"
-								class="form-check-input" name="optionsRadios"
-								id="optionsImage" value="option2"> Image
+								class="form-check-input" name="optionsRadios" id="optionsImage"
+								value="option2"> Image
 							</label>
 						</div>
 						<div class="form-check disabled">
 							<label class="form-check-label"> <input type="radio"
-								class="form-check-input" name="optionsRadios"
-								id="optionsLink" value="option3"> Link
+								class="form-check-input" name="optionsRadios" id="optionsLink"
+								value="option3"> Link
 							</label>
 						</div>
-						<label id="topicContentLabel">Content:</label><br/>
+						<label id="topicContentLabel">Content:</label><br />
 						<textarea rows="5" cols="60" id="topicContentText"
 							style='resize: none'></textarea>
 						<div class="form-group hidden divForImage">
 							<label for="exampleInputFile">File input</label> <input
 								type="file" class="form-control-file" id="imageInputFile"
 								aria-describedby="fileHelp"> <small id="fileHelp"
-								class="form-text text-muted">Browse image you want to post.Image preview.</small><br/>
-								<button type="button" id="addTopicImageBtn">Upload photo</button><br/><br/>
-								<img src=""  name="previewImage" id="previewTopicImage" width="100" height="100">
+								class="form-text text-muted">Browse image you want to
+								post.Image preview.</small><br />
+							<button type="button" id="addTopicImageBtn">Upload photo</button>
+							<br /> <br /> <img src="" name="previewImage"
+								id="previewTopicImage" width="100" height="100">
 						</div>
 						<div class="form-group hidden divForLink">
 							<label for="title">Link:</label> <input name="link"
 								id="topicContentLink" type="text" class="form-control" />
 						</div>
 						<br />
-						<button type="button" class="btn btn-default createTopic col-lg-offset-5" style='width:100px'>Save</button>
+						<button type="button"
+							class="btn btn-default createTopic col-lg-offset-5"
+							style='width: 100px'>Save</button>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+
+
+	<!-- 	MODAL NEW SUBFORUM -->
+	<div id="modalNewSubforum" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header newSubforumHeader">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="commentTitle">New subforum</h4>
+				</div>
+				<div class="modal-body">
+					<form id="newSubforumForm">
+						<div class="form-group">
+							<label for="name">Name:</label> <input type="text"
+								class="form-control" id="subName">
+						</div>
+						<div class="form-group">
+							<label for="name">Description:</label><br />
+							<textarea rows="2" cols="60" id="subDescr" style='resize: none'
+								class="form-control"></textarea>
+						</div>
+						<div class="container">
+							<table>
+								<tr>
+									<td><label for="icon">Icon:</label></td>
+									<td rowspan="3"><img src="" name="previewImage"
+										id="previewSubIcon" width="100" height="100"></td>
+
+								</tr>
+								<tr>
+									<td><input type="file" class="form-control-file"
+										id="iconSubInputFile" aria-describedby="fileHelp"></td>
+									<td>&nbsp;</td>
+								</tr>
+								<tr>
+									<td><button type="button" id="addIconSubBtn">Upload
+											icon</button></td>
+									<td>&nbsp;</td>
+								</tr>
+							</table>
+							<small id="fileHelp" class="form-text text-muted">Browse
+								icon for subforum and see icon preview.</small>
+						</div>
+						<br />
+						<div class="form-group">
+							<label>Rules:</label>
+							<ul id="rules"></ul>
+							<a href="#" class="addRule">Add rule</a> <input type="text"
+								class="form-control" id="ruleInput"> <a href="#"
+								class="saveRule">Save rule</a>
+						</div>
+						<button type="button"
+							class="btn btn-default newSubforumSave col-lg-offset-5"
+							style='width: 100px'>Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
 </body>
 </html>

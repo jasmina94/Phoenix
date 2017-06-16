@@ -1,7 +1,6 @@
 package services;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
@@ -32,11 +31,8 @@ import enums.TopicType;
  * @author Jasmina
  *
  */
-
 @Path("/topics")
 public class TopicService {
-
-	//Comment 
 	
 	@Context
 	HttpServletRequest request;

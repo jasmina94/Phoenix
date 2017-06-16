@@ -44,7 +44,7 @@ function buildSubforumsPanel(data){
 	$.each(data, function(index, subforum){
 		$subforumsPanel.append("<div class='media' style='padding-left:10px'>"+
 					"<div class='media-left media-top'>" +
-					"<a href='#'><img class='media-object showTopics' id='" + subforum.name + "' src='"+ subforum.icon + "'></a> " +
+					"<a href='#'><img class='media-object showTopics' id='" + subforum.name + "' src='"+ subforum.icon + "' width='32' height='32'></a> " +
 					"</div>" +
 					"<div class='media-body'>" + 
 					"<h4 class='media-heading showTopics' id='"+ subforum.name + "'>" + subforum.name + "</h4>" +
@@ -119,7 +119,7 @@ $(document).on("click", ".backLink", function(){
 	location.reload();
 });
 
-//OVO SE DESAVA U OKVIRU TEME POJEDINACNO
+
 $(document).on("click", ".backLinkTopic", function(){
 	var subforumName = $("#hiddenSubforum").val();
 	

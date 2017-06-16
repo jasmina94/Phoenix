@@ -110,7 +110,6 @@ $(function(){
 			var data = new FormData();
 			data.append('file', file);
 			uploadTopicImage(data);
-			console.log(newSrc);
 			$("#createTopic").attr("disabled", false);			
 		}
 	});
