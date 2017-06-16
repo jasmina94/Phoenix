@@ -85,15 +85,15 @@ public class TopicService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getTopicWithComments(@PathParam("subforum") String subforumName, String topic)
-			throws JsonProcessingException {
-		String topicRealName = topic.substring(1, topic.length() - 1);
+			throws JsonProcessingException {		
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		Topic targetTopic = new Topic();
 
 		if (allTopics != null) {
 			for (Topic t : allTopics.getTopics()) {
-				if (t.getTitle().equals(topicRealName) && t.getSubforum().equals(subforumName)) {
+				if (t.getTitle().equals(topic) && t.getSubforum().equals(subforumName)) {
 					targetTopic = t;
+					break;
 				}
 			}
 		}
@@ -207,10 +207,10 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addText")
+	@Path("/addText/{edit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean newTextTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+	public boolean newTextTopic(@Context HttpServletRequest request, @PathParam("edit") boolean edit, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
 		
 		User user = (User) request.getSession().getAttribute("loggedUser");
@@ -225,19 +225,27 @@ public class TopicService {
 			success = false;
 		}
 		
-		if(!user.getUsername().equals(author)){
-			success = false;
-		}
-		
-		for(Topic t : allTopics.getTopics()){
-			if(t.getTitle().equals(title)){
-				success=false;
+		if(!edit){
+			for(Topic t : allTopics.getTopics()){
+				if(t.getTitle().equals(title)){
+					success=false;
+				}
 			}
 		}
 		
 		if(success){
-			Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
-			allTopics.getTopics().add(newTopic);
+			if(!edit){
+				Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
+				allTopics.getTopics().add(newTopic);
+			}else {
+				for(Topic t: allTopics.getTopics()){
+					if(t.getTitle().equals(title)){
+						t.setContent(content);
+						t.setType(TopicType.TEXT);
+					}
+				}
+			}
+			
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
 		}
@@ -246,10 +254,10 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addLink")
+	@Path("/addLink/{edit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean newLinkTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+	public boolean newLinkTopic(@Context HttpServletRequest request, @PathParam("edit") boolean edit, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
 		
 		User user = (User) request.getSession().getAttribute("loggedUser");
@@ -264,19 +272,26 @@ public class TopicService {
 			success = false;
 		}
 		
-		if(!user.getUsername().equals(author)){
-			success = false;
-		}
-		
-		for(Topic t : allTopics.getTopics()){
-			if(t.getTitle().equals(title)){
-				success=false;
+		if(!edit){
+			for(Topic t : allTopics.getTopics()){
+				if(t.getTitle().equals(title)){
+					success=false;
+				}
 			}
 		}
 		
 		if(success){
-			Topic newTopic = new Topic(subforum, title, TopicType.LINK, author, content);
-			allTopics.getTopics().add(newTopic);
+			if(!edit){
+				Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
+				allTopics.getTopics().add(newTopic);
+			}else {
+				for(Topic t: allTopics.getTopics()){
+					if(t.getTitle().equals(title)){
+						t.setContent(content);
+						t.setType(TopicType.LINK);
+					}
+				}
+			}
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
 		}
@@ -285,10 +300,10 @@ public class TopicService {
 	}
 	
 	@POST
-	@Path("/addPhoto")
+	@Path("/addPhoto/{edit}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean newPhotoTopic(@Context HttpServletRequest request, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
+	public boolean newPhotoTopic(@Context HttpServletRequest request, @PathParam("edit") boolean edit, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
 		
 		User user = (User) request.getSession().getAttribute("loggedUser");
@@ -303,19 +318,27 @@ public class TopicService {
 			success = false;
 		}
 		
-		if(!user.getUsername().equals(author)){
-			success = false;
-		}
-		
-		for(Topic t : allTopics.getTopics()){
-			if(t.getTitle().equals(title)){
-				success=false;
+		if(!edit){
+			for(Topic t : allTopics.getTopics()){
+				if(t.getTitle().equals(title)){
+					success=false;
+				}
 			}
 		}
 		
+		
 		if(success){
-			Topic newTopic = new Topic(subforum, title, TopicType.PHOTO, author, content);
-			allTopics.getTopics().add(newTopic);
+			if(!edit){
+				Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
+				allTopics.getTopics().add(newTopic);
+			}else {
+				for(Topic t: allTopics.getTopics()){
+					if(t.getTitle().equals(title)){
+						t.setContent(content);
+						t.setType(TopicType.PHOTO);
+					}
+				}
+			}
 			allTopics.writeTopics(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);			
 		}

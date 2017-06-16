@@ -104,7 +104,7 @@ $(document).on("click", ".enterTopic", function(){
 		url: 'rest/topics/loadTopic/'+ subforum,
 		type : 'POST',
 		contentType : "application/json; charset=UTF-8",
-		data: JSON.stringify(topic),
+		data: topic,
 		success: function(data){
 			contentGrid.showTopicWithComments(data);
 		},

@@ -15,12 +15,15 @@ $(function(){
 			return false;
 		}else {
 			$("#newTopicForm")[0].reset();
+			$("#newTopicTitle").removeClass("hidden");
+			$("#editTopicTitle").addClass("hidden");
 			$("#subforum").val(subforum);
 			$("#author").val(user);
 			$("#topicContentText").removeClass("hidden");
 			$("#topicContentLabel").removeClass("hidden");
 			$(".divForLink").addClass("hidden");
 			$(".divForImage").addClass("hidden");
+			$("input#topicTitle").prop("readonly", false);
 			$("#modalNewTopic").modal('show');
 		}
 	});
@@ -51,9 +54,18 @@ $(function(){
 	
 	$(document).on("click", ".createTopic", function(){
 		var image ="";
-		if($("#topicTitle").val() === ""){
-			toastr.warning("Topic title is required. Plese fill it.");
-			return false;
+		var id = $(this).attr("id");
+		var edit = false;
+		
+		if(id == "edit"){
+			edit = true;
+		}
+		
+		if(!edit){
+			if($("#topicTitle").val() === ""){
+				toastr.warning("Topic title is required. Plese fill it.");
+				return false;
+			}			
 		}
 		
 		if($('#optionsText').is(':checked')){
@@ -61,13 +73,13 @@ $(function(){
 				toastr.warning("Topic textual content is required. Plese fill the field for content.");
 				return false;
 			}else {
-				makeTextTopicObject();
+				makeTextTopicObject(edit);
 				return true;
 			}
 		}
 		
 		if($('#optionsImage').is(':checked')){
-			makeImageTopicObject();
+			makeImageTopicObject(edit);
 			return true;
 		}
 		
@@ -79,7 +91,7 @@ $(function(){
 				toastr.warning("Link format is not valid.");
 				return false;
 			}else {
-				makeLinkTopicObject();
+				makeLinkTopicObject(edit);
 				return true;
 			}
 		}
@@ -111,14 +123,10 @@ $(function(){
 		var subforum = id[1];
 		var author = id[2];
 		
-		console.log(topic);
-		console.log(subforum);
-		console.log(author);
-		
 		var user = checkIfUserIsLoggedIn();
 		checkModeratorsForSubforum(subforum);
 		if(user == ""){
-			toastr.warning("Can't create new topic if you're not sign in!");
+			toastr.warning("Can't delete topic if you're not sign in!");
 			return false;
 		} else {
 			checkUserRole();
@@ -129,17 +137,103 @@ $(function(){
 			} else if(userRole == "MODERATOR" || user == author){
 				for(var i=0; i< moderators.length; i++){
 					if(moderators[i] === user){
-						deleteTopic(topic, subforum)
+						deleteTopic(topic, subforum);
 						break;
 					}
 				}
+				toastr.warning("You don't have permission to delete this topic!");
+				return false;
 			} else {
-				toastr.warning("You don't have permission to delete that topic!");
+				toastr.warning("You don't have permission to delete this topic!");
 				return false;
 			}
 		}	
 	});
+	
+	
+	$(document).on("click", ".editTopic", function(){
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var topic = id[0];
+		var subforum = id[1];
+		var author = id[2];
+		var user = checkIfUserIsLoggedIn();
+		checkModeratorsForSubforum(subforum);
+		checkUserRole();
+		if(user == ""){
+			toastr.warning("Can't edit topic if you're not sign in!");
+			return false;
+		} else {
+			if(userRole == "USER" && user == author){
+				getTopic(topic, subforum);
+			}else if(userRole == "ADMINISTRATOR"){
+				getTopic(topic, subforum);
+			}else if(userRole == "MODERATOR" || user == author){
+				for(var i=0; i< moderators.length; i++){
+					if(moderators[i] === user){
+						getTopic(topic, subforum);
+						break;
+					}
+				}
+				toastr.warning("You don't have permission to edit this topic!");
+				return false;
+			}else {
+				toastr.warning("You don't have permission to edit this topic!");
+				return false;
+			}
+		}
+	});
 });
+
+function getTopic(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/loadTopic/' + subforum,
+		type: 'POST',
+		data: topic,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				$("#editTopicTitle").removeClass("hidden");
+				$("#newTopicTitle").addClass("hidden");
+				$("input#subforum").val(data.subforum);
+				$("input#topicTitle").val(data.title);
+				$("input#topicTitle").prop("readonly", true);
+				$("input#author").val(data.author);
+				if(data.type == "TEXT"){
+					$("#optionsText").prop("checked", true);
+					$(".divForImage").addClass("hidden");
+					$(".divForLink").addClass("hidden");
+					$("#topicContentText").removeClass("hidden");
+					$("#topicContentLabel").removeClass("hidden");
+					$("#topicContentText").val(data.content);
+				}else if(data.type == "LINK"){
+					$("#optionsLink").prop("checked", true);
+					$(".divForLink").removeClass("hidden");
+					$(".divForImage").addClass("hidden");
+					$("#topicContentText").addClass("hidden");
+					$("#topicContentLabel").addClass("hidden");
+					$("#topicContentLink").val(data.content);
+				}else if(data.type == "PHOTO"){
+					$("#optionsImage").prop("checked", true);
+					$(".divForImage").removeClass("hidden");
+					$(".divForLink").addClass("hidden");
+					$("#topicContentText").addClass("hidden");
+					$("#topicContentLabel").addClass("hidden");
+					$("#previewTopicImage").attr("src", data.content);
+				}
+				$(".createTopic").attr("id", "edit");
+				$("#modalNewTopic").modal('show');
+			}else {
+				toastr.error("Error occured. Please try again");
+				return;
+			}
+		}, 
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
+		}
+	});
+}
 
 function deleteTopic(topic, subforum){
 	$.ajax({
@@ -193,76 +287,84 @@ function uploadTopicImage(data){
 	});
 }
 
-function makeTextTopicObject(){
-	var title = $("#topicTitle").val();
+function makeTextTopicObject(edit) {
+	var title = $("input#topicTitle").val();
+	console.log("ovo je title " + title);
 	var subforum = $("#subforum").val();
 	
-	checkTopicUnique(title, subforum);
-	if(!isUnique){
-		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
-		return false;
-	}else {
-		var author = $("#author").val();
-		var text = $("#topicContentText").val();
-		var topic = new Object();
-		topic['title'] = title;
-		topic['content'] = text;
-		topic['subforum'] = subforum;
-		topic['author'] = author;
-		addTextTopic(JSON.stringify(topic));
+	if(!edit){
+		checkTopicUnique(title, subforum);
+		if(!isUnique){
+			toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+			return false;
+		}
 	}
+	
+	var author = $("#author").val();
+	var text = $("#topicContentText").val();
+	var topic = new Object();
+	topic['title'] = title;
+	topic['content'] = text;
+	topic['subforum'] = subforum;
+	topic['author'] = author;
+	addTextTopic(JSON.stringify(topic), edit);
 }
 
-function makeImageTopicObject(){
-	var title = $("#topicTitle").val();
+function makeImageTopicObject(edit) {
+	var title = $("input#topicTitle").val();
+	console.log("ovo je title " + title);
 	var subforum = $("#subforum").val();
 	
-	checkTopicUnique(title, subforum);
-	if(!isUnique){
-		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
-		return false;
-	}else {
-		var author = $("#author").val();
-		var src = newSrc;
-		var topic = new Object();
-		topic['title'] = title;
-		topic['content'] = src;
-		topic['subforum'] = subforum;
-		topic['author'] = author;
-		addImageTopic(JSON.stringify(topic));		
+	if(!edit){
+		checkTopicUnique(title, subforum);
+		if(!isUnique){
+			toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+			return false;
+		}
 	}
+	var author = $("#author").val();
+	var src = newSrc;
+	var topic = new Object();
+	topic['title'] = title;
+	topic['content'] = src;
+	topic['subforum'] = subforum;
+	topic['author'] = author;
+	addImageTopic(JSON.stringify(topic), edit);		
 }
 
-function makeLinkTopicObject(){
-	var title = $("#topicTitle").val();
+function makeLinkTopicObject(edit) {
+	var title = $("input#topicTitle").val();
+	console.log("ovo je title " + title);
+	
 	var subforum = $("#subforum").val();
 	
-	checkTopicUnique(title, subforum);
-	if(!isUnique){
-		toastr.warning("Title must me unique for topic on subforum level. Please change title.");
-		return false;
-	}else {
-		var author = $("#author").val();
-		var text = $("#topicContentLink").val();
-		var topic = new Object();
-		topic['title'] = title;
-		topic['content'] = text;
-		topic['subforum'] = subforum;
-		topic['author'] = author;
-		addLinkTopic(JSON.stringify(topic));
+	if(!edit){
+		checkTopicUnique(title, subforum);
+		if(!isUnique){
+			toastr.warning("Title must me unique for topic on subforum level. Please change title.");
+			return false;
+		}
 	}
+	var author = $("#author").val();
+	var text = $("#topicContentLink").val();
+	var topic = new Object();
+	topic['title'] = title;
+	topic['content'] = text;
+	topic['subforum'] = subforum;
+	topic['author'] = author;
+	addLinkTopic(JSON.stringify(topic), edit);
 }
 
-function addTextTopic(topicJSON){
+function addTextTopic(topicJSON, edit) {
 	$.ajax({
-		url: 'rest/topics/addText',
+		url: 'rest/topics/addText/' + edit,
 		type: 'POST',
 		data: topicJSON,
 		contentType: 'application/json; charset=UTF-8',
 		success: function(data){
 			if(data){
 				$("#newTopicForm")[0].reset();				
-				toastr.success("New topic is created! Go check it.");
+				toastr.success("Topic is saved! Go check it.");
 				var content = new ContentGrid();
 				content.reloadSubforum();
 				$("#modalNewTopic").modal('hide');
@@ -279,16 +381,16 @@ function addTextTopic(topicJSON){
 	});
 }
 
-function addLinkTopic(topicJSON){
+function addLinkTopic(topicJSON, edit) {
 	$.ajax({
-		url: 'rest/topics/addLink',
+		url: 'rest/topics/addLink/' + edit,
 		type: 'POST',
 		data: topicJSON,
 		contentType: 'application/json; charset=UTF-8',
 		success: function(data){
 			if(data){
 				$("#newTopicForm")[0].reset();				
-				toastr.success("New topic is created! Go check it.");
+				toastr.success("Topic is saved! Go check it.");
 				var content = new ContentGrid();
 				content.reloadSubforum();
 				$("#modalNewTopic").modal('hide');
@@ -305,16 +407,16 @@ function addLinkTopic(topicJSON){
 	});
 }
 
-function addImageTopic(topicJSON){
+function addImageTopic(topicJSON, edit) {
 	$.ajax({
-		url: 'rest/topics/addPhoto',
+		url: 'rest/topics/addPhoto/' + edit,
 		type: 'POST',
 		data: topicJSON,
 		contentType: 'application/json; charset=UTF-8',
 		success: function(data){
 			if(data){
 				$("#newTopicForm")[0].reset();				
-				toastr.success("New topic is created! Go check it.");
+				toastr.success("Topic is saved! Go check it.");
 				var content = new ContentGrid();
 				content.reloadSubforum();
 				$("#modalNewTopic").modal('hide');
@@ -383,7 +485,7 @@ function checkModeratorsForSubforum(subforum){
 	});
 }
 
-function checkUserRole(){
+function checkUserRole() {
 	$.ajax({
 		url: 'rest/users/getRole',
 		type: 'GET',
