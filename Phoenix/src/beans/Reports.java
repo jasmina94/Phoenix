@@ -13,6 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import util.FileMaker;
 
+/**
+ * @author Jasmina
+ *
+ */
 public class Reports implements Serializable{
 
 	/**

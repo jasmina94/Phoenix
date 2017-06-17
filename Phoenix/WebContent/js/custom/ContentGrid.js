@@ -40,8 +40,14 @@ function ContentGrid(){
 								  "<a href='#' class='newTopic'> Make new topic </a><br/>" +
 								  "<input type='text' id='hiddenSubforum' style='display:none'  value='" + subforumName + "' />");
 		
+		
+		
 		if(self.userRole === "ADMINISTRATOR" || self.userRole === "MODERATOR"){
 			$topicsPanelHeader.append("<a href='#' class='deleteSubforum' id='"+ subforumName + "'>Delete this subforum</a><br/>");
+		}
+		
+		if(self.userRole === "USER"){
+			$topicsPanelHeader.append("<a href='#' class='reportSubforum' id='"+ subforumName + "'>Report this subforum</a>")
 		}
 		
 		if(data.topics.length === 0){

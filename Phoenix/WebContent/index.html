@@ -15,6 +15,7 @@
 <script type="text/javascript" src="js/custom/comments.js"></script>
 <script type="text/javascript" src="js/custom/topics.js"></script>
 <script type="text/javascript" src="js/custom/subforums.js"></script>
+<script type="text/javascript" src="js/custom/reports.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
@@ -408,6 +409,39 @@
 		</div>
 	</div>
 
+	<!-- 	MODAL REPORT -->
+	<div id="modalReport" class="modal" role="dialog" data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header reportHeader">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="reportTitle"></h4>
+				</div>
+				<div class="modal-body">
+					<form id="reportForm">
+						<div class="form-gorup">
+							<label>Your complaints:</label><br />
+							<textarea rows="2" cols="60" id="textReport" style='resize: none'
+								class="form-control"></textarea>
+						</div>
+						<br/>
+						<div>
+							<label>Date of complaint:</label> <input type="text"
+								class="form-control" id="dateReport">
+						</div>
+						<br /> <input type="hidden" id="reportSubforum"> <input
+							type="hidden" id="reportTopic"> <input type="hidden"
+							id="reportComment"> <input type="hidden"
+							id="reportAuthor">
+						<button type="button"
+							class="btn btn-default reportSave col-lg-offset-5"
+							style="width: 100px">Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </body>
 </html>

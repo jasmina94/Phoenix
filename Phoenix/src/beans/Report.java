@@ -5,9 +5,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import enums.ReportSolver;
 import enums.ReportStatus;
-import util.Entity;
 
+/**
+ * @author Jasmina
+ *
+ */
 public class Report implements Serializable{
 
 	/**
@@ -17,9 +21,12 @@ public class Report implements Serializable{
 	
 	private String content;      // report text
 	private String date;
-	private Entity reportEntity;
+	private String commentId;   //if report is for comment
+	private String topicTitle;  //if report is for topic
+	private String subforum;    //if report is for topic or for subforum
 	private String reporter;     // username
-	private ReportStatus status; 
+	private ReportStatus status;
+	private ReportSolver solver;
 	
 	public Report() {
 		super();
@@ -27,10 +34,9 @@ public class Report implements Serializable{
 	}
 
 
-	public Report(String content, Entity reportEntity, String reporter) {
+	public Report(String content, String reporter) {
 		super();
 		this.content = content;
-		this.reportEntity = reportEntity;
 		this.reporter = reporter;
 		this.status = ReportStatus.PENDING;
 		setReportDate();
@@ -54,14 +60,7 @@ public class Report implements Serializable{
 	}
 
 
-	public Entity getReportEntity() {
-		return reportEntity;
-	}
-
-
-	public void setReportEntity(Entity reportEntity) {
-		this.reportEntity = reportEntity;
-	}
+	
 
 
 	public String getReporter() {
@@ -88,10 +87,48 @@ public class Report implements Serializable{
 		return date;
 	}
 
+	public String getCommentId() {
+		return commentId;
+	}
+
+
+	public void setCommentId(String commentId) {
+		this.commentId = commentId;
+	}
+
+
+	public String getTopicTitle() {
+		return topicTitle;
+	}
+
+
+	public void setTopicTitle(String topicTitle) {
+		this.topicTitle = topicTitle;
+	}
+
+
+	public String getSubforum() {
+		return subforum;
+	}
+
+
+	public void setSubforum(String subforum) {
+		this.subforum = subforum;
+	}
+	
+	
+	public ReportSolver getSolver() {
+		return solver;
+	}
+
+	public void setSolver(ReportSolver solver) {
+		this.solver = solver;
+	}
+
 
 	@Override
 	public String toString() {
-		return "Report [ user= " + this.reporter + " entity= " + this.reportEntity
-				+ " content= " + this.content + " date= " + this.date + " status= " + this.status + " ]";
+		return "Report [ user= " + this.reporter + " content= " + this.content + 
+				" date= " + this.date + " status= " + this.status + " ]";
 	}
 }
