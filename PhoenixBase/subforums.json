@@ -12,7 +12,8 @@
         ],
         "responsibleModerator": "moderator",
         "allModerators": [
-            "moderator"
+            "moderator",
+            "moderator1"
         ]
     },
     {
@@ -28,7 +29,8 @@
         ],
         "responsibleModerator": "moderator",
         "allModerators": [
-            "moderator"
+            "moderator",
+            "moderator1"
         ]
     },
     {
@@ -63,6 +65,19 @@
         "allModerators": [
             "moderator",
             "ILoveSerbia"
+        ]
+    },
+    {
+        "name": "Novi forum",
+        "details": "Novi opis",
+        "icon": "../PhoenixBase/images/subforums/3.jpg",
+        "rules": [
+            "Prvo pravilo",
+            "Drugo pravilo"
+        ],
+        "responsibleModerator": "admin",
+        "allModerators": [
+            "admin"
         ]
     }
 ]

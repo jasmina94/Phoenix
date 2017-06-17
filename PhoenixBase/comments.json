@@ -2,29 +2,28 @@
     {
         "id": "001",
         "topic": "Interesting things to see in Solun",
-        "subforum": null,
+        "subforum": "Greece",
         "author": "jass94",
         "commentDate": "27/05/2017",
         "parentComment": "",
         "subComments": [
-            "003",
-            "6bd19b4a-27d0-4685-8b64-5921f197192b"
+            "003"
         ],
-        "content": "Bla bla bla",
+        "content": "Ovde izmeni tekst",
         "likes": 1,
         "dislikes": 0,
-        "edited": false,
+        "edited": true,
         "deleted": false
     },
     {
         "id": "002",
         "topic": "Interesting things to see in Solun",
-        "subforum": null,
+        "subforum": "Greece",
         "author": "ILoveSerbia",
         "commentDate": "27/05/2017",
         "parentComment": "",
         "subComments": [],
-        "content": "White tower is grate for making photos. Also there is a boat tour by the Solun cost.",
+        "content": "White tower is grate for making photos. Also there is a boat tour by the Solun cost. Moderator changes.",
         "likes": 1,
         "dislikes": 0,
         "edited": false,
@@ -33,13 +32,11 @@
     {
         "id": "003",
         "topic": "Interesting things to see in Solun",
-        "subforum": null,
+        "subforum": "Greece",
         "author": "ILoveSerbia",
         "commentDate": "27/05/2017",
         "parentComment": "001",
-        "subComments": [
-            "4ed04477-db3d-45d7-ae99-2191d466895a"
-        ],
+        "subComments": [],
         "content": "Nothing smarter to say?",
         "likes": 0,
         "dislikes": 0,
@@ -47,74 +44,14 @@
         "deleted": false
     },
     {
-        "id": "6bd19b4a-27d0-4685-8b64-5921f197192b",
+        "id": "623d143f-2ba4-4138-a6f4-58c310f5589d",
         "topic": "Interesting things to see in Solun",
         "subforum": "Greece",
         "author": "jass94",
-        "commentDate": "11/06/2017",
-        "parentComment": "001",
-        "subComments": [],
-        "content": "Ovo je reply na bla bla",
-        "likes": 1,
-        "dislikes": 0,
-        "edited": false,
-        "deleted": false
-    },
-    {
-        "id": "ade9e23f-b1ee-48b5-a471-86d310bd5579",
-        "topic": "Interesting things to see in Solun",
-        "subforum": "Greece",
-        "author": "jass94",
-        "commentDate": "11/06/2017",
+        "commentDate": "13/06/2017",
         "parentComment": null,
-        "subComments": [
-            "abaa1490-97a8-4f3b-8ba2-ad9bcf1f1cf3"
-        ],
-        "content": "Ovo je reply na temu",
-        "likes": 1,
-        "dislikes": 0,
-        "edited": false,
-        "deleted": false
-    },
-    {
-        "id": "abaa1490-97a8-4f3b-8ba2-ad9bcf1f1cf3",
-        "topic": "Interesting things to see in Solun",
-        "subforum": "Greece",
-        "author": "jass94",
-        "commentDate": "11/06/2017",
-        "parentComment": "ade9e23f-b1ee-48b5-a471-86d310bd5579",
-        "subComments": [
-            "39e991b6-8eb3-4cc3-bf7d-2d51ed730bcf"
-        ],
-        "content": "Sama sebi reply",
-        "likes": 0,
-        "dislikes": 0,
-        "edited": false,
-        "deleted": false
-    },
-    {
-        "id": "39e991b6-8eb3-4cc3-bf7d-2d51ed730bcf",
-        "topic": "Interesting things to see in Solun",
-        "subforum": "Greece",
-        "author": "moderator",
-        "commentDate": "11/06/2017",
-        "parentComment": "abaa1490-97a8-4f3b-8ba2-ad9bcf1f1cf3",
         "subComments": [],
-        "content": "Moderatorrrr\n",
-        "likes": 1,
-        "dislikes": 0,
-        "edited": false,
-        "deleted": false
-    },
-    {
-        "id": "4ed04477-db3d-45d7-ae99-2191d466895a",
-        "topic": "Interesting things to see in Solun",
-        "subforum": "Greece",
-        "author": "jass94",
-        "commentDate": "11/06/2017",
-        "parentComment": "003",
-        "subComments": [],
-        "content": "coooome",
+        "content": "Novi reply",
         "likes": 0,
         "dislikes": 0,
         "edited": false,

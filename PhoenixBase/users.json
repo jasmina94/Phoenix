@@ -22,6 +22,20 @@
         ]
     },
     {
+        "username": "moderator1",
+        "password": "user1",
+        "firstname": "Jasmine1",
+        "lastname": "Smith1",
+        "role": "MODERATOR",
+        "email": "jsmith@gmail.com",
+        "phone": "222333",
+        "registrationDate": "19/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [],
+        "followedComments": [],
+        "votes": []
+    },
+    {
         "username": "admin",
         "password": "admin",
         "firstname": "John",
@@ -82,6 +96,27 @@
                 "votingCommentId": "ade9e23f-b1ee-48b5-a471-86d310bd5579",
                 "votingTopicTitle": "Interesting things to see in Solun",
                 "topicSubforumName": "Greece"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "f299c313-f312-4d90-b84b-5e778aee4a67",
+                "votingTopicTitle": "Proba",
+                "topicSubforumName": "General"
+            },
+            {
+                "type": true,
+                "forComment": true,
+                "votingCommentId": "5711f767-4793-4ab1-8074-60815a667e7a",
+                "votingTopicTitle": "Proba",
+                "topicSubforumName": "General"
+            },
+            {
+                "type": false,
+                "forComment": true,
+                "votingCommentId": "0fb235fa-b4dd-4e77-bd09-6ed4abfedbba",
+                "votingTopicTitle": "Proba",
+                "topicSubforumName": "General"
             }
         ]
     },
