@@ -1,6 +1,8 @@
 package services;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -11,6 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.User;
 import beans.Users;
@@ -29,6 +34,8 @@ public class UserService {
 	@Context
 	ServletContext ctx;
 
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -145,6 +152,19 @@ public class UserService {
 		}
 		
 		return role;
+	}
+	
+	@GET
+	@Path("/getAll")
+	public String getAllUsers(@Context HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+		ArrayList<String> usernames = new ArrayList<>();
+		
+		Users users = new Users(ctx.getRealPath(""));
+		for(User u : users.getRegisteredUsers()){
+			usernames.add(u.getUsername());
+		}
+		
+		return mapper.writeValueAsString(usernames);		
 	}
 	
 	

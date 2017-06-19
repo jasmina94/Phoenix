@@ -215,6 +215,7 @@ public class TopicService {
 		String content = topicDTO.getContent();
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
+		String date = topicDTO.getDate();
 		
 		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
@@ -227,6 +228,10 @@ public class TopicService {
 					success=false;
 				}
 			}
+		}else {
+			if(date == ""){
+				success = false;
+			}
 		}
 		
 		if(success){
@@ -238,6 +243,8 @@ public class TopicService {
 					if(t.getTitle().equals(title)){
 						t.setContent(content);
 						t.setType(TopicType.TEXT);
+						t.setAuthor(author);
+						t.setCreationDate(date);
 					}
 				}
 			}
@@ -262,6 +269,7 @@ public class TopicService {
 		String content = topicDTO.getContent();
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
+		String date = topicDTO.getDate();
 		
 		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
@@ -274,6 +282,10 @@ public class TopicService {
 					success=false;
 				}
 			}
+		}else {
+			if(date == ""){
+				success = false;
+			}
 		}
 		
 		if(success){
@@ -285,6 +297,8 @@ public class TopicService {
 					if(t.getTitle().equals(title)){
 						t.setContent(content);
 						t.setType(TopicType.LINK);
+						t.setAuthor(author);
+						t.setCreationDate(date);
 					}
 				}
 			}
@@ -308,6 +322,7 @@ public class TopicService {
 		String content = topicDTO.getContent();
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
+		String date = topicDTO.getDate();
 		
 		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
@@ -319,6 +334,10 @@ public class TopicService {
 				if(t.getTitle().equals(title)){
 					success=false;
 				}
+			}
+		}else {
+			if(date == ""){
+				success = false;
 			}
 		}
 		
@@ -332,6 +351,8 @@ public class TopicService {
 					if(t.getTitle().equals(title)){
 						t.setContent(content);
 						t.setType(TopicType.PHOTO);
+						t.setAuthor(author);
+						t.setCreationDate(date);
 					}
 				}
 			}

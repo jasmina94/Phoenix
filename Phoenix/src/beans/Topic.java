@@ -130,6 +130,11 @@ public class Topic {
 	public void setComments(ArrayList<Comment> comments) {
 		this.comments = comments;
 	}
+	
+	public void setCreationDate(String creationDate) {
+		this.creationDate = creationDate;
+	}
+
 
 	@Override
 	public String toString() {

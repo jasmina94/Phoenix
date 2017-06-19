@@ -13,17 +13,19 @@ public class TopicDTO implements Serializable{
 	private String author;
 	private String subforum;
 	private String content;
+	private String date;
 	
 	public TopicDTO() {
 		super();
 	}
 
-	public TopicDTO(String title, String author, String subforum, String content) {
+	public TopicDTO(String title, String author, String subforum, String content, String date) {
 		super();
 		this.title = title;
 		this.author = author;
 		this.subforum = subforum;
 		this.content = content;
+		this.date = date;
 	}
 
 	public String getTitle() {
@@ -56,5 +58,13 @@ public class TopicDTO implements Serializable{
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
 	}
 }
