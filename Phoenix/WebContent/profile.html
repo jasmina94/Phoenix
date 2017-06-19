@@ -109,6 +109,51 @@
 		</div>
 	</div>
 
+	<!-- 	MODAL SUBFORUM PREVIEW -->
+	<div id="modalSubforumPreview" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="detailsTitle">Details about subforum</h4>
+					<span><img id="subforumIcon" width="50" height="50"></span>
+				</div>
+				<div class="modal-body">
+					<b>Rules: </b>
+					<ul id="rulesListing">
+					</ul>
+					<hr>
+					<p id="mainModerator"></p>
+					<b>All moderators:</b>
+					<ul id="moderators">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 
+	<div id="modalCommentPreview" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<b id="comment"></b>
+					<p id="commentId"></p>
+				</div>
+				<div class="modal-body">
+					<p id="commentTopic"></p>
+					<p id="commentSubforum"></p>
+					<p id="commentDate"></p>
+					<p id="commentAuthor"></p>
+					<p id="commentLikes"></p>
+					<p id="commentDislikes"></p>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

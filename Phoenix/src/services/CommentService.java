@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Comment;
 import beans.Comments;
+import beans.Subforum;
+import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
@@ -40,6 +42,26 @@ public class CommentService {
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	
+	@GET
+	@Path("/get/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSubforum(@Context HttpServletRequest request, @PathParam("id") String id) throws IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		String ret = "";
+		if(user != null){
+			Comments comments = new Comments(ctx.getRealPath(""));
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(id)){
+					ret = mapper.writeValueAsString(c);
+					break;
+				}
+			}
+			return ret;
+		}else {
+			return ret;
+		}
+	}
 	
 	@GET
 	@Path("/delete/{id}")

@@ -62,6 +62,27 @@ public class SubforumService {
 	}
 	
 	@GET
+	@Path("/get/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSubforum(@Context HttpServletRequest request, @PathParam("subforum") String subforum) throws IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		String ret = "";
+		if(user != null){
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforum)){
+					ret = mapper.writeValueAsString(s);
+					break;
+				}
+			}
+			return ret;
+		}else {
+			return ret;
+		}
+	}
+	
+	@GET
 	@Path("/getModerators/{subforum}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

@@ -25,7 +25,86 @@ $(function(){
 		showUserMng();
 	});
 	
+	$(document).on("click", ".previewSubforum", function(){
+		var subforum = $(this).attr("id");
+		getSubforum(subforum);
+	});
+	
+	$(document).on("click", ".previewComment", function(){
+		var id = $(this).attr("id");
+		getComment(id);
+	});
 });
+
+function getComment(id){
+	$.ajax({
+		url: 'rest/comments/get/' + id,
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		success: function(data){
+			if(data != ""){
+				showPreviewComment(data);
+				return true;
+			}else {
+				toastr.warning("Comment preview is not available.")
+				return false;
+			}
+		}
+	});
+}
+
+function getSubforum(subforum){
+	$.ajax({
+		url: 'rest/subforums/get/' + subforum,
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		success: function(data){
+			if(data != ""){
+				showPreviewSubforum(data);
+				return true;
+			}else {
+				toastr.warning("Subforum preview is not available.")
+				return false;
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+
+function showPreviewComment(comment){
+	$("#modalCommentPreview").modal("show");
+	$("#comment").text(comment.content);
+	$("#commentId").text("Id: " + comment.id);
+	$("#commentTopic").text("Topic: " + comment.topic);
+	$("#commentSubforum").text("Subforum: " + comment.subforum);
+	$("#commentDate").text("Creation date: " + comment.commentDate);
+	$("#commentAuthor").text("Author: " + comment.author);
+	$("#commentLikes").text("Likes: " + comment.likes);
+	$("#commentDislikes").text("Dislikes: " + comment.dislikes);
+}
+
+function showPreviewSubforum(subforum){
+	$("#modalSubforumPreview").modal("show");
+	var $rules = $("#rulesListing").empty();
+	var $moderators = $("#moderators").empty();
+	var $title = $("#detailsTitle").empty();
+	var $mainModerator = $("#mainModerator").empty();
+	
+	$title.append("<span><i>" + subforum.name + "</i><span>");
+	
+	for(i=0; i<subforum.rules.length; i++){
+		$rules.append("<li>" + subforum.rules[i] + "</li>");
+	}
+	
+	for(i=0; i<subforum.allModerators.length; i++){
+		$moderators.append("<li>" + subforum.allModerators[i] + "</li>");
+	}
+	$("#subforumIcon").attr("src", subforum.icon);
+	$mainModerator.append("<span><i>Main moderator: " + subforum.responsibleModerator + "</a></p>");
+}
 
 function showUserMng(){	
 	$("#userPanel").addClass("hidden");
@@ -71,7 +150,7 @@ function makeReportTable(data) {
 					"<td>" + report.status + "</td>"+
 					"<td>" + report.date + "</td>"+
 					"<td>" + report.reporter + "</td>" +
-					"<td><a href='report.commentId' class='previewComment'>Comment " + report.commentId + "</a></td>" +
+					"<td><a href='#' class='previewComment' id='"+ report.commentId + "'>Comment</a></td>" +
 					"<td>" + report.content + "</td>"+
 					"<td><a href='#' class='deleteEntityComment' id='" + report.commentId + "?" + report.reporter + "'>Delete</a></td>" +
 					"<td><a href='#' class='warnAuthors' id='" + report.commentId + "?" + report.reporter + "'>Warn</a></td>"+
@@ -81,7 +160,7 @@ function makeReportTable(data) {
 					"<td>" + report.status + "</td>"+
 					"<td>" + report.date + "</td>"+
 					"<td>" + report.reporter + "</td>" +
-					"<td><a href='report.commentId' class='previewTopic' id='"+ report.topicTitle +"?" + report.subforum + "'>Topic " + report.topicTitle + "</a></td>" +
+					"<td><a href='#' class='previewTopic' id='"+ report.topicTitle +"?" + report.subforum + "'>Topic " + report.topicTitle + "</a></td>" +
 					"<td>" + report.content + "</td>"+
 					"<td><a href='#' class='deleteEntityComment' id='" + report.topicTitle + "?" + data[i].subforum + "?" + report.reporter + "'>Delete</a></td>" +
 					"<td><a href='#' class='warnAuthors' id='" + report.topicTitle + "?" + report.subforum + "?" + report.reporter + "'>Warn</a></td>"+
@@ -91,7 +170,7 @@ function makeReportTable(data) {
 					"<td>" + report.status + "</td>"+
 					"<td>" + report.date + "</td>"+
 					"<td>" + report.reporter + "</td>" +
-					"<td><a href='report.commentId' class='previewSubforum' id='"+ report.subforum + "'>Subforum " + report.subforum + "</a></td>" +
+					"<td><a href='#' class='previewSubforum' id='"+ report.subforum + "'>Subforum " + report.subforum + "</a></td>" +
 					"<td>" + report.content + "</td>"+
 					"<td><a href='#' class='deleteEntityComment' id='" + report.subforum + "?" + report.reporter + "'>Delete</a></td>" +
 					"<td><a href='#' class='warnAuthors' id='" + report.subforum + "?" + report.reporter + "'>Warn</a></td>"+
