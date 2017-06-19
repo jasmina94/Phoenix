@@ -4,6 +4,7 @@
 package services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -94,5 +96,28 @@ public class ReportService {
 		
 		
 		return success;
+	}
+	
+	@GET
+	@Path("/all")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAllReports(@Context HttpServletRequest request) throws IOException{
+		boolean success = true;
+		ArrayList<Report> reports = new ArrayList<>();
+		
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || user.getRole().equals("USER") || user.getRole().equals("ADMINISTRATOR")){
+			success = false;
+		}
+		
+		if(success){
+			Reports allReports = new Reports(ctx.getRealPath(""));
+			for(Report r : allReports.getReports()){
+				reports.add(r);
+			}
+		}
+		
+		return mapper.writeValueAsString(reports);
 	}
 }

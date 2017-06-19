@@ -145,6 +145,7 @@ function logoutUser() {
 			if (data) {
 				unbindCookie();
 				setViewLoggout();
+				window.location.replace("http://localhost:8080/Phoenix/index.html");
 				return false;
 			} else {
 				toastr.error("Error occured! Try again.");

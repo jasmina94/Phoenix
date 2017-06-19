@@ -39,7 +39,7 @@ $(function(){
 		var id = $(this).attr("id");
 		
 		$("#newSubforumForm")[0].reset();
-		$("#reportTitle").text("Report comment with " + id);
+		$("#reportTitle").text("Report comment " + id);
 		var date = getCurrentDate();
 		$("#dateReport").val(date);
 		

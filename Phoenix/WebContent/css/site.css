@@ -73,3 +73,7 @@ p.commentTopic{
 .hidden{
 	display: none;
 }
+
+.reportsTable{
+	width: 100%;
+}
