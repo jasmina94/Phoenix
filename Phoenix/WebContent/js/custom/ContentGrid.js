@@ -149,6 +149,7 @@ function ContentGrid(){
 		var $postDiv = $("<div>");
 		var $onlyTopic = $("<div>");
 		var self = this;
+		self.checkUserRole();
 		
 		$postDiv.addClass("container col-lg-12 postDiv");
 		
@@ -161,6 +162,10 @@ function ContentGrid(){
 						  "<a href='#' class='commentOnTopic' id='"+ topic.title +"?" + topic.subforum +"' data-toggle='modal' data-target='#modalComment'>Reply</a></p>");
 		
 
+		if(self.userRole === "USER"){
+			$onlyTopic.append("<p><a href='#' class='reportTopic' id='"+ topic.title + "?" + topic.subforum + "'>Report</a><p>")
+		}
+		
 		$onlyTopic.append(self.postDiv(topic));
 		
 		$onlyTopic.addClass("topicDiv")
@@ -224,6 +229,8 @@ function ContentGrid(){
 	
 	this.makeOneComment = function(comment){
 		var self = this;
+		self.checkUserRole();
+		
 		var $ul = $("<ul style='list-style:none;padding-left:10px;'>");
 		var $commentDiv = $("<div>");
 		
@@ -239,6 +246,10 @@ function ContentGrid(){
 					   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +
 					   "<a href='#' class='commentReply' id='"+ comment.id +"' data-toggle='modal' data-target='#modalComment'>Reply</a>");
 			$commentWrapper.append("<a href='#' class='pull-right deleteComment' id='"+ comment.id + "?"+ comment.author + "' style='padding-right:5px'><span class='glyphicon glyphicon-trash'></span></a>");
+			
+			if(self.userRole === "USER"){
+				$commentWrapper.append("<a href='#' class='pull-right reportComment' id='" + comment.id + "' style='padding-right:5px'><img src='images/report.png' width='20' height='20'></a>");
+			}
 			
 			if(comment.edited){
 				$commentWrapper.append("<a href='#' class='pull-right editComment' id='"+comment.id + "?"+ comment.author + "' style='padding-right:5px'><span class='glyphicon glyphicon-pencil'></span></a><p class='pull-right editedLabel'>edited</p>");

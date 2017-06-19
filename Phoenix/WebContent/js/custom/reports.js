@@ -16,6 +16,42 @@ $(function(){
 		$("#modalReport").modal("show");
 	});
 	
+	$(document).on("click", ".reportTopic", function(){
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var topic = id[0];
+		var subforum = id[1];
+		
+		$("#newSubforumForm")[0].reset();
+		$("#reportTitle").text("Report topic " + topic + " in subforum " + subforum);
+		
+		var date = getCurrentDate();
+		$("#dateReport").val(date);
+		
+		var user = checkLoggedUserName();
+		$("#reportSubforum").val(subforum);
+		$("#reportTopic").val(topic);
+		$("#reportAuthor").val(user);
+		$("#modalReport").modal("show");
+	});
+	
+	$(document).on("click", ".reportComment", function(){
+		var id = $(this).attr("id");
+		
+		$("#newSubforumForm")[0].reset();
+		$("#reportTitle").text("Report comment with " + id);
+		var date = getCurrentDate();
+		$("#dateReport").val(date);
+		
+		var user = checkLoggedUserName();
+		$("#reportSubforum").val("");
+		$("#reportTopic").val("");
+		$("#reportComment").val(id);
+		$("#reportAuthor").val(user);
+		$("#modalReport").modal("show");
+		
+	});
+	
 	
 	$(document).on("click", ".reportSave", function(){
 		if($("#textReport").val() === ""){
