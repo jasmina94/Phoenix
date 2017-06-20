@@ -210,10 +210,10 @@ function getNotifications(username){
 
 function makeNotificationMenu(data){
 	var $ul = $("<ul>");
-	$ul.addClass("dropdown-menu");
+	$ul.addClass("dropdown-menu notificationPanel");
 	
 	for(var i=0; i < data.length; i++){
-		$ul.append("<li><a href='#' class='markSeen'id='"+ data[i].id + "'>"+ data[i].content + "</a></li>")
+		$ul.append("<li><div class='divNotify markSeen' id='" + data[i].id + "'>" + data[i].content + "</div></li>");
 	}
 	
 	return $ul;

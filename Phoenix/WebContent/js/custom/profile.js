@@ -47,7 +47,64 @@ $(function(){
 		var id = $(this).attr("id");
 		rejectReport(id);
 	});
+	
+	$(document).on("click", ".warnAuthors", function(){
+		var id = $(this).attr("id");
+		warnAuthors(id);
+	});
+	
+	$(document).on("click", ".deleteEntity", function(){
+		var id = $(this).attr("id");
+		deleteEntity(id);
+	});
 });
+
+function deleteEntity(reportId){
+	$.ajax({
+		url: 'rest/reports/delete/' + reportId,
+		type: 'POST',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		success: function(data){
+			if(data.length != 0){
+				for(var i=0; i< data.length; i++){
+					sendNotification(data[i]);
+				}
+				getAllReports();
+				toastr.success("Deleted unappropriate content. Content author and report author notified!");
+				return true;
+			}else {
+				toastr.warning("Warning authors failed.")
+				return false;
+			}
+		}
+	});
+}
+
+function warnAuthors(reportId){
+	$.ajax({
+		url: 'rest/reports/warn/' + reportId,
+		type: 'POST',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		success: function(data){
+			if(data.length != 0){
+				for(var i=0; i< data.length; i++){
+					sendNotification(data[i]);
+				}
+				getAllReports();
+				toastr.success("Entity author and report author will be warned!");
+				return true;
+			}else {
+				toastr.warning("Warning authors failed.")
+				return false;
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}	
+	});
+}
 
 function rejectReport(reportId){
 	$.ajax({
@@ -78,7 +135,9 @@ function sendNotification(notification){
 		type: 'POST',
 		contentType : "application/json; charset=UTF-8",
 		data: JSON.stringify(notification),
+		async: false,
 		success: function(data){
+			return;
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
@@ -245,8 +304,8 @@ function makeReportTable(data) {
 						"<td>" + report.reporter + "</td>" +
 						"<td><a href='#' class='previewComment' id='"+ report.commentId + "'>Comment</a></td>" +
 						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntityComment' id='" + report.commentId + "?" + report.reporter + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.commentId + "?" + report.reporter + "'>Warn authors</a></td>"+
+						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
+						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
 						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
 			}else if(report.topicTitle != ""){
 				$body.append("<tr>" +
@@ -255,8 +314,8 @@ function makeReportTable(data) {
 						"<td>" + report.reporter + "</td>" +
 						"<td><a href='#' class='previewTopic' id='"+ report.topicTitle +"?" + report.subforum + "'>Topic " + report.topicTitle + "</a></td>" +
 						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntityComment' id='" + report.topicTitle + "?" + data[i].subforum + "?" + report.reporter + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.topicTitle + "?" + report.subforum + "?" + report.reporter + "'>Warn authors</a></td>"+
+						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
+						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
 						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
 			} else {
 				$body.append("<tr>" +
@@ -265,8 +324,8 @@ function makeReportTable(data) {
 						"<td>" + report.reporter + "</td>" +
 						"<td><a href='#' class='previewSubforum' id='"+ report.subforum + "'>Subforum " + report.subforum + "</a></td>" +
 						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntityComment' id='" + report.subforum + "?" + report.reporter + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.subforum + "?" + report.reporter + "'>Warn authors</a></td>"+
+						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
+						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
 						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
 			}
 		}

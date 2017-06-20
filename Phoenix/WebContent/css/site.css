@@ -77,3 +77,24 @@ p.commentTopic{
 .reportsTable{
 	width: 100%;
 }
+
+.divNotify{
+	margin-left: 2px;
+	margin-right: 2px;
+	margin-bottom: 2px;
+	width: 300px;
+	height: 70px;
+	border: 2px solid #000000;
+	border-radius: 2px;
+	text-align: left;
+	display: block;
+	cursor: pointer;
+}
+
+.divNotify:hover{
+	background-color: #fff0b3;
+}
+
+.notificationPanel{
+	background-color: #f2f2f2;
+}

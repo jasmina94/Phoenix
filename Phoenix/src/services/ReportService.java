@@ -21,8 +21,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import beans.Comment;
+import beans.Comments;
 import beans.Report;
 import beans.Reports;
+import beans.Subforum;
+import beans.Subforums;
+import beans.Topic;
+import beans.Topics;
 import beans.User;
 import dto.NotificationDTO;
 import dto.ReportDTO;
@@ -127,16 +133,12 @@ public class ReportService {
 	@Path("/reject/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String rejectComment(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
-		boolean success = true;
+	public String reject(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
 		NotificationDTO notifyDTO = new NotificationDTO();
-
 		User user = (User)request.getSession().getAttribute("loggedUser");
 		if(user == null || id.isEmpty() || id == null){
-			success = false;
-		}
-		
-		if(success){
+			return "";
+		}else{
 			Reports allReports = new Reports(ctx.getRealPath(""));
 			for(Report r : allReports.getReports()){
 				if(r.getId().equals(id)){
@@ -150,9 +152,85 @@ public class ReportService {
 			}			
 			
 			allReports.writeReports(ctx.getRealPath(""));
+			return mapper.writeValueAsString(notifyDTO);
+		}	
+	}
+	
+	@POST
+	@Path("/delete/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String delete(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
+		NotificationDTO forReporter = new NotificationDTO();
+		NotificationDTO forAuthor = new NotificationDTO();
+		ArrayList<NotificationDTO> notifications = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || id.isEmpty() || id == null){
+			return "";
+		}else {
+			Reports allReports = new Reports(ctx.getRealPath(""));
+			for(Report r : allReports.getReports()){
+				if(r.getId().equals(id)){
+					r.setStatus(ReportStatus.ACCEPTED);
+					
+					forReporter.setReceiver(r.getReporter());
+					forReporter.setSeen(false);
+					forReporter.setEntity(checkReportEntity(r));
+					forReporter.setContent("Your report about " + forReporter.getEntity() + " is accepted and it will be deleted!");
+				
+					forAuthor.setSeen(false);
+					forAuthor.setEntity(checkReportEntity(r));
+					forAuthor.setReceiver(findAuthorForEntity(forAuthor.getEntity()));
+					forAuthor.setContent("Your " + forAuthor.getEntity() + " is deleted because of unappropriate content, spam or abuse.");
+					
+					findEntityAndDelete(checkReportEntity(r));
+					
+					break;
+				}
+			}
+			
+			notifications.add(forReporter);
+			notifications.add(forAuthor);
+			allReports.writeReports(ctx.getRealPath(""));
+			return mapper.writeValueAsString(notifications);
 		}
-		
-		return mapper.writeValueAsString(notifyDTO);
+	}
+	
+	@POST
+	@Path("/warn/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String warn(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
+		NotificationDTO forReporter = new NotificationDTO();
+		NotificationDTO forAuthor = new NotificationDTO();
+		ArrayList<NotificationDTO> notifications = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || id.isEmpty() || id == null){
+			return "";
+		}else{
+			Reports allReports = new Reports(ctx.getRealPath(""));
+			for(Report r : allReports.getReports()){
+				if(r.getId().equals(id)){
+					r.setStatus(ReportStatus.ACCEPTED);
+					forReporter.setReceiver(r.getReporter());
+					forReporter.setSeen(false);
+					forReporter.setEntity(checkReportEntity(r));
+					forReporter.setContent("Your report about " + forReporter.getEntity() + " is accepted and it's author will be warned!");
+					
+					forAuthor.setSeen(false);
+					forAuthor.setEntity(checkReportEntity(r));
+					forAuthor.setReceiver(findAuthorForEntity(forAuthor.getEntity()));
+					forAuthor.setContent("Your entity " + forAuthor.getEntity() + " is reported. Please consider changing it content. It's not appropriate.");
+					
+					break;
+				}
+			}
+			
+			notifications.add(forReporter);
+			notifications.add(forAuthor);
+			allReports.writeReports(ctx.getRealPath(""));
+			return mapper.writeValueAsString(notifications);
+		}
 	}
 	
 	private String checkReportEntity(Report report){
@@ -168,5 +246,81 @@ public class ReportService {
 		}
 		
 		return ret;
+	}
+	
+	private String findAuthorForEntity(String entity) throws JsonParseException, JsonMappingException, IOException{
+		String author = "";
+		String[] parts = entity.split(" ");
+		if(parts[0].equals("comment")){
+			String commentId = entity.substring(16, entity.length());
+			Comments comments = new Comments(ctx.getRealPath(""));
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(commentId)){
+					author = c.getAuthor();
+				}
+			}
+		}else if(parts[0].equals("topic")){
+			int index1 = entity.lastIndexOf(" on subforum ");
+			String topicName = entity.substring(6, index1).trim();
+			String subforumName = entity.substring(index1+13, entity.length()).trim();
+			Topics topics = new Topics(ctx.getRealPath(""));
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().equals(topicName) && t.getSubforum().equals(subforumName)){
+					author = t.getAuthor();
+				}
+			}
+		}else {
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			String subforumName = entity.substring(9, entity.length());
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforumName)){
+					author = s.getResponsibleModerator();
+				}
+			}
+		}		
+		return author;
+	}
+	
+	private void findEntityAndDelete(String entity) throws JsonParseException, JsonMappingException, IOException{
+		String[] parts = entity.split(" ");
+		ArrayList<Comment> commDelete = new ArrayList<>();
+		ArrayList<Topic> topicDelete = new ArrayList<>();
+		ArrayList<Subforum> subDelete = new ArrayList<>();
+		
+		if(parts[0].equals("comment")){
+			String commentId = entity.substring(16, entity.length());
+			Comments comments = new Comments(ctx.getRealPath(""));
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(commentId)){
+					commDelete.add(c);
+					break;
+				}
+			}
+			comments.getComments().removeAll(commDelete);
+			comments.writeComments(ctx.getRealPath(""));
+		}else if(parts[0].equals("topic")){
+			int index1 = entity.lastIndexOf(" on subforum ");
+			String topicName = entity.substring(6, index1).trim();
+			String subforumName = entity.substring(index1+13, entity.length()).trim();
+			Topics topics = new Topics(ctx.getRealPath(""));
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().equals(topicName) && t.getSubforum().equals(subforumName)){
+					topicDelete.add(t);
+					break;
+				}
+			}
+			topics.getTopics().removeAll(topicDelete);
+			topics.writeTopics(ctx.getRealPath(""));
+		}else {
+			String subforumName = entity.substring(9, entity.length());
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforumName)){
+					subDelete.add(s);
+				}
+			}		
+			subforums.getSubforums().removeAll(subDelete);
+			subforums.writeSubforums(ctx.getRealPath(""));
+		}
 	}
 }
