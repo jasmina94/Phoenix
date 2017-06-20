@@ -81,8 +81,8 @@ public class TopicService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getTopicWithComments(@PathParam("subforum") String subforumName, String topic)
-			throws JsonProcessingException {		
-		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+			throws IOException {		
+		Topics allTopics = new Topics(ctx.getRealPath(""));
 		Topic targetTopic = new Topic();
 
 		if (allTopics != null) {

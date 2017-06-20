@@ -12,20 +12,22 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Report;
 import beans.Reports;
 import beans.User;
+import dto.NotificationDTO;
 import dto.ReportDTO;
 import enums.ReportSolver;
+import enums.ReportStatus;
 
 /**
  * @author Jasmina
@@ -119,5 +121,52 @@ public class ReportService {
 		}
 		
 		return mapper.writeValueAsString(reports);
+	}
+	
+	@POST
+	@Path("/reject/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String rejectComment(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
+		boolean success = true;
+		NotificationDTO notifyDTO = new NotificationDTO();
+
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || id.isEmpty() || id == null){
+			success = false;
+		}
+		
+		if(success){
+			Reports allReports = new Reports(ctx.getRealPath(""));
+			for(Report r : allReports.getReports()){
+				if(r.getId().equals(id)){
+					r.setStatus(ReportStatus.REJECTED);
+					notifyDTO.setReceiver(r.getReporter());
+					notifyDTO.setEntity(checkReportEntity(r));
+					notifyDTO.setSeen(false);
+					notifyDTO.setContent("Your report about " + notifyDTO.getEntity() + " is rejected.");
+					break;
+				}
+			}			
+			
+			allReports.writeReports(ctx.getRealPath(""));
+		}
+		
+		return mapper.writeValueAsString(notifyDTO);
+	}
+	
+	private String checkReportEntity(Report report){
+		String ret = "";	
+		if(!report.getCommentId().isEmpty()){
+			ret = "comment with id " + report.getCommentId();
+		}else {
+			if(!report.getTopicTitle().isEmpty()){
+				ret = "topic " + report.getTopicTitle() + " on subforum " + report.getSubforum();
+			}else {
+				ret = "subforum " + report.getSubforum();
+			}
+		}
+		
+		return ret;
 	}
 }

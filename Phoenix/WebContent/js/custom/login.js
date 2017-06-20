@@ -68,6 +68,7 @@ function loginUser(userJSON) {
 				$("#modalLogin").modal("toggle");
 				setViewLogged(data.username);
 				bindCookie(data.username);
+				getNotifications(data.username);
 				return false;
 			} else {
 				toastr.error("Wrong credentials. Try again!");
@@ -167,6 +168,22 @@ function checkUserRole() {
 		success: function(data){
 			userRole = data;
 			return true;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function getNotifications(username){
+	$.ajax({
+		url: 'rest/notify/get/' + username,
+		type: 'GET',
+		contentType : 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data.length != 0) {
+				$("span.notify").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>")
+			}
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);

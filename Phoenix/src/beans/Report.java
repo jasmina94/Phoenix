@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import enums.ReportSolver;
 import enums.ReportStatus;
@@ -19,28 +20,30 @@ public class Report implements Serializable{
 	 */
 	private static final long serialVersionUID = 5144228041118937534L;
 	
-	private String content;      // report text
+	private String id; 			
+	private String content;
 	private String date;
 	private String commentId;   //if report is for comment
 	private String topicTitle;  //if report is for topic
 	private String subforum;    //if report is for topic or for subforum
-	private String reporter;     // username
+	private String reporter;
 	private ReportStatus status;
 	private ReportSolver solver;
 	
 	public Report() {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.status = ReportStatus.PENDING;
 	}
 
 
 	public Report(String content, String reporter) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.content = content;
 		this.reporter = reporter;
 		this.status = ReportStatus.PENDING;
 		setReportDate();
-		
 	}
 	
 	private void setReportDate(){
@@ -123,6 +126,15 @@ public class Report implements Serializable{
 
 	public void setSolver(ReportSolver solver) {
 		this.solver = solver;
+	}
+	
+	public String getId() {
+		return id;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 
