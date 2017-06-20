@@ -16,6 +16,7 @@ $(document).ready(function() {
 
 		if (splitedCookie[1] != "") {
 			setViewLogged(splitedCookie[1]);
+			getNotifications(splitedCookie[1]);
 		} else {
 			setViewLoggout();
 		}
@@ -182,11 +183,69 @@ function getNotifications(username){
 		contentType : 'application/json; charset=UTF-8',
 		success: function(data){
 			if(data.length != 0) {
+				$("span.notify").empty();
 				$("span.notify").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>")
+				var $li = $("span.notify").parent().parent();
+				var $link = $("span.notify").parent();
+				$li.addClass("dropdown");
+				$link.addClass("dropdown-toggle");
+				$link.attr("data-toggle", "dropdown");
+				$li.find("ul").remove();
+				$li.append(makeNotificationMenu(data));			
+			}else {
+				$("span.notify").empty();
+				var $li = $("span.notify").parent().parent();
+				var $link = $("span.notify").parent();
+				$li.removeClass("dropdown");
+				$link.removeClass("dropdown-toggle");
+				$link.attr("data-toggle", "");
+				$li.find("ul").remove();
 			}
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		}
 	});
+}
+
+function makeNotificationMenu(data){
+	var $ul = $("<ul>");
+	$ul.addClass("dropdown-menu");
+	
+	for(var i=0; i < data.length; i++){
+		$ul.append("<li><a href='#' class='markSeen'id='"+ data[i].id + "'>"+ data[i].content + "</a></li>")
+	}
+	
+	return $ul;
+}
+
+$(document).on("click", ".markSeen", function(){
+	var id = $(this).attr("id");
+	var username = checkIfUserIsLoggedIn();
+	$.ajax({
+		url: 'rest/notify/seen/' + id,
+		type: 'GET',
+		success: function(data){
+			if(data){
+				getNotifications(username);
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+});
+
+function checkIfUserIsLoggedIn(){
+	var cookie = document.cookie;
+	if (cookie.indexOf("=") !== -1) {
+		var splitedCookie = cookie.split("=");
+		if (splitedCookie[1] != "") {
+			return splitedCookie[1];
+		} else {
+			return "";
+		}
+	} else {
+		return "";
+	}
 }

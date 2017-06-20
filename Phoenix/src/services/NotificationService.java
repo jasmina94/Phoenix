@@ -75,4 +75,25 @@ public class NotificationService {
 			return mapper.writeValueAsString(notifications);
 		}
 	}
+	
+	@GET
+	@Path("/seen/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean seenNotification(@Context HttpServletRequest request, @PathParam("id") String id) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || id.isEmpty() || id == null){
+			return false;
+		}else {
+			Notifications allNotifications = new Notifications(ctx.getRealPath(""));
+			for(Notification n : allNotifications.getNotifications()){
+				if(n.getId().equals(id)){
+					n.setSeen(true);
+					break;
+				}
+			}
+			allNotifications.writeNotifications(ctx.getRealPath(""));
+			return true;
+		}
+	}
 }
