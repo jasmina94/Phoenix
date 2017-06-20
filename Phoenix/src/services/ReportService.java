@@ -311,6 +311,7 @@ public class ReportService {
 			}
 			topics.getTopics().removeAll(topicDelete);
 			topics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", topics);
 		}else {
 			String subforumName = entity.substring(9, entity.length());
 			Subforums subforums = new Subforums(ctx.getRealPath(""));
@@ -321,6 +322,7 @@ public class ReportService {
 			}		
 			subforums.getSubforums().removeAll(subDelete);
 			subforums.writeSubforums(ctx.getRealPath(""));
+			ctx.setAttribute("subforums", subforums);
 		}
 	}
 }

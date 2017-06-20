@@ -166,8 +166,4 @@ public class UserService {
 		
 		return mapper.writeValueAsString(usernames);		
 	}
-	
-	
-	
-	
 }

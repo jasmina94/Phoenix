@@ -19,11 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Comment;
 import beans.Comments;
-import beans.Subforum;
-import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
+import beans.Users;
 
 /**
  * @author Jasmina
@@ -146,5 +145,32 @@ public class CommentService {
 		}		
 		
 		return success;
+	}
+	
+	@POST
+	@Path("/save/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean save(@Context HttpServletRequest request, @PathParam("id") String commentId) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null || commentId.isEmpty() || commentId == null){
+			return false;
+		}else {
+			Comment toSave = new Comment();
+			Comments comments = new Comments(ctx.getRealPath(""));
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(commentId)){
+					toSave = c;
+				}
+			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				if(u.getUsername().equals(user.getUsername())){
+					u.getFollowedComments().add(toSave);
+				}
+			}
+			users.writeUsers(ctx.getRealPath(""));
+			return true;
+		}
 	}
 }

@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import beans.Comment;
@@ -24,6 +23,7 @@ import beans.Comments;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
+import beans.Users;
 import dto.TopicDTO;
 import enums.TopicType;
 
@@ -402,4 +402,30 @@ public class TopicService {
 		return success;
 	}
 	
+	@POST
+	@Path("/save/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean save(@Context HttpServletRequest request, @PathParam("subforum") String subforum, String topic) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null || subforum.isEmpty() || subforum == null || topic.isEmpty() || topic == null){
+			return false;
+		}else {
+			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+			Topic toSave = new Topic();
+			for(Topic t : allTopics.getTopics()){
+				if(t.getTitle().equals(topic) && t.getSubforum().equals(subforum)){
+					toSave = t;
+				}
+			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u: users.getRegisteredUsers()){
+				if(u.getUsername().equals(user.getUsername())){
+					u.getFollowedTopics().add(toSave);
+				}
+			}
+			users.writeUsers(ctx.getRealPath(""));
+			return true;
+		}
+	}
 }
