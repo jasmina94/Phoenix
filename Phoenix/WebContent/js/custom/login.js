@@ -177,9 +177,11 @@ function checkUserRole() {
 }
 
 function getNotifications(username){
+	console.log(username);
 	$.ajax({
 		url: 'rest/notify/get/' + username,
 		type: 'GET',
+		dataType: "json",
 		contentType : 'application/json; charset=UTF-8',
 		success: function(data){
 			if(data.length != 0) {

@@ -62,7 +62,7 @@ public class NotificationService {
 	public String getNotifications(@Context HttpServletRequest request, @PathParam("username") String username) throws JsonParseException, JsonMappingException, IOException{
 		User user = (User)request.getSession().getAttribute("loggedUser");
 		if(user == null || username.isEmpty() || username == null || !username.equals(user.getUsername())){
-			return "";
+			return mapper.writeValueAsString("");
 		}else {
 			ArrayList<Notification> notifications = new ArrayList<>();
 			Notifications allNotifications = new Notifications(ctx.getRealPath(""));

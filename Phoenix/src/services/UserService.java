@@ -14,9 +14,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import beans.Comment;
+import beans.Topic;
 import beans.User;
 import beans.Users;
 import enums.Role;
@@ -166,4 +169,37 @@ public class UserService {
 		
 		return mapper.writeValueAsString(usernames);		
 	}
+	
+	@GET
+	@Path("/getSavedTopics")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSavedTopics(@Context HttpServletRequest request) throws JsonProcessingException{
+		ArrayList<Topic> savedTopics = new ArrayList<>();	
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			savedTopics = user.getFollowedTopics();
+			return mapper.writeValueAsString(savedTopics);
+		}
+	}
+	
+	@GET
+	@Path("/getSavedComments")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSavedComments(@Context HttpServletRequest request) throws JsonProcessingException{
+		ArrayList<Comment> savedComments = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			savedComments = user.getFollowedComments();
+			return mapper.writeValueAsString(savedComments);
+		}
+	}
+	
 }
