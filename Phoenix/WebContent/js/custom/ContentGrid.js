@@ -29,7 +29,8 @@ function ContentGrid(){
 		
 		$jumbotron.hide();
 		$subforumsPanel.hide();
-		$oneTopicPanel.hide();	
+		$oneTopicPanel.hide();
+		$(".userPanel").hide();
 		$topicsPanel.show();
 		
 		var $topicsPanelBody = $("#topicsPanelBody").empty();

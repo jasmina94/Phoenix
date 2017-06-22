@@ -42,6 +42,7 @@ $(document).on("click", ".goOnProfile", function(){
 
 function showAdminPanel(){
 	$(".adminPanel").removeClass("hidden");
+	$(".adminPanel").show();
 	$("#adminPanelBody").hide();
 	$(".jumbotron").hide();
 	$("#subForumsPanel").parent().hide();
@@ -51,6 +52,7 @@ function showAdminPanel(){
 
 function showUserPanel(){
 	$(".userPanel").removeClass("hidden");
+	$(".userPanel").show();
 	$("#userPanelBody").hide();
 	$(".jumbotron").hide();
 	$("#subForumsPanel").parent().hide();

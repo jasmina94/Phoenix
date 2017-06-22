@@ -196,10 +196,20 @@ public class SubforumService {
 			}
 			comments.getComments().removeAll(commForDelete);
 			
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u: users.getRegisteredUsers()){
+				for(Subforum s : u.getFollowedSubforums()){
+					if(s.getName().equals(subforum)){
+						u.getFollowedSubforums().remove(s);
+						break;
+					}
+				}
+			}
 			
 			subforums.writeSubforums(ctx.getRealPath(""));
 			allTopics.writeTopics(ctx.getRealPath(""));
 			comments.writeComments(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
 			
 			ctx.setAttribute("subforums", subforums);
 			ctx.setAttribute("allTopics", allTopics);
@@ -227,16 +237,27 @@ public class SubforumService {
 					toFollow.setIcon(s.getIcon());
 					toFollow.setResponsibleModerator(s.getResponsibleModerator());
 					toFollow.setRules(s.getRules());
+					break;
 				}
 			}
 			
+			boolean found = false;
 			Users allusers = new Users(ctx.getRealPath(""));
 			for(User u : allusers.getRegisteredUsers()){
 				if(u.getUsername().equals(user.getUsername())){
-					u.getFollowedSubforums().add(toFollow);
+					for(Subforum s : u.getFollowedSubforums()){
+						if(s.getName().equals(toFollow.getName())){
+							found = true;
+						}
+					}
+					
+					if(!found){
+						u.getFollowedSubforums().add(toFollow);
+						user.getFollowedSubforums().add(toFollow);
+					}
 				}
 			}
-			user.getFollowedSubforums().add(toFollow);
+			
 			allusers.writeUsers(ctx.getRealPath(""));
 			ctx.setAttribute("users", allusers);
 			request.getSession().setAttribute("loggedUser", user);

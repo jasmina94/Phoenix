@@ -92,8 +92,19 @@ public class CommentService {
 				}
 			}
 			
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u: users.getRegisteredUsers()){
+				for(Comment c : u.getFollowedComments()){
+					if(c.getId().equals(commentId)){
+						c.setDeleted(true);
+						break;
+					}
+				}
+			}
 			comments.writeComments(ctx.getRealPath(""));
 			allTopics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);
+			users.writeUsers(ctx.getRealPath(""));
 		}
 		
 		return success;

@@ -30,6 +30,7 @@ import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
+import beans.Users;
 import dto.NotificationDTO;
 import dto.ReportDTO;
 import enums.ReportSolver;
@@ -296,8 +297,29 @@ public class ReportService {
 					break;
 				}
 			}
+			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
+			for(Topic t : allTopics.getTopics()){
+				for(Comment c : t.getComments()){
+					if(c.getId().equals(commentId)){
+						c.setDeleted(true);
+						break;
+					}
+				}
+			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				for(Comment c : u.getFollowedComments()){
+					if(c.getId().equals(commentId)){
+						c.setDeleted(true);;
+						break;
+					}
+				}
+			}
 			comments.getComments().removeAll(commDelete);
 			comments.writeComments(ctx.getRealPath(""));
+			allTopics.writeTopics(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);
 		}else if(parts[0].equals("topic")){
 			int index1 = entity.lastIndexOf(" on subforum ");
 			String topicName = entity.substring(6, index1).trim();
@@ -309,8 +331,18 @@ public class ReportService {
 					break;
 				}
 			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				for(Topic t : u.getFollowedTopics()){
+					if(t.getTitle().equals(topicName) && t.getSubforum().equals(subforumName)){
+						u.getFollowedTopics().remove(t);
+						break;
+					}
+				}
+			}
 			topics.getTopics().removeAll(topicDelete);
 			topics.writeTopics(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", topics);
 		}else {
 			String subforumName = entity.substring(9, entity.length());
@@ -319,9 +351,19 @@ public class ReportService {
 				if(s.getName().equals(subforumName)){
 					subDelete.add(s);
 				}
-			}		
+			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				for(Subforum s : u.getFollowedSubforums()){
+					if(s.getName().equals(subforumName)){
+						u.getFollowedSubforums().remove(s);
+						break;
+					}
+				}
+			}
 			subforums.getSubforums().removeAll(subDelete);
 			subforums.writeSubforums(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
 			ctx.setAttribute("subforums", subforums);
 		}
 	}

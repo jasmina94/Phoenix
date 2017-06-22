@@ -8,6 +8,7 @@ $(function(){
 	});
 	
 	$(document).on("click", ".directTopic", function(){
+		showSavedEntities();
 		var id = $(this).attr("id");
 		id = id.split("?");
 		var topic = id[0];
@@ -20,6 +21,7 @@ $(function(){
 	});
 	
 	$(document).on("click", ".directComment", function(){
+		showSavedEntities();
 		var id = $(this).attr("id");
 		id = id.split("?");
 		var commentId = id[0];
@@ -153,7 +155,12 @@ function makeCommentsList(comments){
 	
 	for(var i=0; i<comments.length; i++){
 		var comment = comments[i];
-		$list.append("<li><a href='#' class='directComment' id='"+ comment.id + "?" + comment.topic + "?" + comment.subforum + "'>" + comment.content + "</a> [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
+		if(!comment.deleted){
+			$list.append("<li><a href='#' class='directComment' id='"+ comment.id + "?" + comment.topic + "?" + comment.subforum + "'>" + comment.content + "</a> [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
+		}else {
+			$list.append("<li style='text-decoration: line-through'>comment deleted [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
+		}
+		
 	}
 	
 	$wrapper.append($list);

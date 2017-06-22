@@ -378,7 +378,15 @@ public class TopicService {
 		if(success){
 			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 			Comments comments = new Comments(ctx.getRealPath(""));
-			
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				for(Topic tt : u.getFollowedTopics()){
+					if(tt.getTitle().equals(topic) && tt.getSubforum().equals(subforum)){
+						u.getFollowedTopics().remove(tt);
+						break;
+					}
+				}
+			}
 			for(Topic t : allTopics.getTopics()){
 				if(t.getTitle().equals(topic) && t.getSubforum().equals(subforum)){
 					allTopics.getTopics().remove(t);

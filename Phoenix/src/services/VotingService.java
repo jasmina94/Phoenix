@@ -62,6 +62,7 @@ public class VotingService {
 					vote.setTopicSubforumName(subforum);
 					vote.setVotingTopicTitle(topicTitle);
 					vote.setType(true);
+					vote.setVotingCommentId("");
 					break;
 				}
 			}
@@ -131,6 +132,7 @@ public class VotingService {
 					vote.setTopicSubforumName(subforum);
 					vote.setVotingTopicTitle(topicTitle);
 					vote.setType(false);
+					vote.setVotingCommentId("");
 					break;
 				}
 			}
