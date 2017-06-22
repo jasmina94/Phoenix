@@ -100,6 +100,14 @@ public class CommentService {
 						break;
 					}
 				}
+				for(Topic t : user.getFollowedTopics()){
+					for(Comment c : t.getComments()){
+						if(c.getId().equals(commentId)){
+							c.setDeleted(true);
+							break;
+						}
+					}
+				}
 			}
 			comments.writeComments(ctx.getRealPath(""));
 			allTopics.writeTopics(ctx.getRealPath(""));

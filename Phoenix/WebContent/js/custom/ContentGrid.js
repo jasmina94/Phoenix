@@ -190,7 +190,7 @@ function ContentGrid(){
 			$content.append("<p>"+ topic.content + "</p>");
 			break;
 		case "PHOTO":
-			$content.append("<img src='"+ topic.content + "' alt=''/>");
+			$content.append("<img src='"+ topic.content + "' alt='' class='photoTopic'/>");
 			break;
 		case "LINK":
 			$content.append("<a href='" + topic.content + "'>" + topic.title + "</a>");

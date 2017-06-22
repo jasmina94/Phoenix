@@ -98,3 +98,8 @@ p.commentTopic{
 .notificationPanel{
 	background-color: #f2f2f2;
 }
+
+.photoTopic{
+	max-width: 700px;
+	max-height: 700px;
+}

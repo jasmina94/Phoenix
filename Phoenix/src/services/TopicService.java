@@ -344,7 +344,7 @@ public class TopicService {
 		
 		if(success){
 			if(!edit){
-				Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
+				Topic newTopic = new Topic(subforum, title, TopicType.PHOTO, author, content);
 				allTopics.getTopics().add(newTopic);
 			}else {
 				for(Topic t: allTopics.getTopics()){
@@ -379,6 +379,7 @@ public class TopicService {
 			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 			Comments comments = new Comments(ctx.getRealPath(""));
 			Users users = new Users(ctx.getRealPath(""));
+			
 			for(User u : users.getRegisteredUsers()){
 				for(Topic tt : u.getFollowedTopics()){
 					if(tt.getTitle().equals(topic) && tt.getSubforum().equals(subforum)){
@@ -403,6 +404,7 @@ public class TopicService {
 			
 			allTopics.writeTopics(ctx.getRealPath(""));
 			comments.writeComments(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
 			ctx.setAttribute("allTopics", allTopics);
 		}
 			
