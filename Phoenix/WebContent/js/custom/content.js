@@ -51,8 +51,9 @@ function buildSubforumsPanel(data){
 					"<p>" + subforum.details + "</p>" +
 					"<p>Moderator: " + "<a href='#'>" + subforum.responsibleModerator + "</a></p>" +
 					"<div><a href='#' data-toggle='modal' data-target='#modalDetails'" +
-					"id='"+index + "' class='detailsLink'>Details</a></div>"+					
-					"<hr></div>");
+					"id='"+ index + "' class='detailsLink'>Details</a><br/>" +
+					"<a href='#' class='followSubforum' id='" + subforum.name + "'>Follow</a></div>"+
+					"<hr/></div>");
 	});
 }
 

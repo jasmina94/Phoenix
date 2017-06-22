@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,7 @@ import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
+import beans.Users;
 import dto.SubforumDTO;
 
 /**
@@ -204,5 +206,41 @@ public class SubforumService {
 		}
 		
 		return success;
+	}
+	
+	@POST
+	@Path("/follow")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean follow(@Context HttpServletRequest request, String subforum) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null || subforum.isEmpty() || subforum == null){
+			return false;
+		}else {
+			Subforum toFollow = new Subforum();
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforum)){
+					toFollow.setName(s.getName());
+					toFollow.setAllModerators(s.getAllModerators());
+					toFollow.setDetails(s.getDetails());
+					toFollow.setIcon(s.getIcon());
+					toFollow.setResponsibleModerator(s.getResponsibleModerator());
+					toFollow.setRules(s.getRules());
+				}
+			}
+			
+			Users allusers = new Users(ctx.getRealPath(""));
+			for(User u : allusers.getRegisteredUsers()){
+				if(u.getUsername().equals(user.getUsername())){
+					u.getFollowedSubforums().add(toFollow);
+				}
+			}
+			user.getFollowedSubforums().add(toFollow);
+			allusers.writeUsers(ctx.getRealPath(""));
+			ctx.setAttribute("users", allusers);
+			request.getSession().setAttribute("loggedUser", user);
+			return true;
+		}
 	}
 }

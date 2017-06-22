@@ -19,9 +19,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Comment;
+import beans.Subforum;
 import beans.Topic;
 import beans.User;
 import beans.Users;
+import beans.Vote;
 import enums.Role;
 
 /**
@@ -176,8 +178,7 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getSavedTopics(@Context HttpServletRequest request) throws JsonProcessingException{
 		ArrayList<Topic> savedTopics = new ArrayList<>();	
-		User user = (User)request.getSession().getAttribute("loggedUser");
-		
+		User user = (User)request.getSession().getAttribute("loggedUser");		
 		if(user == null){
 			return mapper.writeValueAsString("");
 		}else {
@@ -192,8 +193,7 @@ public class UserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getSavedComments(@Context HttpServletRequest request) throws JsonProcessingException{
 		ArrayList<Comment> savedComments = new ArrayList<>();
-		User user = (User)request.getSession().getAttribute("loggedUser");
-		
+		User user = (User)request.getSession().getAttribute("loggedUser");		
 		if(user == null){
 			return mapper.writeValueAsString("");
 		}else {
@@ -202,4 +202,33 @@ public class UserService {
 		}
 	}
 	
+	@GET
+	@Path("/votes")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String votes(@Context HttpServletRequest request) throws JsonProcessingException{
+		ArrayList<Vote> votes = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			votes = user.getVotes();
+			return mapper.writeValueAsString(votes);
+		}
+	}
+	
+	@GET
+	@Path("/subforums")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String subforums(@Context HttpServletRequest request) throws JsonProcessingException{
+		ArrayList<Subforum> subforums = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			subforums = user.getFollowedSubforums();
+			return mapper.writeValueAsString(subforums);
+		}
+	}
 }

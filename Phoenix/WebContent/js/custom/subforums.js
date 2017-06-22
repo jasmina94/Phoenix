@@ -88,7 +88,40 @@ $(function (){
 		}
 		
 	});
+	
+	$(document).on("click", ".followSubforum", function(){
+		var subforum = $(this).attr("id");
+		var user = checkLoggedUserName();
+		if(user === ""){
+			toastr.warning("You have to be signed in to follow subforum.");
+			return false;
+		}else {
+			followSubforum(subforum);
+		}
+	});
 });
+
+function followSubforum(subforum){
+	$.ajax({
+		url: 'rest/subforums/follow',
+		type: 'POST',
+		data: subforum,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){
+				toastr.success("You have successfully added subforum " + subforum + " in following list.");
+				return true;
+			}else{
+				toastr.warning("An error occured while trying to follow " + subforum + " subforum");
+				return false;
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
+		}
+	});
+}
 
 function deleteSubforum(subforum){
 	$.ajax({
@@ -134,6 +167,7 @@ function addNewSubforum(subforum){
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
 		}
 	});
 }
@@ -198,7 +232,8 @@ function buildSubforumsPanel(data){
 					"<p>" + subforum.details + "</p>" +
 					"<p>Moderator: " + "<a href='#'>" + subforum.responsibleModerator + "</a></p>" +
 					"<div><a href='#' data-toggle='modal' data-target='#modalDetails'" +
-					"id='"+index + "' class='detailsLink'>Details</a></div>"+					
+					"id='"+index + "' class='detailsLink'>Details</a></div><br/>"+	
+					"<a href='#' class='followSubforum' id='" + subforum.name + "'>Follow</a></div>"+
 					"<hr></div>");
 	});
 }
