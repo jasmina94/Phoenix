@@ -25,6 +25,39 @@ $(document).ready(function() {
 	}
 });
 
+$(document).on("click", ".goOnProfile", function(){
+	var user = checkIfUserIsLoggedIn();
+	checkUserRole();
+	if(user === ""){
+		toastr.warning("Please sign in to go on your profile!");
+		return false;
+	}else {
+		if(userRole === "ADMINISTRATOR"){
+			showAdminPanel();
+		}else {
+			showUserPanel();
+		}
+	}
+});
+
+function showAdminPanel(){
+	$(".adminPanel").removeClass("hidden");
+	$("#adminPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+}
+
+function showUserPanel(){
+	$(".userPanel").removeClass("hidden");
+	$("#userPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+}
+
 $(document).on("click", "#loginUserBtn", function(e) {
 	if(!validateLoginForm()){
 		return;

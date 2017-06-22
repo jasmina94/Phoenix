@@ -1,23 +1,4 @@
-var userRole = "";
-var savedTopics = [];
-var savedComments = [];
-
 $(function(){
-	
-	$(document).ready(function(){
-		var user = checkIfUserIsLoggedIn();
-		checkUserRole();
-		if(user === ""){
-			window.location.replace("http://localhost:8080/Phoenix/index.html");
-		}else {
-			if(userRole === "ADMINISTRATOR"){
-				showAdminPanel();
-			}else {
-				showUserPanel();
-			}
-		}
-	});
-	
 	//ADMIN EVENTS	
 	$(document).on("click",".reports", function(){
 		getAllReports();
@@ -58,106 +39,9 @@ $(function(){
 	$(document).on("click", ".deleteEntity", function(){
 		var id = $(this).attr("id");
 		deleteEntity(id);
-	});
-	
-	//USER EVENTS
-	$(document).on("click", ".savedEntities", function(){
-		showSavedEntities();
-	});
+	});	
 });
 
-
-function showSavedEntities(){
-	var user = checkIfUserIsLoggedIn();
-	if(user === ""){
-		window.location.replace("http://localhost:8080/Phoenix/index.html");
-	}else {
-		$.ajax({
-			url: 'rest/users/getSavedTopics',
-			type: 'GET',
-			contentType : "application/json; charset=UTF-8",
-			async: false,
-			success: function(data){
-				if(data.length != 0){
-					savedTopics = data;
-				}else {
-					savedTopics = [];
-				}
-			},
-			error: function(xhr, textStatus, errorThrown) {
-				toastr.error('Error!  Status = ' + xhr.status);
-			}
-		});
-		$.ajax({
-			url: 'rest/users/getSavedComments',
-			type: 'GET',
-			contentType : "application/json; charset=UTF-8",
-			async: false,
-			success: function(data){
-				if(data.length != 0){
-					savedComments = data;
-				}else {
-					savedComments = [];
-				}
-			},
-			error: function(xhr, textStatus, errorThrown) {
-				toastr.error('Error!  Status = ' + xhr.status);
-			}
-		});
-		buildSavedContent(savedTopics, savedComments);
-	}
-}
-
-function buildSavedContent(topics, comments){
-	var $panel = $("#userPanelBody");
-	$panel.empty();
-	$panel.removeClass("hidden");
-	
-	$panel.append("<h4>Saved topics</h4>");	
-	if(topics.length == 0){
-		$panel.append("<h5>You haven't save any topic yet!</h5>");
-	}else {
-		$panel.append(makeTopicsList(topics));
-	}
-	
-	$panel.append("<hr/>")
-	
-	$panel.append("<h4>Saved comments</h4>");
-	if(comments.length == 0){
-		$panel.append("<h5>You haven't save any comment yet!</h5>");
-	}else {
-		$panel.append(makeCommentsList(comments));
-	}
-	
-}
-
-function makeTopicsList(topics){
-	var $wrapper = $("<div>");
-	var $list = $("<ul>");
-	
-	for(var i=0; i<topics.length; i++){
-		var topic = topics[i];
-		$list.append("<li><a href='#' class='directTopic' id='"+ topic.tile + "?" + topic.subforum + "'>" + topic.title + "</a> [subforum: " + topic.subforum + "]</li>");
-	}
-	
-	$wrapper.append($list);
-	
-	return $wrapper;
-}
-
-function makeCommentsList(comments){
-	var $wrapper = $("<div>");
-	var $list = $("<ul>");
-	
-	for(var i=0; i<comments.length; i++){
-		var comment = comments[i];
-		$list.append("<li><a href='#' class='directComment' id='"+ comment.id + "'>" + comment.content + "</a> [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
-	}
-	
-	$wrapper.append($list);
-	
-	return $wrapper;
-}
 
 function deleteEntity(reportId){
 	$.ajax({
@@ -369,7 +253,8 @@ function showUserMng(){
 function showReports(data){
 	$("#userPanel").addClass("hidden");
 	var $panelBody = $("#adminPanelBody");
-	$panelBody.removeClass("hidden");	
+	$panelBody.removeClass("hidden");
+	$panelBody.show();
 	$panelBody.empty();
 	
 	$panelBody.append(makeReportTable(data));
@@ -443,7 +328,7 @@ function getAllReports(){
 		type: 'GET',
 		contentType : "application/json; charset=UTF-8",
 		success: function(data){
-			if(data.lenght == 0){
+			if(data.length == 0){
 				toastr.success("No reports to proccess!");
 				return true;
 			}else {
@@ -451,43 +336,6 @@ function getAllReports(){
 				return true;
 			}
 		}, 
-		error: function(xhr, textStatus, errorThrown) {
-			toastr.error('Error!  Status = ' + xhr.status);
-		}
-	});
-}
-
-function showAdminPanel(){
-	$(".adminPanel").removeClass("hidden");
-}
-
-function showUserPanel(){
-	$(".userPanel").removeClass("hidden");
-}
-
-function checkIfUserIsLoggedIn(){
-	var cookie = document.cookie;
-	if (cookie.indexOf("=") !== -1) {
-		var splitedCookie = cookie.split("=");
-		if (splitedCookie[1] != "") {
-			return splitedCookie[1];
-		} else {
-			return "";
-		}
-	} else {
-		return "";
-	}
-}
-
-function checkUserRole() {
-	$.ajax({
-		url: 'rest/users/getRole',
-		type: 'GET',
-		async: false,
-		success: function(data){
-			userRole = data;
-			return true;
-		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
 		}

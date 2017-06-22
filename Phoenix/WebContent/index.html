@@ -18,6 +18,8 @@
 <script type="text/javascript" src="js/custom/subforums.js"></script>
 <script type="text/javascript" src="js/custom/reports.js"></script>
 <script type="text/javascript" src="js/custom/other.js"></script>
+<script type="text/javascript" src="js/custom/adminFunctions.js"></script>
+<script type="text/javascript" src="js/custom/userFunctions.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
@@ -75,7 +77,7 @@
 							class="caret"></span><span class="glyphicon glyphicon-user"></span><span
 							id="usernameLabel"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="profile.html">Profile</a></li>
+							<li><a href="#" class="goOnProfile">Profile</a></li>
 							<li><a href="#" id="logoutBtn">Log out</a></li>
 						</ul></li>
 				</ul>
@@ -102,6 +104,25 @@
 		<div class="panel panel-default oneTopicPanel">
 			<div class="panel-heading" id="oneTopicHeader"></div>
 			<div class="panel-body" id="oneTopicBody"></div>
+		</div>
+		<div class="panel panel-default userPanel hidden">
+			<div class="panel-heading" id="userPanelHeader">
+				<button type="button" class="btn btn-default savedEntities">Saved
+					entities</button>
+				<button type="button" class="btn btn-default">Your votes</button>
+				<button type="button" class="btn btn-default">Following
+					subforums</button>
+				<button type="button" class="btn btn-info pull-right">Messages</button>
+			</div>
+			<div class="panel-body hidden" id="userPanelBody"></div>
+		</div>
+		<div class="panel panel-default adminPanel hidden">
+			<div class="panel-heading" id="adminPanelHeader">
+				<button type="button" class="btn btn-default reports">Reports</button>
+				<button type="button" class="btn btn-default usrmng">User management</button>
+				<button type="button" class="btn btn-info pull-right">Messages</button>
+			</div>
+			<div class="panel-body hidden" id="adminPanelBody"></div>
 		</div>
 	</div>
 
@@ -457,6 +478,78 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- 	MODAL SUBFORUM PREVIEW -->
+	<div id="modalSubforumPreview" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="detailsTitle">Details about subforum</h4>
+					<span><img id="subforumIcon" width="50" height="50"></span>
+				</div>
+				<div class="modal-body">
+					<b>Rules: </b>
+					<ul id="rulesListing">
+					</ul>
+					<hr>
+					<p id="mainModerator"></p>
+					<b>All moderators:</b>
+					<ul id="moderators">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 
+	<!-- 	MODAL COMMENT PREVIEW -->
+	<div id="modalCommentPreview" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<b id="comment"></b>
+					<p id="commentId"></p>
+				</div>
+				<div class="modal-body">
+					<p id="commentTopic"></p>
+					<p id="commentSubforum"></p>
+					<p id="commentDate"></p>
+					<p id="commentAuthor"></p>
+					<p id="commentLikes"></p>
+					<p id="commentDislikes"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- 	MODAL TOPIC PREVIEW -->
+	<div id="modalTopicPreview" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="topic"></h4>
+					<p id="subforum"></p>
+					<p id="topicAuthor"></p>
+					<p id="topicDate"></p>
+					<p id="topicLikes"></p>
+					<p id="topicDislikes"></p>
+				</div>
+				<div class="modal-body">
+					<img src='#' width=200 height=200 id="topicImage" class="hidden"/>
+					<p id="topicText" class="hidden"></p>
+					<a href='#' id="topicLink" class="hidden"></a>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

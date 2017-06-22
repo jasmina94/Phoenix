@@ -242,6 +242,8 @@ function ContentGrid(){
 		
 		var $commentWrapper = $("<div>");
 		
+		$commentWrapper.attr("id", comment.id);
+		
 		if(!comment.deleted){
 			$commentWrapper.append("<p><a href='#' class='commentAuthor'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
 			$commentWrapper.append("<p class='commentContent'>" + comment.content + "</p>");
