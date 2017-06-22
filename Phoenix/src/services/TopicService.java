@@ -415,16 +415,35 @@ public class TopicService {
 			Topic toSave = new Topic();
 			for(Topic t : allTopics.getTopics()){
 				if(t.getTitle().equals(topic) && t.getSubforum().equals(subforum)){
-					toSave = t;
+					toSave.setTitle(t.getTitle());
+					toSave.setSubforum(t.getSubforum());
+					toSave.setCreationDate(t.getCreationDate());
+					toSave.setContent(t.getContent());
+					toSave.setType(t.getType());
+					toSave.setAuthor(t.getAuthor());
+					toSave.setComments(t.getComments());
+					toSave.setLikes(t.getLikes());
+					toSave.setDislikes(t.getDislikes());
 				}
 			}
 			Users users = new Users(ctx.getRealPath(""));
+			boolean found = false;
 			for(User u: users.getRegisteredUsers()){
 				if(u.getUsername().equals(user.getUsername())){
-					u.getFollowedTopics().add(toSave);
+					for(Topic t : u.getFollowedTopics()){
+						if(t.getTitle().equals(toSave.getTitle()) && t.getSubforum().equals(toSave.getSubforum())){
+							found = true;
+						}
+					}
+					if(!found){
+						u.getFollowedTopics().add(toSave);
+						user.getFollowedTopics().add(toSave);
+					}
 				}
 			}
 			users.writeUsers(ctx.getRealPath(""));
+			request.getSession().setAttribute("loggedUser", user);
+			
 			return true;
 		}
 	}

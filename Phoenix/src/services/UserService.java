@@ -57,7 +57,7 @@ public class UserService {
 				Users users = new Users(ctx.getRealPath(""));
 				ctx.setAttribute("users", users);
 				for (User user : users.getRegisteredUsers()) {
-					if (user.getUsername().equals(u.getUsername()) && user.getPassword().equals(user.getPassword())) {
+					if (user.getUsername().equals(u.getUsername()) && user.getPassword().equals(u.getPassword())) {
 						request.getSession().setAttribute("loggedUser", user);
 						retVal = user;
 					}

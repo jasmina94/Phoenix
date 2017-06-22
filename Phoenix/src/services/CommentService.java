@@ -160,16 +160,41 @@ public class CommentService {
 			Comments comments = new Comments(ctx.getRealPath(""));
 			for(Comment c : comments.getComments()){
 				if(c.getId().equals(commentId)){
-					toSave = c;
+					toSave.setId(c.getId());
+					toSave.setAuthor(c.getAuthor());
+					toSave.setTopic(c.getTopic());
+					toSave.setSubforum(c.getSubforum());
+					toSave.setCommentDate(c.getCommentDate());
+					toSave.setDeleted(c.isDeleted());
+					toSave.setEdited(c.isEdited());
+					toSave.setContent(c.getContent());
+					toSave.setParentComment(c.getParentComment());
+					toSave.setSubComments(c.getSubComments());
+					toSave.setLikes(c.getLikes());
+					toSave.setDislikes(c.getDislikes());
 				}
-			}
+			}			
+			
 			Users users = new Users(ctx.getRealPath(""));
+			boolean found = false;
 			for(User u : users.getRegisteredUsers()){
 				if(u.getUsername().equals(user.getUsername())){
-					u.getFollowedComments().add(toSave);
+					for(Comment c : u.getFollowedComments()){
+						if(c.getId().equals(toSave.getId())){
+							found = true;
+						}
+					}
+					
+					if(!found){
+						u.getFollowedComments().add(toSave);
+						user.getFollowedComments().add(toSave);
+					}
 				}
 			}
+			
 			users.writeUsers(ctx.getRealPath(""));
+			request.getSession().setAttribute("loggedUser", user);
+			
 			return true;
 		}
 	}

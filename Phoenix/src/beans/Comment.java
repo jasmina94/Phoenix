@@ -175,5 +175,16 @@ public class Comment implements Serializable, Entity{
 	public void setSubforum(String subforum) {
 		this.subforum = subforum;
 	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+	public void setCommentDate(String commentDate) {
+		this.commentDate = commentDate;
+	}
+	
 	
 }
