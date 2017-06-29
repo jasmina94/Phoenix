@@ -124,7 +124,6 @@ public class CommentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean editComment(@PathParam("id") String commentId, @PathParam("role") String role, String commentContent) throws JsonParseException, JsonMappingException, IOException{
 		boolean success = true;		
-		
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		if(user == null || commentId.isEmpty() || commentId == null || role.isEmpty() || role == null ||
 				commentContent.isEmpty() || commentContent == null){
@@ -157,10 +156,29 @@ public class CommentService {
 					}
 				}
 			}
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u: users.getRegisteredUsers()){
+				for(Comment c : u.getFollowedComments()){
+					if(c.getId().equals(commentId)){
+						c.setContent(commentContent);
+						break;
+					}
+				}
+				for(Topic t : u.getFollowedTopics()){
+					for(Comment c : t.getComments()){
+						if(c.getId().equals(commentId)){
+							c.setContent(commentContent);
+							break;
+						}
+					}
+				}
+			}
 			
 			
 			comments.writeComments(ctx.getRealPath(""));
 			allTopics.writeTopics(ctx.getRealPath(""));
+			ctx.setAttribute("allTopics", allTopics);
+			users.writeUsers(ctx.getRealPath(""));
 		}		
 		
 		return success;

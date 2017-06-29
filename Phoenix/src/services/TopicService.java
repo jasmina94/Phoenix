@@ -208,7 +208,7 @@ public class TopicService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean newTextTopic(@Context HttpServletRequest request, @PathParam("edit") boolean edit, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
-		
+		Users users = new Users(ctx.getRealPath(""));
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		String title = topicDTO.getTitle();
@@ -247,10 +247,24 @@ public class TopicService {
 						t.setCreationDate(date);
 					}
 				}
+				for(User u : users.getRegisteredUsers()){
+					for(Topic tt : u.getFollowedTopics()){
+						if(tt.getTitle().equals(title) && tt.getSubforum().equals(subforum)){
+							tt.setTitle(title);
+							tt.setSubforum(subforum);
+							tt.setContent(content);
+							tt.setAuthor(author);
+							tt.setType(TopicType.TEXT);
+							tt.setCreationDate(date);
+							break;
+						}
+					}
+				}
 			}
 			
 			allTopics.writeTopics(ctx.getRealPath(""));
-			ctx.setAttribute("allTopics", allTopics);			
+			ctx.setAttribute("allTopics", allTopics);
+			users.writeUsers(ctx.getRealPath(""));
 		}
 		
 		return true;		
@@ -262,7 +276,7 @@ public class TopicService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean newLinkTopic(@Context HttpServletRequest request, @PathParam("edit") boolean edit, TopicDTO topicDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
-		
+		Users users = new Users(ctx.getRealPath(""));
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		String title = topicDTO.getTitle();
@@ -270,6 +284,7 @@ public class TopicService {
 		String author = topicDTO.getAuthor();
 		String subforum = topicDTO.getSubforum();
 		String date = topicDTO.getDate();
+		
 		
 		if(user == null || title.isEmpty() || title == null || content.isEmpty() || content == null
 				|| author.isEmpty() || author == null || subforum.isEmpty() || subforum == null){
@@ -301,9 +316,24 @@ public class TopicService {
 						t.setCreationDate(date);
 					}
 				}
+				
+				for(User u : users.getRegisteredUsers()){
+					for(Topic tt : u.getFollowedTopics()){
+						if(tt.getTitle().equals(title) && tt.getSubforum().equals(subforum)){
+							tt.setTitle(title);
+							tt.setSubforum(subforum);
+							tt.setContent(content);
+							tt.setAuthor(author);
+							tt.setType(TopicType.LINK);
+							tt.setCreationDate(date);
+							break;
+						}
+					}
+				}
 			}
 			allTopics.writeTopics(ctx.getRealPath(""));
-			ctx.setAttribute("allTopics", allTopics);			
+			ctx.setAttribute("allTopics", allTopics);
+			users.writeUsers(ctx.getRealPath(""));
 		}
 		
 		return success;
@@ -317,6 +347,7 @@ public class TopicService {
 		boolean success = true;
 		
 		User user = (User) request.getSession().getAttribute("loggedUser");
+		Users users = new Users(ctx.getRealPath(""));
 		Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 		String title = topicDTO.getTitle();
 		String content = topicDTO.getContent();
@@ -355,9 +386,24 @@ public class TopicService {
 						t.setCreationDate(date);
 					}
 				}
+				
+				for(User u : users.getRegisteredUsers()){
+					for(Topic tt : u.getFollowedTopics()){
+						if(tt.getTitle().equals(title) && tt.getSubforum().equals(subforum)){
+							tt.setTitle(title);
+							tt.setSubforum(subforum);
+							tt.setContent(content);
+							tt.setAuthor(author);
+							tt.setType(TopicType.PHOTO);
+							tt.setCreationDate(date);
+							break;
+						}
+					}
+				}
 			}
 			allTopics.writeTopics(ctx.getRealPath(""));
-			ctx.setAttribute("allTopics", allTopics);			
+			ctx.setAttribute("allTopics", allTopics);
+			users.writeUsers(ctx.getRealPath(""));
 		}
 		
 		return success;

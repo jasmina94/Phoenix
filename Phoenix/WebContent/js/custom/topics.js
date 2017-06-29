@@ -192,8 +192,6 @@ $(function(){
 						break;
 					}
 				}
-				toastr.warning("You don't have permission to edit this topic!");
-				return false;
 			}else {
 				toastr.warning("You don't have permission to edit this topic!");
 				return false;

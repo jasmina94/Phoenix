@@ -88,16 +88,14 @@ public class SubforumService {
 	@Path("/getModerators/{subforum}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getModerators(@PathParam("subforum") String subforum) throws JsonProcessingException{
+	public String getModerators(@PathParam("subforum") String subforum) throws IOException{
 		String ret = "";
-		
-		Subforums subforums = (Subforums) ctx.getAttribute("subforums");
+		Subforums subforums = new Subforums(ctx.getRealPath(""));
 		for(Subforum s : subforums.getSubforums()){
 			if(s.getName().equals(subforum)){
 				return mapper.writeValueAsString(s.getAllModerators());
 			}
 		}
-		
 		return ret;
 	}
 	
@@ -105,16 +103,14 @@ public class SubforumService {
 	@Path("/getModerator/{subforum}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getResponsibleModerator(@PathParam("subforum") String subforum) throws JsonProcessingException{
-		String ret = "";
-		
-		Subforums subforums = (Subforums) ctx.getAttribute("subforums");
+	public String getResponsibleModerator(@PathParam("subforum") String subforum) throws IOException{
+		String ret = "";		
+		Subforums subforums = new Subforums(ctx.getRealPath(""));
 		for(Subforum s : subforums.getSubforums()){
 			if(s.getName().equals(subforum)){
 				return mapper.writeValueAsString(s.getResponsibleModerator());
 			}
 		}
-		
 		return ret;
 	}
 	
@@ -124,20 +120,16 @@ public class SubforumService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean create(@Context HttpServletRequest request, SubforumDTO subforumDTO) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
-		
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		String name = subforumDTO.getName();
 		String descr = subforumDTO.getDescription();
 		String icon = subforumDTO.getIcon();
 		ArrayList<String> rules = subforumDTO.getRules();
-		
-		
 		if(user == null || name.isEmpty() || name == null || descr.isEmpty() || descr == null
 				|| icon.isEmpty() || icon == null || rules.size() == 0 
 				|| user.getRole().equals("USER")) {
 			success = false;
 		}
-		
 		if(success){
 			Subforums subforums = (Subforums) ctx.getAttribute("subforums");
 			Subforum newSubforum = new Subforum();
@@ -153,7 +145,6 @@ public class SubforumService {
 			subforums.writeSubforums(ctx.getRealPath(""));
 			ctx.setAttribute("subforums", subforums);
 		}
-		
 		return success;
 	}
 	
@@ -164,7 +155,6 @@ public class SubforumService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean delete(@Context HttpServletRequest request, String subforum) throws JsonGenerationException, JsonMappingException, IOException{
 		boolean success = true;
-		
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		if(user == null || user.getRole().equals("USER")){
 			success= false;
