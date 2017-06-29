@@ -64,6 +64,24 @@ public class SubforumService {
 	}
 	
 	@GET
+	@Path("/onlyNames")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSubforumsNames(@Context HttpServletRequest request) throws IOException{
+		ArrayList<String> subforumList = new ArrayList<>();
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				subforumList.add(s.getName());
+			}
+			return mapper.writeValueAsString(subforumList);
+		}
+	}
+	
+	@GET
 	@Path("/get/{subforum}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -264,7 +282,7 @@ public class SubforumService {
 		String forumResponsibleFor = "";
 		User user = (User) request.getSession().getAttribute("loggedUser");
 		if(user == null){
-			return "";
+			return mapper.writeValueAsString("");
 		}else {
 			Subforums subforums = new Subforums(ctx.getRealPath(""));
 			for(Subforum s : subforums.getSubforums()){
@@ -274,6 +292,6 @@ public class SubforumService {
 				}
 			}
 		}
-		return forumResponsibleFor;
+		return mapper.writeValueAsString(forumResponsibleFor);
 	}
 }

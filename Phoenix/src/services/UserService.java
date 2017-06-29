@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -20,10 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Comment;
 import beans.Subforum;
+import beans.Subforums;
 import beans.Topic;
 import beans.User;
 import beans.Users;
 import beans.Vote;
+import dto.ChangeRoleDTO;
 import dto.UserDTO;
 import enums.Role;
 
@@ -275,4 +278,135 @@ public class UserService {
 			return mapper.writeValueAsString(userDTOS);
 		}
 	}
+	
+	@GET
+	@Path("/changeToUser/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String toUser(@Context HttpServletRequest request, @PathParam("username") String username) throws IOException{
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for (User u : users.getRegisteredUsers()) {
+				if(u.getUsername().equals(username)){
+					u.setRole(Role.USER);
+					break;
+				}
+			}
+			users.writeUsers(ctx.getRealPath(""));
+			return mapper.writeValueAsString(username);
+		}
+	}
+	
+	@GET
+	@Path("/changeToAdmin/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String toAdmin(@Context HttpServletRequest request, @PathParam("username") String username) throws IOException{
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for (User u : users.getRegisteredUsers()) {
+				if(u.getUsername().equals(username)){
+					u.setRole(Role.ADMINISTRATOR);
+					break;
+				}
+			}
+			users.writeUsers(ctx.getRealPath(""));
+			return mapper.writeValueAsString(username);
+		}
+	}
+	
+	@POST
+	@Path("/changeToUserAndResp/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String changeToUserAndNewResponsible(@Context HttpServletRequest request, 
+			@PathParam("username") String username, ChangeRoleDTO change) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for (User u : users.getRegisteredUsers()) {
+				if(u.getUsername().equals(username)){
+					u.setRole(Role.ADMINISTRATOR);
+					break;
+				}
+			}
+			String subforum = change.getSubforum();
+			String newResponsible = change.getUsername();
+			for(User u : users.getRegisteredUsers()){
+				if(u.getUsername().equals(newResponsible)){
+					u.setRole(Role.MODERATOR);
+					break;
+				}
+			}
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforum)){
+					s.setResponsibleModerator(newResponsible);
+					break;
+				}
+			}
+			subforums.writeSubforums(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
+			return mapper.writeValueAsString(username);
+		}
+	}
+	
+	@GET
+	@Path("/onlyUserNames")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String onlyUserNames(@Context HttpServletRequest request) throws IOException{
+		ArrayList<String> userNames = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				userNames.add(u.getUsername());
+			}
+			return mapper.writeValueAsString(userNames);
+		}
+	}	
+	
+	@GET
+	@Path("/usrToMod/{username}/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String onlyUserNames(@Context HttpServletRequest request, 
+			@PathParam("username") String username,	@PathParam("subforum") String subforum) throws IOException{
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				if(u.getUsername().equals(username)){
+					u.setRole(Role.MODERATOR);
+					break;
+				}
+			}
+			Subforums subs = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subs.getSubforums()){
+				if(s.getName().equals(subforum)){
+					s.getAllModerators().add(username);
+					break;
+				}
+			}
+			
+			users.writeUsers(ctx.getRealPath(""));
+			subs.writeSubforums(ctx.getRealPath(""));
+			return mapper.writeValueAsString(username);
+		}
+	}
+	
+	
 }

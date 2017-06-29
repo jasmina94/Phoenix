@@ -1,5 +1,6 @@
 var allModerators = [];
 var allUsers = [];
+var subforum = "";
 
 $(function(){
 	//ADMIN EVENTS	
@@ -47,47 +48,171 @@ $(function(){
 	
 	$(document).on("click", ".removeModerator", function(){
 		var moderator = $(this).attr("id");
+		findSubforum(moderator);
+		console.log(subforum);
+		if(subforum === ""){
+			$("#modalRemoveModerator").modal("show");
+			$("#responsible").addClass("hidden");
+			$("p#subforum").text(subforum);
+			$("#moderatorDelete").text(moderator);
+			var message = "You will change role for user " + moderator + " from moderator to " +
+					"regular user. Please confirm:";
+			$("#notResponsibleDscr").text(message);
+			$("#notResponsible").removeClass("hidden");
+			$("#moderatorTitle").text("Removing moderator role");
+		}else {
+			$("#modalRemoveModerator").modal("show");
+			$("#responsible").removeClass("hidden");
+			$("#notResponsible").addClass("hidden");
+			$("#moderatorTitle").text("Changing responsible moderator");
+			$("p#subforum").text(subforum);
+			$("#moderatorDelete").text(moderator);
+			var message = "User " + moderator + " is responsible for subforum " + subforum + ". Subforum can't be" +
+					"without responsible moderator. Please choose new responsible moderator from list of all user: ";
+			$("#responsibleDscr").text(message);
+			$("#responsibleDscr").removeClass("hidden");
+			var $select = $("#allUsers");
+			for(var i=0; i<allUsers.length; i++){
+				var user = allUsers[i];
+				if(user.username != moderator){
+					$select.append("<option value='" + user.username + "'>"
+							+ user.username + " ------role---- "  + user.role + "</option>");
+				}						
+			}
+		}
+	});
+	
+	$(document).on("click", "#submitNotResp", function(){
+		var moderator = $("p#moderatorDelete").text();
 		$.ajax({
-			url: 'rest/subforums/responsibleModerator/' + moderator,
+			url: 'rest/users/changeToUser/' + moderator,
 			type: 'GET',
-			contentType : 'application/json; charset=UTF-8',
-			complete: function(data){
-				if(data.responeseText = ""){
-					console.log(data);
-					$("#modalRemoveModerator").modal("show");
-					$("#subforum").text(data.responeseText);
-					$("#moderatorDelete").text(moderator);
-					var message = "You will change role for user " + moderator + " from moderator to " +
-							"regular user. Please confirm:";
-					$("#notResponsibleDscr").text(message);
-					$("#notResponsible").removeClass("hidden");
-					$("#moderatorTitle").text("Removing moderator role");
-					return;
-				}else {
-					console.log(data);
-					$("#modalRemoveModerator").modal("show");
-					$("#responsible").removeClass("hidden");
-					$("#moderatorTitle").text("Changing responsible moderator");
-					$("#subforum").text(data.responeseText);
-					$("#moderatorDelete").text(moderator);
-					var message = "User " + moderator + " is responsible for subforum " + data.responeseText + "." +
-							"Please select new responsible moderator from list of all users.";
-					$("#responsibleDscr").text(message);
-					$("#responsibleDscr").removeClass("hidden");
-					var $select = $("#allUsers");
-					for(var i=0; i<allUsers.length; i++){
-						var user = allUsers[i];
-						if(user.username != moderator){
-							$select.append("<option value='" + user.username + "'>"
-									+ user.firstname + " " + user.lastname + " " + user.role + "</option>");
-						}						
-					}
-					return;
-				}
+			dataType: 'json',
+			contentType: 'application/json; charset=UTF-8;',
+			success: function(data){
+				$("#modalRemoveModerator").modal("hide");
+				$("#responsible").addClass("hidden");
+				$("#notResponsible").addClass("hidden");
+				showUserMng();
+				toastr.success("You have successfully removed moderator role from user.");
+				return true;
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+				
+			}
+		});
+	});
+	
+	$(document).on("click", "#submitResp", function(){
+		var moderator = $("p#moderatorDelete").text();
+		var obj = new Object();
+		obj['username'] = $("#allUsers").val();
+		obj['subforum'] = $("p#subforum").text();
+		$.ajax({
+			url: 'rest/users/changeToUserAndResp/' + moderator,
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json; charset=UTF-8;',
+			data: JSON.stringify(obj),
+			success: function(data){
+				showUserMng();
+				toastr.success("You have successfully changed user role and add new responsible" +
+						"moderator for forum " + obj['subforum']);
+				return true;
+			}
+		});
+	});
+	
+	$(document).on("click", ".promoteToAdmin", function(){
+		var moderator = $(this).attr("id");
+		$.ajax({
+			url: 'rest/users/changeToAdmin/' + moderator,
+			type: 'GET',
+			dataType: 'json',
+			contentType:  'application/json; charset=UTF-8',
+			success: function(data){
+				showUserMng();
+				toastr.success("You have successfully changed user role to administrator.");
+				return true;
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+				
+			}
+		});
+	});
+	
+	$(document).on("click", ".usrToMod", function(){
+		var user = $("#selectUser").val();
+		var subforum = $("#selectSubforum").val();
+		if(user === ""){
+			toastr.warning("You haven't selected any user.");
+			return false;
+		}
+		if(subforum === ""){
+			toastr.warning("You haven't selected any subforum.");
+			return false;
+		}
+		$.ajax({
+			url: 'rest/users/usrToMod/' + user + '/' + subforum,
+			type: 'GET',
+			dataType: 'json',
+			contentType: 'application/json; charset=UTF-8;',
+			success: function(data){
+				showUserMng();
+				toastr.success("You have successfully promote user " + user 
+						+ " to moderator for subforum " + subforum + ".");
+				return true;
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+				
+			}
+		});
+	});
+	
+	$(document).on("click", ".usrToAdm", function(){
+		var user = $("#selectUser").val();
+		if(user === ""){
+			toastr.warning("You haven't selected any user.");
+			return false;
+		}
+		$.ajax({
+			url: 'rest/users/changeToAdmin/'+ user,
+			type: 'GET',
+			dataType: 'json',
+			contentType: 'application/json; charset=UTF-8;',
+			success: function(data){
+				showUserMng();
+				toastr.success("You have successfully promote user " + user 
+						+ " to administator.");
+				return true;
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+				
 			}
 		});
 	});
 });
+
+
+function findSubforum(moderator){
+	$.ajax({
+		url: 'rest/subforums/responsibleModerator/' + moderator,
+		type: 'GET',
+		async: false,
+		contentType : 'application/json; charset=UTF-8',
+		dataType: 'json',
+		success: function(data){
+			subforum = data;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
 
 function getAllUsers(){
 	$.ajax({
@@ -313,6 +438,12 @@ function showUserMng(){
 	$panelBody.append("<h4 style='text-align:center'>Moderators</h4>");
 	$panelBody.append(makeModeratorsTable());
 	$panelBody.append("<hr/>");
+	$panelBody.append("<h4 style='text-align:center'>Regular users</h4>");
+	$panelBody.append(makeUsersSelection());
+	$panelBody.append(subforumsSelection());
+	$panelBody.append("<button type='button' class='btn btn-default usrToMod'>Make user moderator for subforum</button>");
+	$panelBody.append("<br/>");
+	$panelBody.append("<button type='button' class='btn btn-default usrToAdm'>Make user automatically administrator</button>");
 }
 
 
@@ -333,6 +464,86 @@ function findModerators(){
 	});
 }
 
+function makeUsersSelection(){
+	var usernames = [];
+	$.ajax({
+		url: 'rest/users/onlyUserNames',
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			usernames = data;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		} 
+	});
+	var $div = $("<div>");
+	var $firstForm = $("<div>");
+	var $firstLabel = $("<label>");
+	var $firstSelect = $("<input>");
+	
+	$firstForm.addClass("form-group col-lg-4");
+	$firstLabel.addClass("control-label");
+	$firstLabel.text("Find user by username:")
+	$firstSelect.addClass("form-control");
+	$firstSelect.attr("type", "text");
+	$firstSelect.attr("id", "selectUser");
+	
+	$firstSelect.autocomplete({
+	      source: usernames
+    });
+	
+	$firstForm.append($firstLabel);
+	$firstForm.append($firstSelect);
+	
+	$div.append($firstForm);
+	
+	return $div;
+}
+
+
+function subforumsSelection(){
+	var subforumNames = [];
+	$.ajax({
+		url: 'rest/subforums/onlyNames',
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			subforumNames = data;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		} 
+	});
+	var $div = $("<div>");
+	var $firstForm = $("<div>");
+	var $firstLabel = $("<label>");
+	var $firstSelect = $("<input>");
+	
+	$firstForm.addClass("form-group col-lg-4");
+	$firstLabel.addClass("control-label");
+	$firstLabel.text("Find subforum by name:")
+	$firstSelect.addClass("form-control");
+	$firstSelect.attr("type", "text");
+	$firstSelect.attr("id", "selectSubforum");
+	
+	$firstSelect.autocomplete({
+      source: subforumNames
+    });
+	
+	$firstForm.append($firstLabel);
+	$firstForm.append($firstSelect);
+	
+	$div.append($firstForm);
+	
+	return $div;
+	
+}
+
 function makeModeratorsTable(){
 	var $table = $("<table>");
 	var $thead = $("<thead>");
@@ -342,7 +553,8 @@ function makeModeratorsTable(){
 	
 	$thead.append("<tr>" +
 			"<th>Username</th>" +
-			"<th>Removing</th>" +
+			"<th>Remove moderator role</th>" +
+			"<th>Promote to admin</th>" +
 			"</tr>");
 	
 	for(var i=0; i < allModerators.length; i++){
@@ -350,6 +562,7 @@ function makeModeratorsTable(){
 		$tbody.append("<tr>" +
 				"<td>"+ moderator + "</td>" +
 				"<td><a href='#' class='removeModerator' id='"+ moderator +"'>Remove moderator role</a></td>" +
+				"<td><a href='#' class='promoteToAdmin' id='" + moderator + "'>Promote</a></td>" +
 				"</tr>");
 	}
 	
