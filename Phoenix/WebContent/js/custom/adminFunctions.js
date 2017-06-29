@@ -1,3 +1,6 @@
+var allModerators = [];
+var allUsers = [];
+
 $(function(){
 	//ADMIN EVENTS	
 	$(document).on("click",".reports", function(){
@@ -5,6 +8,7 @@ $(function(){
 	});
 	
 	$(document).on("click", ".usrmng", function(){
+		getAllUsers();
 		showUserMng();
 	});
 	
@@ -40,8 +44,65 @@ $(function(){
 		var id = $(this).attr("id");
 		deleteEntity(id);
 	});	
+	
+	$(document).on("click", ".removeModerator", function(){
+		var moderator = $(this).attr("id");
+		$.ajax({
+			url: 'rest/subforums/responsibleModerator/' + moderator,
+			type: 'GET',
+			contentType : 'application/json; charset=UTF-8',
+			complete: function(data){
+				if(data.responeseText = ""){
+					console.log(data);
+					$("#modalRemoveModerator").modal("show");
+					$("#subforum").text(data.responeseText);
+					$("#moderatorDelete").text(moderator);
+					var message = "You will change role for user " + moderator + " from moderator to " +
+							"regular user. Please confirm:";
+					$("#notResponsibleDscr").text(message);
+					$("#notResponsible").removeClass("hidden");
+					$("#moderatorTitle").text("Removing moderator role");
+					return;
+				}else {
+					console.log(data);
+					$("#modalRemoveModerator").modal("show");
+					$("#responsible").removeClass("hidden");
+					$("#moderatorTitle").text("Changing responsible moderator");
+					$("#subforum").text(data.responeseText);
+					$("#moderatorDelete").text(moderator);
+					var message = "User " + moderator + " is responsible for subforum " + data.responeseText + "." +
+							"Please select new responsible moderator from list of all users.";
+					$("#responsibleDscr").text(message);
+					$("#responsibleDscr").removeClass("hidden");
+					var $select = $("#allUsers");
+					for(var i=0; i<allUsers.length; i++){
+						var user = allUsers[i];
+						if(user.username != moderator){
+							$select.append("<option value='" + user.username + "'>"
+									+ user.firstname + " " + user.lastname + " " + user.role + "</option>");
+						}						
+					}
+					return;
+				}
+			}
+		});
+	});
 });
 
+function getAllUsers(){
+	$.ajax({
+		url: 'rest/users/all',
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		dataType: "json",
+		success: function(data){
+			allUsers = data;
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
 
 function deleteEntity(reportId){
 	$.ajax({
@@ -246,8 +307,56 @@ function showUserMng(){
 	var $panelBody = $("#adminPanelBody");
 	$panelBody.removeClass("hidden");	
 	$panelBody.empty();
+	$panelBody.show();
 
-	$panelBody.append("<p>User management</p>");
+	findModerators();
+	$panelBody.append("<h4 style='text-align:center'>Moderators</h4>");
+	$panelBody.append(makeModeratorsTable());
+	$panelBody.append("<hr/>");
+}
+
+
+function findModerators(){
+	$.ajax({
+		url: 'rest/users/moderators',
+		type: 'GET',
+		contentType : "application/json; charset=UTF-8",
+		async: false,
+		success: function(data){
+			if(data != null) {
+				allModerators = data;
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function makeModeratorsTable(){
+	var $table = $("<table>");
+	var $thead = $("<thead>");
+	var $tbody = $("<tbody>");
+	
+	$table.addClass("reportsTable table");
+	
+	$thead.append("<tr>" +
+			"<th>Username</th>" +
+			"<th>Removing</th>" +
+			"</tr>");
+	
+	for(var i=0; i < allModerators.length; i++){
+		var moderator = allModerators[i];
+		$tbody.append("<tr>" +
+				"<td>"+ moderator + "</td>" +
+				"<td><a href='#' class='removeModerator' id='"+ moderator +"'>Remove moderator role</a></td>" +
+				"</tr>");
+	}
+	
+	$table.append($thead);
+	$table.append($tbody);
+	
+	return $table;
 }
 
 function showReports(data){

@@ -24,6 +24,7 @@ import beans.Topic;
 import beans.User;
 import beans.Users;
 import beans.Vote;
+import dto.UserDTO;
 import enums.Role;
 
 /**
@@ -229,6 +230,49 @@ public class UserService {
 		}else {
 			subforums = user.getFollowedSubforums();
 			return mapper.writeValueAsString(subforums);
+		}
+	}
+	
+	@GET
+	@Path("/moderators")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String moderators(@Context HttpServletRequest request) throws IOException{
+		ArrayList<String> moderators = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				if(u.getRole().equals(Role.MODERATOR)){
+					moderators.add(u.getUsername());
+				}
+			}
+			return mapper.writeValueAsString(moderators);
+		}
+	}
+	
+	@GET
+	@Path("/all")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String all(@Context HttpServletRequest request) throws IOException{
+		ArrayList<UserDTO> userDTOS = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");		
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else{
+			Users users = new Users(ctx.getRealPath(""));
+			for(User u : users.getRegisteredUsers()){
+				UserDTO userDTO = new UserDTO();
+				userDTO.setUsername(u.getUsername());
+				userDTO.setFirstname(u.getFirstname());
+				userDTO.setLastname(u.getLastname());
+				userDTO.setRole(u.getRole());
+				userDTOS.add(userDTO);
+			}
+			return mapper.writeValueAsString(userDTOS);
 		}
 	}
 }

@@ -551,5 +551,33 @@
 			</div>
 		</div>
 	</div>
+	
+	<!-- 	MODAL MODERATOR REMOVE -->
+	<div id="modalRemoveModerator" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="moderatorTitle"></h4>
+					<p class="hidden" id="subforum"></p>
+					<p class="hidden" id="moderatorDelete"></p>
+				</div>
+				<div class="modal-body">
+					<div id="notResponsible" class="hidden">
+						<p id="notResponsibleDscr"></p>
+						<button id="submitNotResp">Confirm</button>
+					</div>
+					<div id="responsible" class="hidden">
+						<p id="responsibleDscr"></p>
+						<select id="allUsers">
+						</select>
+						<button id="submitResp">Confirm</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

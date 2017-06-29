@@ -254,4 +254,26 @@ public class SubforumService {
 			return true;
 		}
 	}
+	
+	
+	@GET
+	@Path("/responsibleModerator/{moderator}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String responsible(@Context HttpServletRequest request, @PathParam("moderator") String moderator) throws JsonParseException, JsonMappingException, IOException{
+		String forumResponsibleFor = "";
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return "";
+		}else {
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getResponsibleModerator().equals(moderator)){
+					forumResponsibleFor = s.getName();
+					break;
+				}
+			}
+		}
+		return forumResponsibleFor;
+	}
 }
