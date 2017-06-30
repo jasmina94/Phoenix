@@ -3,6 +3,36 @@ var userMessages = [];
 var userNames = [];
 
 $(function(){
+	
+	$(document).on("click", "span.message", function(){
+		var user = checkIfUserIsLoggedIn();
+		checkUserRole();
+		if(user === ""){
+			toastr.warning("Please sign in to go on your profile!");
+			return false;
+		}else {
+			if(userRole === "ADMINISTRATOR"){
+				showAdminPanel();
+				$("#adminPanelBody").empty();
+				$("#adminPanel").removeClass("hidden");
+				$("#adminPanelBody").removeClass("hidden");
+				$("#adminPanelBody").show();
+				loadMessagesForUser(user)
+				getUserNames();
+				$("#adminPanelBody").append(buildInbox(userMessages));
+			}else {
+				showUserPanel();
+				$("#userPanelBody").empty();
+				$("#userPanel").removeClass("hidden");
+				$("#userPanelBody").removeClass("hidden");
+				$("#userPanelBody").show();
+				loadMessagesForUser(user)
+				getUserNames();
+				$("#userPanelBody").append(buildInbox(userMessages));
+			}
+		}
+	});
+	
 	$(document).on("click", ".msgUser", function(){
 		var receiver = $(this).attr("id");
 		var user = checkIfUserIsLoggedIn();
@@ -19,6 +49,14 @@ $(function(){
 		var messageId = $(this).find("p.messageId").text();
 		$(this).removeClass("messageBoxNotSeen");
 		$(this).addClass("messageBoxSeen");
+		var number = $("span.message").find("span.badge").text();
+		number = parseInt(number);
+		number = number - 1;
+		if(number == 0){
+			$("span.message").empty();
+		}else {
+			$("span.message").find("span.badge").text(number);
+		}
 		seenMessage(messageId);
 	});
 	
@@ -266,4 +304,24 @@ function checkUserRole(){
 			toastr.error('Error!  Status = ' + xhr.status);
 		}
 	});
+}
+
+function showAdminPanel(){
+	$(".adminPanel").removeClass("hidden");
+	$(".adminPanel").show();
+	$("#adminPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+}
+
+function showUserPanel(){
+	$(".userPanel").removeClass("hidden");
+	$(".userPanel").show();
+	$("#userPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
 }

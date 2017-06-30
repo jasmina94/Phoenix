@@ -17,6 +17,7 @@ $(document).ready(function() {
 		if (splitedCookie[1] != "") {
 			setViewLogged(splitedCookie[1]);
 			getNotifications(splitedCookie[1]);
+			getMessages(splitedCookie[1]);
 		} else {
 			setViewLoggout();
 		}
@@ -105,6 +106,7 @@ function loginUser(userJSON) {
 				setViewLogged(data.username);
 				bindCookie(data.username);
 				getNotifications(data.username);
+				getMessages(data.username);
 				return false;
 			} else {
 				toastr.error("Wrong credentials. Try again!");
@@ -212,7 +214,6 @@ function checkUserRole() {
 }
 
 function getNotifications(username){
-	console.log(username);
 	$.ajax({
 		url: 'rest/notify/get/' + username,
 		type: 'GET',
@@ -221,7 +222,7 @@ function getNotifications(username){
 		success: function(data){
 			if(data.length != 0) {
 				$("span.notify").empty();
-				$("span.notify").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>")
+				$("span.notify").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>");
 				var $li = $("span.notify").parent().parent();
 				var $link = $("span.notify").parent();
 				$li.addClass("dropdown");
@@ -237,6 +238,26 @@ function getNotifications(username){
 				$link.removeClass("dropdown-toggle");
 				$link.attr("data-toggle", "");
 				$li.find("ul").remove();
+			}
+		},
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+		}
+	});
+}
+
+function getMessages(username){
+	$.ajax({
+		url: 'rest/messages/getUnseen/' + username,
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		success: function(data){
+			if(data.length != 0) {
+				$("span.message").empty();
+				$("span.message").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>");
+			}else {
+				$("span.message").empty();
 			}
 		},
 		error: function(xhr, textStatus, errorThrown) {

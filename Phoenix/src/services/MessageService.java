@@ -17,7 +17,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import beans.Message;
@@ -71,6 +70,26 @@ public class MessageService {
 			Messages messages = new Messages(ctx.getRealPath(""));
 			for(Message m : messages.getMessages()){
 				if(m.getReceiver().equals(username)){
+					messagesList.add(m);
+				}
+			}
+			return mapper.writeValueAsString(messagesList);
+		}
+	}
+	
+	@GET
+	@Path("/getUnseen/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUnseen(@Context HttpServletRequest request, @PathParam("username") String username) throws IOException{
+		ArrayList<Message> messagesList = new ArrayList<>();
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else{
+			Messages messages = new Messages(ctx.getRealPath(""));
+			for(Message m : messages.getMessages()){
+				if(m.getReceiver().equals(username) && !m.isSeen()){
 					messagesList.add(m);
 				}
 			}
