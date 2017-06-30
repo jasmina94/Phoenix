@@ -66,7 +66,7 @@ function ContentGrid(){
 							"</div>" +
 							"<div class='media-body'>" + 
 							"<h4 class='media-heading enterTopic' id='"+topic.title + "'>" + topic.title + "</h4>" +
-							"<p>Author: " + "<a href='#'>" + topic.author + "</a></p>" +
+							"<p>Author: " + "<a href='#' class='msgUser' id='" + topic.author + "'>" + topic.author + "</a></p>" +
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span>" +
@@ -81,7 +81,7 @@ function ContentGrid(){
 							"</div>" +
 							"<div class='media-body'>" + 
 							"<h4 class='media-heading enterTopic' id='"+topic.title + "'>" + topic.title + "</h4>" +
-							"<p>Author: " + "<a href='#'>" + topic.author + "</a></p>" +
+							"<p>Author: " + "<a href='#' class='msgUser' id='" + topic.author + "'>" + topic.author + "</a></p>" +
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span></a>" +
@@ -96,7 +96,7 @@ function ContentGrid(){
 							"</div>" +
 							"<div class='media-body'>" + 
 							"<h4 class='media-heading enterTopic' id='"+topic.title + "'>" + topic.title + "</h4>" +
-							"<p>Author: " + "<a href='#'>" + topic.author + "</a></p>" +
+							"<p>Author: " + "<a href='#' class='msgUser' id='" + topic.author + "'>" + topic.author + "</a></p>" +
 							"<p>Creation date: " + topic.creationDate + "</p>" +
 							"<span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + topic.likes + "</span>" +
 							"<span class='glyphicon glyphicon-thumbs-down'>" + topic.dislikes + "</span></a>" +
@@ -157,7 +157,7 @@ function ContentGrid(){
 		
 		$postDiv.addClass("container col-lg-12 postDiv");
 		
-		$onlyTopic.append("<p class='topicInfo'>submitted on " + topic.creationDate + " by <a href='#'>"+topic.author + "</a></p>");
+		$onlyTopic.append("<p class='topicInfo'>submitted on " + topic.creationDate + " by <a href='#' class='msgUser' id='"+ topic.author + "'>"+topic.author + "</a></p>");
 		$onlyTopic.append("<p class='topicInfo'><a href='#jumpComments'>" + topic.comments.length + " comments</a></p>")
 		$onlyTopic.append("<p style='padding-top:10px'><a href='#' class='topicLike' id='"+ topic.title +"?" + topic.subforum +"'>" +
 						  "<span class='glyphicon glyphicon-thumbs-up'  style='padding-right:10px'>" + topic.likes + "</span></a>" +
@@ -246,7 +246,7 @@ function ContentGrid(){
 		$commentWrapper.attr("id", comment.id);
 		
 		if(!comment.deleted){
-			$commentWrapper.append("<p><a href='#' class='commentAuthor'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
+			$commentWrapper.append("<p><a href='#' class='commentAuthor msgUser' id='"+ comment.author + "'>"+ comment.author + "</a> posted on:  " +  comment.commentDate + "</p>");
 			$commentWrapper.append("<p class='commentContent'>" + comment.content + "</p>");
 			$commentWrapper.append("<a href='#' class='commentLike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-up' style='padding-right:10px'>" + comment.likes + "</span></a>" +
 					   "<a href='#' class='commentDislike' id='"+ comment.id +"'><span class='glyphicon glyphicon-thumbs-down' style='padding-right:10px'>" + comment.dislikes + "</span></a>" +

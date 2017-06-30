@@ -36,14 +36,14 @@ public class Messages implements Serializable{
 		super();
 	}
 
-	public Messages(String path) {
-		
+	public Messages(String path) throws JsonParseException, JsonMappingException, IOException {
+		readMessages(path);
 	}
 	
 	public void readMessages(String path) throws JsonParseException, JsonMappingException, IOException{
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		messages = mapper.readValue(FileMaker.getDestinationFile(path, messagesPath), 
-				new TypeReference<ArrayList<Messages>>() {});
+				new TypeReference<ArrayList<Message>>() {});
 	}
 	
 	public void writeMessages(String path) throws JsonGenerationException, JsonMappingException, IOException{
@@ -52,7 +52,7 @@ public class Messages implements Serializable{
 	}
 
 	public ArrayList<Message> getMessages() {
-		return messages;
+		return this.messages;
 	}
 
 	public void setMessages(ArrayList<Message> messages) {

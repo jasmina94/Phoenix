@@ -20,6 +20,7 @@
 <script type="text/javascript" src="js/custom/other.js"></script>
 <script type="text/javascript" src="js/custom/adminFunctions.js"></script>
 <script type="text/javascript" src="js/custom/userFunctions.js"></script>
+<script type="text/javascript" src="js/custom/messages.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
@@ -120,7 +121,7 @@
 			<div class="panel-heading" id="adminPanelHeader">
 				<button type="button" class="btn btn-default reports">Reports</button>
 				<button type="button" class="btn btn-default usrmng">User management</button>
-				<button type="button" class="btn btn-info pull-right">Messages</button>
+				<button type="button" class="btn btn-info pull-right msgsPanel">Messages</button>
 			</div>
 			<div class="panel-body hidden" id="adminPanelBody"></div>
 		</div>
@@ -576,6 +577,32 @@
 						<br/>			
 						<button id="submitResp" class="btn btn-default">Confirm</button>
 					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 	MODAL MESSAGE -->
+	<div id="modalMessage" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="msgTitle">Send private message</h4>
+					<p class="hidden" id="usrSender"></p>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label class="control-label">To:</label>
+						<input type="text" id="receiver" class="form-control">
+					</div>
+					<div class="form-group">
+						<label class="control-label">Message:</label>
+						<textarea rows="3" cols="60" id="messageContent" class="form-control"></textarea>
+					</div>
+					<button type="button" class="btn btn-primary sendMessage col-lg-offset-5">Send message</button>
 				</div>
 			</div>
 		</div>

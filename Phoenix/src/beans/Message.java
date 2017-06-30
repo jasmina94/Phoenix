@@ -1,6 +1,7 @@
 package beans;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class Message implements Serializable{
 
@@ -9,6 +10,7 @@ public class Message implements Serializable{
 	 */
 	private static final long serialVersionUID = -1012676572510453853L;
 	
+	private String id;
 	private String sender;
 	private String receiver;
 	private String content;
@@ -17,14 +19,18 @@ public class Message implements Serializable{
 	
 	public Message() {
 		super();
+		this.id = UUID.randomUUID().toString();
+		this.seen = false;
 	}
 
 
 	public Message(String sender, String receiver, String content) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.sender = sender;
 		this.receiver = receiver;
 		this.content = content;
+		this.seen = false;
 	}
 	
 	public String getSender() {
@@ -65,6 +71,15 @@ public class Message implements Serializable{
 	public void setSeen(boolean seen) {
 		this.seen = seen;
 	}
+	
+	public String getId() {
+		return id;
+	}
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 
 	@Override
@@ -73,11 +88,4 @@ public class Message implements Serializable{
 		return "Message [sender= " + this.sender + " receiver= " + this.receiver 
 				+ " content= " + this.content + " ]";
 	}
-	
-	
-	
-	
-	
-	
-
 }
