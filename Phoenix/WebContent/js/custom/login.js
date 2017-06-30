@@ -35,8 +35,10 @@ $(document).on("click", ".goOnProfile", function(){
 	}else {
 		if(userRole === "ADMINISTRATOR"){
 			showAdminPanel();
-		}else {
+		}else if(userRole === "USER"){
 			showUserPanel();
+		}else {
+			showModeratorPanel();
 		}
 	}
 });
@@ -51,6 +53,17 @@ function showAdminPanel(){
 	$(".oneTopicPanel").hide();
 }
 
+function showModeratorPanel(){
+	$(".userPanel").removeClass("hidden");
+	$(".userPanel").show();
+	$("#userPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+	$(".modFun").removeClass("hidden");
+}
+
 function showUserPanel(){
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
@@ -60,6 +73,7 @@ function showUserPanel(){
 	$(".topicsPanel").hide();
 	$(".oneTopicPanel").hide();
 }
+
 
 $(document).on("click", "#loginUserBtn", function(e) {
 	if(!validateLoginForm()){
@@ -222,7 +236,7 @@ function getNotifications(username){
 		success: function(data){
 			if(data.length != 0) {
 				$("span.notify").empty();
-				$("span.notify").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>");
+				$("span.notify").append("<span class='badge badge-default' style='background-color:#ff0000'>" + data.length + "</span>");
 				var $li = $("span.notify").parent().parent();
 				var $link = $("span.notify").parent();
 				$li.addClass("dropdown");
@@ -255,7 +269,7 @@ function getMessages(username){
 		success: function(data){
 			if(data.length != 0) {
 				$("span.message").empty();
-				$("span.message").append("<span class='badge badge-default' style='background-color:#ffb84d'>" + data.length + "</span>");
+				$("span.message").append("<span class='badge badge-default' style='background-color:#ff0000'>" + data.length + "</span>");
 			}else {
 				$("span.message").empty();
 			}

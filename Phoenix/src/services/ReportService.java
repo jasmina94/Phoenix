@@ -35,6 +35,7 @@ import dto.NotificationDTO;
 import dto.ReportDTO;
 import enums.ReportSolver;
 import enums.ReportStatus;
+import enums.Role;
 
 /**
  * @author Jasmina
@@ -124,6 +125,38 @@ public class ReportService {
 			Reports allReports = new Reports(ctx.getRealPath(""));
 			for(Report r : allReports.getReports()){
 				reports.add(r);
+			}
+		}
+		
+		return mapper.writeValueAsString(reports);
+	}
+	
+	@GET
+	@Path("/onlyMod/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getModeratorsReports(@Context HttpServletRequest request, @PathParam("username") String moderator) throws IOException{
+		boolean success = true;
+		ArrayList<Report> reports = new ArrayList<>();
+		User user = (User)request.getSession().getAttribute("loggedUser");
+		if(user == null || !user.getRole().equals(Role.MODERATOR)){
+			success = false;
+		}
+		if(success){
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			String subforum = "";
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getResponsibleModerator().equals(moderator)){
+					subforum = s.getName();
+				}
+			}
+			
+			Reports allReports = new Reports(ctx.getRealPath(""));
+			for(Report r : allReports.getReports()){
+				if(r.getSolver().equals(ReportSolver.BOTH) && r.getSubforum().equals(subforum)
+						&& !r.getTopicTitle().isEmpty() && r.getStatus().equals(ReportStatus.PENDING)){
+					reports.add(r);
+				}
 			}
 		}
 		

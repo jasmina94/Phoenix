@@ -20,8 +20,17 @@ $(function(){
 				loadMessagesForUser(user)
 				getUserNames();
 				$("#adminPanelBody").append(buildInbox(userMessages));
-			}else {
+			}else if (userRole === "USER"){
 				showUserPanel();
+				$("#userPanelBody").empty();
+				$("#userPanel").removeClass("hidden");
+				$("#userPanelBody").removeClass("hidden");
+				$("#userPanelBody").show();
+				loadMessagesForUser(user)
+				getUserNames();
+				$("#userPanelBody").append(buildInbox(userMessages));
+			}else {
+				showModeratorPanel();
 				$("#userPanelBody").empty();
 				$("#userPanel").removeClass("hidden");
 				$("#userPanelBody").removeClass("hidden");
@@ -324,4 +333,15 @@ function showUserPanel(){
 	$("#subForumsPanel").parent().hide();
 	$(".topicsPanel").hide();
 	$(".oneTopicPanel").hide();
+}
+
+function showModeratorPanel(){
+	$(".userPanel").removeClass("hidden");
+	$(".userPanel").show();
+	$("#userPanelBody").hide();
+	$(".jumbotron").hide();
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+	$(".modFun").removeClass("hidden");
 }

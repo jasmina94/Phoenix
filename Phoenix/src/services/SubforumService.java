@@ -3,6 +3,7 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.jws.soap.SOAPBinding.Use;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -29,6 +30,7 @@ import beans.Topics;
 import beans.User;
 import beans.Users;
 import dto.SubforumDTO;
+import enums.Role;
 
 /**
  * @author Jasmina
@@ -81,6 +83,72 @@ public class SubforumService {
 		}
 	}
 	
+	
+	@GET
+	@Path("/getByMod/{moderator}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getSubforumsNames(@Context HttpServletRequest request, @PathParam("moderator") String moderator) throws IOException{
+		ArrayList<Subforum> subforumList = new ArrayList<>();
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getResponsibleModerator().equals(moderator)){
+					subforumList.add(s);
+				}
+			}
+			return mapper.writeValueAsString(subforumList);
+		}
+	}
+	
+	
+	@POST
+	@Path("/newModerator/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String postNewModerator(@Context HttpServletRequest request, 
+			@PathParam("subforum") String subforum, String moderator) throws IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		Users users = new Users(ctx.getRealPath(""));
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			boolean found = false;
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforum)){
+					for(String st : s.getAllModerators()){
+						if(st.equals(moderator)){
+							found = true;
+							break;
+						}
+					}
+					if(!found){
+						s.getAllModerators().add(moderator);
+						for(User u : users.getRegisteredUsers()){
+							if(u.getUsername().equals(moderator)){
+								u.setRole(Role.MODERATOR);
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			subforums.writeSubforums(ctx.getRealPath(""));
+			users.writeUsers(ctx.getRealPath(""));
+			if(found){
+				return mapper.writeValueAsString("");
+			}else{
+				return mapper.writeValueAsString(moderator);
+			}
+			
+		}
+	}
+	
 	@GET
 	@Path("/get/{subforum}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -130,6 +198,28 @@ public class SubforumService {
 			}
 		}
 		return ret;
+	}
+	
+	
+	@POST
+	@Path("/removeModerators/{subforum}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String removeModerators(@Context HttpServletRequest request,
+			@PathParam("subforum") String subforum, ArrayList<String> moderators) throws IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			Subforums subforums = new Subforums(ctx.getRealPath(""));
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().equals(subforum)){
+					s.getAllModerators().removeAll(moderators);
+				}
+			}
+			subforums.writeSubforums(ctx.getRealPath(""));
+			return mapper.writeValueAsString(moderators);
+		}
 	}
 	
 	@POST

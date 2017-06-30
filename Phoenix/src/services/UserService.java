@@ -366,7 +366,7 @@ public class UserService {
 	public String onlyUserNames(@Context HttpServletRequest request) throws IOException{
 		ArrayList<String> userNames = new ArrayList<>();
 		User user = (User)request.getSession().getAttribute("loggedUser");		
-		if(user == null || !user.getRole().equals(Role.ADMINISTRATOR)){
+		if(user == null){
 			return mapper.writeValueAsString("");
 		}else{
 			Users users = new Users(ctx.getRealPath(""));

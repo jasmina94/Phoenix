@@ -20,6 +20,7 @@
 <script type="text/javascript" src="js/custom/other.js"></script>
 <script type="text/javascript" src="js/custom/adminFunctions.js"></script>
 <script type="text/javascript" src="js/custom/userFunctions.js"></script>
+<script type="text/javascript" src="js/custom/moderatorFunctions.js"></script>
 <script type="text/javascript" src="js/custom/messages.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
@@ -108,12 +109,13 @@
 		</div>
 		<div class="panel panel-default userPanel hidden">
 			<div class="panel-heading" id="userPanelHeader">
+				<button type="button" class="btn btn-default modFun hidden">My subforum</button>
 				<button type="button" class="btn btn-default savedEntities">Saved
 					entities</button>
 				<button type="button" class="btn btn-default userVotes">Your votes</button>
 				<button type="button" class="btn btn-default followSubforums">Following
 					subforums</button>
-				<button type="button" class="btn btn-info pull-right">Messages</button>
+				<button type="button" class="btn btn-info pull-right msgsPanel">Messages</button>
 			</div>
 			<div class="panel-body hidden" id="userPanelBody"></div>
 		</div>
@@ -603,6 +605,49 @@
 						<textarea rows="3" cols="60" id="messageContent" class="form-control"></textarea>
 					</div>
 					<button type="button" class="btn btn-primary sendMessage col-lg-offset-5">Send message</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 	MODAL NEW MODERATOR -->
+	<div id="modalNewModerator" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="newModTitle"></h4>
+					<p class="hidden" id="newModSub"></p>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label class="control-label">Find user by its username:</label>
+						<input type="text" id="newModerator" class="form-control">
+					</div>
+					<button type="button" class="btn btn-primary newModerator col-lg-offset-5">Confirm</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 	MODAL REMOVE MODERATOR -->
+	<div id="modalRemoveModerator1" class="modal" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 id="removeModTitle"></h4>
+					<p class="hidden" id="removeModSub"></p>
+				</div>
+				<div class="modal-body">
+					<label>Choose one to remove</label>
+					<fieldset class="forOptions">
+					</fieldset>
+					<button type="button" class="btn btn-primary remMod1 col-lg-offset-5">Confirm</button>
 				</div>
 			</div>
 		</div>
