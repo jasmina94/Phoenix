@@ -30,6 +30,7 @@ import beans.Topics;
 import beans.User;
 import beans.Users;
 import dto.SubforumDTO;
+import dto.SubforumSearchDTO;
 import enums.Role;
 
 /**
@@ -71,16 +72,11 @@ public class SubforumService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getSubforumsNames(@Context HttpServletRequest request) throws IOException{
 		ArrayList<String> subforumList = new ArrayList<>();
-		User user = (User) request.getSession().getAttribute("loggedUser");
-		if(user == null){
-			return mapper.writeValueAsString("");
-		}else {
-			Subforums subforums = new Subforums(ctx.getRealPath(""));
-			for(Subforum s : subforums.getSubforums()){
-				subforumList.add(s.getName());
-			}
-			return mapper.writeValueAsString(subforumList);
+		Subforums subforums = new Subforums(ctx.getRealPath(""));
+		for(Subforum s : subforums.getSubforums()){
+			subforumList.add(s.getName());
 		}
+		return mapper.writeValueAsString(subforumList);
 	}
 	
 	
@@ -200,6 +196,20 @@ public class SubforumService {
 		return ret;
 	}
 	
+	@GET
+	@Path("/getResponsibleModerators")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getResponsibleForEachSubforum(@Context HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+		ArrayList<String> responsibles = new ArrayList<>();
+		Subforums subforums = new Subforums(ctx.getRealPath(""));
+		for(Subforum s : subforums.getSubforums()){
+			if(!responsibles.contains(s.getResponsibleModerator())){
+				responsibles.add(s.getResponsibleModerator());
+			}
+		}
+		return mapper.writeValueAsString(responsibles);
+	}
 	
 	@POST
 	@Path("/removeModerators/{subforum}")
@@ -383,5 +393,64 @@ public class SubforumService {
 			}
 		}
 		return mapper.writeValueAsString(forumResponsibleFor);
+	}
+	
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String search(@Context HttpServletRequest request, SubforumSearchDTO searchDTO) throws IOException{
+		ArrayList<Subforum> results = new ArrayList<>();
+		String name = searchDTO.getSubforumName();
+		String descr = searchDTO.getSubforumDescription();
+		String resp = searchDTO.getSubforumResponsibleModerator();
+		Subforums subforums = new Subforums(ctx.getRealPath(""));
+		if(name.equals("") && descr.equals("") && resp.equals("")){
+			return mapper.writeValueAsString("");
+		}else if(!name.equals("") && descr.equals("") && resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().toLowerCase().equals(name.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(name.equals("") && !descr.equals("") && resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getDetails().toLowerCase().contains(descr.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(name.equals("") && descr.equals("") && !resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getResponsibleModerator().toLowerCase().equals(resp.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(!name.equals("") && !descr.equals("") && resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().toLowerCase().equals(name.toLowerCase()) || s.getDetails().toLowerCase().contains(descr.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(!name.equals("") && descr.equals("") && !resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().toLowerCase().equals(name.toLowerCase()) || s.getResponsibleModerator().toLowerCase().equals(resp.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(name.equals("") && !descr.equals("") && !resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getDetails().toLowerCase().contains(descr.toLowerCase()) || s.getResponsibleModerator().toLowerCase().equals(resp.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}else if(!name.equals("") && !descr.equals("") && !resp.equals("")){
+			for(Subforum s : subforums.getSubforums()){
+				if(s.getName().toLowerCase().equals(name.toLowerCase()) || s.getDetails().toLowerCase().contains(descr.toLowerCase())
+						|| s.getResponsibleModerator().toLowerCase().equals(resp.toLowerCase())){
+					results.add(s);
+				}
+			}
+		}
+		return mapper.writeValueAsString(results);
 	}
 }

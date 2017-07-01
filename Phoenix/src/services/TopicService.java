@@ -503,4 +503,34 @@ public class TopicService {
 			return true;
 		}
 	}
+	
+	@GET
+	@Path("/onlyTitles")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getTopicTitles(@Context HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+		ArrayList<String> titles = new ArrayList<>();
+		Topics topics = new Topics(ctx.getRealPath(""));
+		for(Topic t : topics.getTopics()){
+			if(!titles.contains(t.getTitle())){
+				titles.add(t.getTitle());
+			}
+		}
+		return mapper.writeValueAsString(titles);
+	}
+	
+	@GET
+	@Path("/onlyAuthors")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getTopicAuthors(@Context HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+		ArrayList<String> authors = new ArrayList<>();
+		Topics topics = new Topics(ctx.getRealPath(""));
+		for(Topic t : topics.getTopics()){
+			if(!authors.contains(t.getAuthor())){
+				authors.add(t.getAuthor());
+			}
+		}
+		return mapper.writeValueAsString(authors);
+	}
 }

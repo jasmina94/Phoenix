@@ -169,7 +169,6 @@ function unbindCookie() {
 }
 
 function setViewLogged(data) {
-
 	$defaultBtns.hide();
 	$loggedUserBtns.show();
 	$("span#usernameLabel").text(data);

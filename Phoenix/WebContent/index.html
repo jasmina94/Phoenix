@@ -22,6 +22,7 @@
 <script type="text/javascript" src="js/custom/userFunctions.js"></script>
 <script type="text/javascript" src="js/custom/moderatorFunctions.js"></script>
 <script type="text/javascript" src="js/custom/messages.js"></script>
+<script type="text/javascript" src="js/custom/search.js"></script>
 
 <script type="text/javascript" src="js/custom/util.js"></script>
 <script type="text/javascript" src="js/custom/validation.js"></script>
@@ -61,13 +62,8 @@
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">
-				<form class="navbar-form navbar-left">
-					<div class="form-group">
-						<input type="text" class="form-control" placeholder="Search">
-					</div>
-					<button type="submit" class="btn btn-default">Submit</button>
-				</form>
 				<ul class="nav navbar-nav navbar-right">
+					<li><a href='#' class="navbar-brand searchPage"><span class="glyphicon glyphicon-search"></span></a></li>
 					<li><a href="#"><span class="glyphicon glyphicon-envelope message"></span></a></li>
 					<li><a href="#"><span class="glyphicon glyphicon-bell notify"></span></a></li>
 					<li class="notLoggedUserOption"><a href="#"
@@ -126,6 +122,74 @@
 				<button type="button" class="btn btn-info pull-right msgsPanel">Messages</button>
 			</div>
 			<div class="panel-body hidden" id="adminPanelBody"></div>
+		</div>
+		<div class="panel panel-default searchPanel hidden">
+			<div class="panel-heading" id="searchPanelHeader">
+				<h4 style='text-align:center;font-weight: bold;'>Search for subforum, topics or users you are interested to!</h4>
+			</div>
+			<div class="panel-body" id="searchPanelBody">
+				<div class="row searchBox">
+					<h4 style='text-align:center;font-style: italic;'>Search subforums</h4>
+					<br/>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By title</label>
+						<input type="text" class="form-control" id="subByTitle" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By description</label>
+						<input type="text" class="form-control" id="subByDescr" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By responsible moderator</label>
+						<input type="text" class="form-control" id="subByRespMod" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-3" style='padding-top:25px;'>
+						<button type="button" class="btn btn-success col-lg-5" style='margin-right:10px;' id="apllySubforum">Apply</button>
+						<button type="button" class="btn btn-danger col-lg-5" id="resetSubforum">Reset</button>
+					</div>
+				</div>
+				<div class="row resultSubforums resultBox hidden"></div>
+				<hr/>
+				<div class="row searchBox">
+					<h4 style='text-align:center;font-style: italic;'>Search topics</h4>
+					<br/>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By title</label>
+						<input type="text" class="form-control" id="topByTitle" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By content</label>
+						<input type="text" class="form-control" id="topByContent" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-2">
+						<label class="control-label">By author</label>
+						<input type="text" class="form-control" id="topByAuthor" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-2">
+						<label class="control-label">By subforum</label>
+						<input type="text" class="form-control" id="topBySub" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-2" style='padding-top:25px;'>
+						<button type="button" class="btn btn-success col-lg-5" style='margin-right:10px;' id="applyTopic">Apply</button>
+						<button type="button" class="btn btn-danger col-lg-5" id="resetTopic">Reset</button>
+					</div>
+				</div>
+				<div class="row resultTopics resultBox hidden"></div>
+				<hr/>
+				<div class="row searchBox">
+					<h4 style='text-align:center;font-style: italic;'>Search users</h4>
+					<div class="form-group col-lg-3">
+						<label class="control-label">By username</label>
+						<input type="text" class="form-control" id="userByUsername" placeholder="Search">
+					</div>
+					<div class="form-group col-lg-3" style='padding-top:25px;'>
+						<button type="button" class="btn btn-success col-lg-5" style='margin-right:10px;' id="applyUser">Apply</button>
+						<button type="button" class="btn btn-danger col-lg-5" id="resetUser">Reset</button>
+					</div>
+				</div>
+				<div class="row resultUsers resultBox hidden"></div>
+				<hr/>
+			</div>
 		</div>
 	</div>
 

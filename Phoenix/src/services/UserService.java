@@ -165,14 +165,14 @@ public class UserService {
 	
 	@GET
 	@Path("/getAll")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllUsers(@Context HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
 		ArrayList<String> usernames = new ArrayList<>();
-		
 		Users users = new Users(ctx.getRealPath(""));
 		for(User u : users.getRegisteredUsers()){
 			usernames.add(u.getUsername());
 		}
-		
 		return mapper.writeValueAsString(usernames);		
 	}
 	

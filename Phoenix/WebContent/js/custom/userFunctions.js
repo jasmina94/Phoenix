@@ -367,7 +367,6 @@ function buildFollowingSubforumList(subforums){
 }
 
 function makeSubforumList(subforums){
-	console.log(subforums);
 	var $wrapper = $("<div>");
 	
 	$.each(subforums, function(index, subforum){
@@ -378,7 +377,7 @@ function makeSubforumList(subforums){
 					"<div class='media-body'>" + 
 					"<h4 class='media-heading showTopics' id='"+ subforum.name + "'>" + subforum.name + "</h4>" +
 					"<p>" + subforum.details + "</p>" +
-					"<p>Moderator: " + "<a href='#'>" + subforum.responsibleModerator + "</a></p>" +
+					"<p>Moderator: " + "<a href='#' class='msgUser' id='"+ subforum.responsibleModerator + "'>" + subforum.responsibleModerator + "</a></p>" +
 					"<div><a href='#' data-toggle='modal' data-target='#modalDetails'" +
 					"id='"+index + "' class='detailsLink'>Details</a></div><br/>"+	
 					"<a href='#' class='followSubforum' id='" + subforum.name + "'>Follow</a></div>"+

@@ -31,6 +31,7 @@ function ContentGrid(){
 		$subforumsPanel.hide();
 		$oneTopicPanel.hide();
 		$(".userPanel").hide();
+		$(".searchPanel").addClass("hidden");
 		$topicsPanel.show();
 		
 		var $topicsPanelBody = $("#topicsPanelBody").empty();
