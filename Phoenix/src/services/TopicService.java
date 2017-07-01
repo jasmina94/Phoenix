@@ -25,6 +25,7 @@ import beans.Topics;
 import beans.User;
 import beans.Users;
 import dto.TopicDTO;
+import dto.TopicSearchDTO;
 import enums.TopicType;
 
 /**
@@ -533,4 +534,119 @@ public class TopicService {
 		}
 		return mapper.writeValueAsString(authors);
 	}
+	
+	@POST
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String search(@Context HttpServletRequest request, TopicSearchDTO searchDTO) throws IOException{
+		ArrayList<Topic> results = new ArrayList<>();
+		String title = searchDTO.getTopicTitle();
+		String content = searchDTO.getTopicContent();
+		String author = searchDTO.getTopicAuthor();
+		String subforum = searchDTO.getTopicSubforum();
+		Topics topics = new Topics(ctx.getRealPath(""));
+		
+		if(title.isEmpty() && content.isEmpty() && author.isEmpty() && subforum.isEmpty()){ //0+
+			return mapper.writeValueAsString("");
+		}else if(!title.isEmpty() && content.isEmpty() && author.isEmpty() && subforum.isEmpty()){ //1 +
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && !content.isEmpty() && author.isEmpty() && subforum.isEmpty()){ // 2 +
+			for(Topic t : topics.getTopics()){
+				if(t.getContent().toLowerCase().contains(content.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && content.isEmpty() && !author.isEmpty() && subforum.isEmpty()){ // 3 +
+			for(Topic t : topics.getTopics()){
+				if(t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && content.isEmpty() && author.isEmpty() && !subforum.isEmpty()){ // 4 +
+			for(Topic t : topics.getTopics()){
+				if(t.getSubforum().toLowerCase().equals(subforum.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && !content.isEmpty() && author.isEmpty() && subforum.isEmpty()){ // 12+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getContent().toLowerCase().contains(content.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && content.isEmpty() && !author.isEmpty() && subforum.isEmpty()){ //13+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && content.isEmpty() && author.isEmpty() && !subforum.isEmpty()){ //14+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getSubforum().toLowerCase().equals(subforum.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && !content.isEmpty() && !author.isEmpty() && subforum.isEmpty()){ //23+
+			for(Topic t : topics.getTopics()){
+				if(t.getContent().toLowerCase().contains(content.toLowerCase()) || t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && !content.isEmpty() && author.isEmpty() && !subforum.isEmpty()){ //24+
+			for(Topic t : topics.getTopics()){
+				if(t.getContent().toLowerCase().contains(content.toLowerCase()) || t.getSubforum().toLowerCase().equals(subforum.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && content.isEmpty() && !author.isEmpty() && !subforum.isEmpty()){ //34+
+			for(Topic t : topics.getTopics()){
+				if(t.getAuthor().toLowerCase().equals(author.toLowerCase()) || t.getSubforum().toLowerCase().equals(subforum.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && !content.isEmpty() && !author.isEmpty() && subforum.isEmpty()){ //123+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getContent().toLowerCase().contains(content.toLowerCase()) 
+						|| t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && content.isEmpty() && !author.isEmpty() && !subforum.isEmpty()){ //134+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getSubforum().toLowerCase().equals(subforum.toLowerCase()) 
+						|| t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && !content.isEmpty() && author.isEmpty() && !subforum.isEmpty()){ //124+
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().toLowerCase().equals(title.toLowerCase()) || t.getSubforum().toLowerCase().equals(subforum.toLowerCase())
+						|| t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(title.isEmpty() && !content.isEmpty() && !author.isEmpty() && !subforum.isEmpty()){ //234+
+			for(Topic t : topics.getTopics()){
+				if(t.getSubforum().toLowerCase().equals(subforum.toLowerCase()) || t.getContent().toLowerCase().contains(content.toLowerCase()) 
+						|| t.getAuthor().toLowerCase().equals(author.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}else if(!title.isEmpty() && !content.isEmpty() && !author.isEmpty() && !subforum.isEmpty()){ //1234+
+			for(Topic t : topics.getTopics()){
+				if(t.getSubforum().toLowerCase().equals(subforum.toLowerCase()) || t.getContent().toLowerCase().contains(content.toLowerCase()) 
+						|| t.getAuthor().toLowerCase().equals(author.toLowerCase()) || t.getTitle().toLowerCase().equals(title.toLowerCase())){
+					results.add(t);
+				}
+			}
+		}
+		
+		return mapper.writeValueAsString(results);
+	}
+	
 }

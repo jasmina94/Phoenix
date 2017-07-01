@@ -44,6 +44,7 @@ $(document).on("click", ".goOnProfile", function(){
 });
 
 function showAdminPanel(){
+	$(".searchPanel").addClass("hidden");
 	$(".adminPanel").removeClass("hidden");
 	$(".adminPanel").show();
 	$("#adminPanelBody").hide();
@@ -54,6 +55,7 @@ function showAdminPanel(){
 }
 
 function showModeratorPanel(){
+	$(".searchPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();
@@ -65,6 +67,7 @@ function showModeratorPanel(){
 }
 
 function showUserPanel(){
+	$(".searchPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();

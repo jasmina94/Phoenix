@@ -2,6 +2,7 @@ var subforumNames = [];
 var responsibleModerators = [];
 var topicTitles = [];
 var usernames = [];
+var topicDirect = new Object();
 
 $(function(){
 	$(document).on("click", ".searchPage", function(){
@@ -26,6 +27,13 @@ $(function(){
 	});
 	
 	$(document).on("click", "#apllySubforum", function(){
+		$(".resultSubforums").empty();
+		$(".resultTopics").empty();
+		$(".resultTopics").addClass("hidden");
+		$(".resultUsers").empty();
+		$(".resultUsers").addClass("hidden");
+		emptyTopicSearch();
+		emptyUserSearch();
 		var name = $("#subByTitle").val();
 		var descr = $("#subByDescr").val();
 		var resp = $("#subByRespMod").val();
@@ -40,6 +48,29 @@ $(function(){
 		searchSubforum(JSON.stringify(obj));
 	});
 	
+	$(document).on("click", "#applyTopic", function(){
+		$(".resultTopics").empty();
+		$(".resultSubforums").empty();
+		$(".resultSubforums").addClass("hidden");
+		$(".resultUsers").empty();
+		$(".resultUsers").addClass("hidden");
+		emptySubforumSearch();
+		emptyUserSearch();
+		var title = $("#topByTitle").val();
+		var content = $("#topByContent").val();
+		var author = $("#topByAuthor").val();
+		var subforum = $("#topBySub").val();
+		if(title === "" && content === "" && author === "" && subforum === ""){
+			toastr.warning("Please insert at least one criteria for subforum search.");
+			return false;
+		}
+		var obj = new Object();
+		obj['topicTitle'] = title;
+		obj['topicContent'] = content;
+		obj['topicAuthor'] = author;
+		obj['topicSubforum'] = subforum;
+		searchTopic(JSON.stringify(obj));
+	});
 	
 	$(document).on("click", "#resetUser", function(){
 		emptyUserSearch();
@@ -68,6 +99,18 @@ $(function(){
 				toastr.error('Error!  Status = ' + xhr.status);
 			}
 		});
+	});
+	
+	$(document).on("click", ".directTopic1", function(){
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var topic = id[0];
+		var subforum = id[1];
+		$(".searchPanel").addClass("hidden");
+		$(".topicsPanel").show();
+		findTopic(topic, subforum);
+		var content = new ContentGrid();
+		content.showTopicWithComments(topicDirect);
 	});
 });
 
@@ -99,6 +142,20 @@ function emptyTopicSearch(){
 	$("#topBySub").val("");
 }
 
+
+function findTopic(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/loadTopic/' + subforum,
+		type: 'POST',
+		data: topic,
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			topicDirect = data;
+		}
+	});
+}
 function searchSubforum(subforum){
 	$.ajax({
 		url: 'rest/subforums/search',
@@ -131,7 +188,32 @@ function searchSubforum(subforum){
 							"<hr></div>");
 				});
 				$(".resultSubforums").append($divWrap);
+				return;
 			}
+		}
+	});
+}
+
+
+function searchTopic(topic){
+	$.ajax({
+		url: 'rest/topics/search',
+		type: 'POST',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		data: topic,
+		success: function(data){
+			if(data.length == 0){
+				$(".resultTopics").empty();
+				$(".resultTopics").removeClass("hidden");
+				$(".resultTopics").append("<p style='text-align:center;font-style:italic'>Sorry! There are no topics for these criterias to be found.<p>");
+				return;
+			}else {
+				$(".resultTopics").empty();
+				$(".resultTopics").removeClass("hidden");
+				$(".resultTopics").append(makeTopicsList(data));
+			}
+			
 		}
 	});
 }
@@ -225,4 +307,18 @@ function getUsers(){
 			usernames = data;
 		}
 	});
+}
+
+function makeTopicsList(topics){
+	var $wrapper = $("<div>");
+	var $list = $("<ul>");
+	
+	for(var i=0; i<topics.length; i++){
+		var topic = topics[i];
+		$list.append("<li><a href='#' class='directTopic1' id='"+ topic.title + "?" + topic.subforum + "'>" + topic.title + "</a> [subforum: " + topic.subforum + "]</li>");
+	}
+	
+	$wrapper.append($list);
+	
+	return $wrapper;
 }

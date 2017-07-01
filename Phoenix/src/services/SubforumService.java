@@ -3,7 +3,6 @@ package services;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.jws.soap.SOAPBinding.Use;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
