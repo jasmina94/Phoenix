@@ -316,6 +316,8 @@ function checkUserRole(){
 }
 
 function showAdminPanel(){
+	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".adminPanel").removeClass("hidden");
 	$(".adminPanel").show();
 	$("#adminPanelBody").hide();
@@ -326,6 +328,8 @@ function showAdminPanel(){
 }
 
 function showUserPanel(){
+	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();
@@ -336,6 +340,8 @@ function showUserPanel(){
 }
 
 function showModeratorPanel(){
+	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();

@@ -16,6 +16,7 @@ function ContentGrid(){
 			success: function(data){
 				self.topics = data;
 				self.showTopics(data, subforumName);
+				return;
 			},
 			error: function(xhr, textStatus, errorThrown) {
 				toastr.error('Error!  Status = ' + xhr.status);
@@ -38,7 +39,7 @@ function ContentGrid(){
 		var $topicsPanelHeader = $("#topicsPanelHeader").empty();	
 		
 		$topicsPanelHeader.append("<h3>Topics for subforum " + subforumName + "</h3>" +
-								  "<a href='#' class='backLink'> Back to all subforums </a><br/>"+
+								  "<a href='#' class='backLink'> Back to start page </a><br/>"+
 								  "<a href='#' class='newTopic'> Make new topic </a><br/>" +
 								  "<input type='text' id='hiddenSubforum' style='display:none'  value='" + subforumName + "' />");
 		
@@ -53,9 +54,12 @@ function ContentGrid(){
 		}
 		
 		if(data.topics.length === 0){
-			$topicsPanel.append("<div>" +
-								"<p>Sorry, there are no topics available for <i>"+ subforumName + "</i> subforum.</p>"+
-								"</div>");
+			var $found = $topicsPanel.find("div#noTopics");
+			if($found.length == 0){		
+				$topicsPanel.append("<div id='noTopics'>" +
+						"<p>Sorry, there are no topics available for <i>"+ subforumName + "</i> subforum.</p>"+
+						"</div>");
+			}
 		} else {
 			for(i=0; i<data.topics.length; i++){
 				var topic = data.topics[i];
@@ -143,7 +147,7 @@ function ContentGrid(){
 		var comments = topic.comments;
 		
 		$topicPanelHeader.append("<h3 id='topicTitle'>" + topic.title + "</h3>" +
-								 "<a href='#' class='backLink'> Back to all subforums </a><br/>"+
+								 "<a href='#' class='backLink'> Back to start </a><br/>"+
 								 "<a href='#' class='backLinkTopic'> Back to subforum "+ topic.subforum + "</a>" +
 								 "<input type='text' id='hiddenSubforum' style='display:none'  value='" + topic.subforum + "' />");
 		

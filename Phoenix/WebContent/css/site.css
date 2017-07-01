@@ -81,9 +81,8 @@ p.commentTopic{
 .divNotify{
 	margin-left: 2px;
 	margin-right: 2px;
-	margin-bottom: 2px;
+	margin-bottom: 10px;
 	width: 300px;
-	height: 70px;
 	border: 2px solid #000000;
 	border-radius: 2px;
 	text-align: left;

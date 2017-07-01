@@ -235,4 +235,24 @@ public class CommentService {
 			return true;
 		}
 	}
+	
+	@GET
+	@Path("/getContent/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String content(@Context HttpServletRequest request, @PathParam("id") String commentId) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			Comments comments = new Comments(ctx.getRealPath(""));
+			String content = "";
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(commentId)){
+					content = c.getContent();
+				}
+			}
+			return mapper.writeValueAsString(content);
+		}
+	}
 }

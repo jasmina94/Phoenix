@@ -90,6 +90,7 @@ $(document).on("click", ".showTopics", function(){
 		success: function(data){
 			topics = data;
 			contentGrid.showTopics(data, subforumName);
+			return;
 		},
 		error: function(xhr, textStatus, errorThrown) {
 			toastr.error('Error!  Status = ' + xhr.status);
@@ -136,3 +137,17 @@ $(document).on("click", ".backLinkTopic", function(){
 		}
 	});
 });
+
+function checkIfUserIsLoggedIn(){
+	var cookie = document.cookie;
+	if (cookie.indexOf("=") !== -1) {
+		var splitedCookie = cookie.split("=");
+		if (splitedCookie[1] != "") {
+			return splitedCookie[1];
+		} else {
+			return "";
+		}
+	} else {
+		return "";
+	}
+}

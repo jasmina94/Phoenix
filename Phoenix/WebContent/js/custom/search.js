@@ -11,6 +11,9 @@ $(function(){
 		$(".topicsPanel").hide();
 		$("#subForumsPanel").parent().hide();
 		$(".jumbotron").hide();
+		$(".startPanel").addClass("hidden");
+		$(".userPanel").addClass("hidden");
+		$(".adminPanel").adClass("hidden");
 		$(".resultSubforums").empty();
 		$(".resultSubforums").addClass("hidden");
 		$(".resultTopics").empty();
@@ -173,6 +176,7 @@ function findTopic(topic, subforum){
 		}
 	});
 }
+
 function searchSubforum(subforum){
 	$.ajax({
 		url: 'rest/subforums/search',

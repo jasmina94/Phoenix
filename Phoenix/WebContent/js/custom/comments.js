@@ -1,7 +1,7 @@
 var userRole = "";
 var moderators = null;
 var commentGlobal = null;
-
+var commentText = "";
 var contentGrid = new ContentGrid();
 
 $(function(){
@@ -86,17 +86,9 @@ $(function(){
 		commentId = commentId.split("?");
 		var id = commentId[0];
 		var author = commentId[1];
-		var commentText = "";
-		
 		var subforum = $("#hiddenSubforum").val();
 		checkModeratorsForSubforum(subforum);
-		
-		for(var i=0; i< contentGrid.commentGlobal.length; i++){
-			if(contentGrid.commentGlobal[i].id == id){
-				commentText = contentGrid.commentGlobal[i].content;
-				break;
-			}
-		}
+		getCommentText(id);
 		
 		var user = checkIfUserIsLoggedIn();
 		if(user == ""){
@@ -146,6 +138,20 @@ $(function(){
 		$("#modalEditComment").modal('hide');
 	});
 });
+
+
+function getCommentText(id){
+	$.ajax({
+		url: 'rest/comments/getContent/' + id,
+		type: 'GET',
+		contentType : 'application/json; charset=UTF-8',
+		dataType: 'json',
+		async: false,
+		success: function(data){
+			commentText = data;
+		}
+	});
+}
 
 function leaveCommentOnTopic(topic, subforum, comment){
 	$.ajax({

@@ -3,6 +3,7 @@ var $defaultBtns = null;
 var $divLog = null;
 var cookie = null;
 var userRole = "";
+var topicDirect = new Object();
 
 $(document).ready(function() {
 	$defaultBtns = $("li.notLoggedUserOption");
@@ -45,6 +46,7 @@ $(document).on("click", ".goOnProfile", function(){
 
 function showAdminPanel(){
 	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".adminPanel").removeClass("hidden");
 	$(".adminPanel").show();
 	$("#adminPanelBody").hide();
@@ -56,6 +58,7 @@ function showAdminPanel(){
 
 function showModeratorPanel(){
 	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();
@@ -68,6 +71,7 @@ function showModeratorPanel(){
 
 function showUserPanel(){
 	$(".searchPanel").addClass("hidden");
+	$(".startPanel").addClass("hidden");
 	$(".userPanel").removeClass("hidden");
 	$(".userPanel").show();
 	$("#userPanelBody").hide();
@@ -181,7 +185,75 @@ function setViewLogged(data) {
 	checkUserRole();
 	if(userRole == "ADMINISTRATOR" || userRole == "MODERATOR"){
 		$("a.newSubforum").removeClass("hidden");
-	}	
+	}
+	$(".startPanel").removeClass("hidden");
+	$("#subForumsPanel").parent().hide();
+	$(".topicsPanel").hide();
+	$(".oneTopicPanel").hide();
+	$(".jumbotron").show();
+	getTopicsFromFollowedSubforums(data);
+}
+
+function getTopicsFromFollowedSubforums(username){
+	$.ajax({
+		url: 'rest/topics/getStartList/' + username,
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		success: function(data){
+			if(data.length == 0){
+				$(".startPanel").addClass("hidden");
+				$("#subForumsPanel").parent().show();
+			}else {
+				$("#subForumsPanel").parent().hide();
+				$(".startPanelBody").empty();
+				$(".startPanelBody").append(makeTopicList(data));
+			}
+		}
+	});
+}
+
+$(document).on("click", ".directTopic2", function(){
+	var id = $(this).attr("id");
+	id = id.split("?");
+	var topic = id[0];
+	var subforum = id[1];
+	$(".startPanel").addClass("hidden");
+	$(".topicsPanel").show();
+	findTopic(topic, subforum);
+	var content = new ContentGrid();
+	content.showTopicWithComments(topicDirect);
+});
+
+$(document).on("click", ".showAllSubforums", function(){
+	$(".startPanel").addClass("hidden");
+	$("#subForumsPanel").parent().show();
+});
+
+
+function findTopic(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/loadTopic/' + subforum,
+		type: 'POST',
+		data: topic,
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			topicDirect = data;
+		}
+	});
+}
+
+function makeTopicList(topics){
+	var $wrapper = $("<div>");
+	var $list = $("<ul>");
+	for(var i=0; i<topics.length; i++){
+		var topic = topics[i];
+		$list.append("<li><a href='#' class='directTopic2' id='"+ topic.title + "?" + topic.subforum + "'>" + topic.title + "</a> [subforum: " + topic.subforum + "]</li>");
+	}
+	$wrapper.append($list);
+	return $wrapper;
 }
 
 function setViewLoggout() {
@@ -189,6 +261,8 @@ function setViewLoggout() {
 	$loggedUserBtns.hide();
 	$("h2#message").text("Welcome!");
 	$("a.newSubforum").addClass("hidden");
+	$(".startPanel").addClass("hidden");
+	$("#subForumsPanel").parent().show();
 }
 
 function logoutUser() {

@@ -16,10 +16,12 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import beans.Comment;
 import beans.Comments;
+import beans.Subforum;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
@@ -648,5 +650,33 @@ public class TopicService {
 		
 		return mapper.writeValueAsString(results);
 	}
+	
+	@GET
+	@Path("/getStartList/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getList(@Context HttpServletRequest request, @PathParam("username") String username) throws IOException{
+		ArrayList<Topic> list = new ArrayList<>();
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(!user.getUsername().equals(username)){
+			return mapper.writeValueAsString("");
+		}else {
+			ArrayList<Subforum> following = user.getFollowedSubforums();
+			if(following.size() == 0){
+				return mapper.writeValueAsString("");
+			}else {
+				Topics topics = new Topics(ctx.getRealPath(""));
+				for(Subforum s : following){
+					for(Topic t : topics.getTopics()){
+						if(t.getSubforum().equals(s.getName())){
+							list.add(t);
+						}
+					}
+				}
+				return mapper.writeValueAsString(list);
+			}
+		}
+	}
+	
 	
 }
