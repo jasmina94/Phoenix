@@ -8,6 +8,7 @@ function ContentGrid(){
 	this.reloadSubforum = function(){
 		var subforumName = $("#hiddenSubforum").val();
 		var self = this;
+		$("#topicsPanelBody").empty();
 		
 		$.ajax({
 			url: 'rest/topics/load/'+ subforumName,
@@ -35,9 +36,11 @@ function ContentGrid(){
 		$(".searchPanel").addClass("hidden");
 		$(".userPanel").addClass("hidden");
 		$(".adminPanel").addClass("hidden");
-		$topicsPanel.show();
+		$(".topicsPanel").show();
+		$("#topicsPanelBody").empty();
+		var $topicsPanelBody = $("#topicsPanelBody");
+		$topicsPanelBody.show();
 		
-		var $topicsPanelBody = $("#topicsPanelBody").empty();
 		var $topicsPanelHeader = $("#topicsPanelHeader").empty();	
 		
 		$topicsPanelHeader.append("<h3>Topics for subforum " + subforumName + "</h3>" +
@@ -56,9 +59,9 @@ function ContentGrid(){
 		}
 		
 		if(data.topics.length === 0){
-			var $found = $topicsPanel.find("div#noTopics");
+			var $found = $topicsPanelBody.find("div#noTopics");
 			if($found.length == 0){		
-				$topicsPanel.append("<div id='noTopics'>" +
+				$topicsPanelBody.append("<div id='noTopics'>" +
 						"<p>Sorry, there are no topics available for <i>"+ subforumName + "</i> subforum.</p>"+
 						"</div>");
 			}

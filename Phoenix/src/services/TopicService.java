@@ -249,6 +249,7 @@ public class TopicService {
 						t.setType(TopicType.TEXT);
 						t.setAuthor(author);
 						t.setCreationDate(date);
+						t.setSubforum(subforum);
 					}
 				}
 				for(User u : users.getRegisteredUsers()){
@@ -260,6 +261,7 @@ public class TopicService {
 							tt.setAuthor(author);
 							tt.setType(TopicType.TEXT);
 							tt.setCreationDate(date);
+							tt.setSubforum(subforum);
 							break;
 						}
 					}
@@ -318,6 +320,7 @@ public class TopicService {
 						t.setType(TopicType.LINK);
 						t.setAuthor(author);
 						t.setCreationDate(date);
+						t.setSubforum(subforum);
 					}
 				}
 				
@@ -330,6 +333,7 @@ public class TopicService {
 							tt.setAuthor(author);
 							tt.setType(TopicType.LINK);
 							tt.setCreationDate(date);
+							tt.setSubforum(subforum);
 							break;
 						}
 					}
@@ -388,6 +392,7 @@ public class TopicService {
 						t.setType(TopicType.PHOTO);
 						t.setAuthor(author);
 						t.setCreationDate(date);
+						t.setSubforum(subforum);
 					}
 				}
 				
@@ -400,6 +405,7 @@ public class TopicService {
 							tt.setAuthor(author);
 							tt.setType(TopicType.PHOTO);
 							tt.setCreationDate(date);
+							tt.setSubforum(subforum);
 							break;
 						}
 					}

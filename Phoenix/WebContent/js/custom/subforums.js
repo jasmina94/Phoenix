@@ -78,7 +78,7 @@ $(function (){
 			var subforum = $(this).attr("id");
 			checkModerator(subforum);
 			var user = checkLoggedUserName();
-			if(moderator === user || userRole === "ADMIN"){
+			if(moderator === user || userRole === "ADMINISTRATOR"){
 				deleteSubforum(subforum);
 			}else {
 				toastr.warning("You don't have permission to delete subforum.");

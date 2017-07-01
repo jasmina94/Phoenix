@@ -3,6 +3,7 @@ var newSrc = "";
 var userRole = "";
 var moderators = null;
 var allUsers = [];
+var subforums = [];
 
 $(function(){
 	
@@ -183,7 +184,8 @@ $(function(){
 				getTopic(topic, subforum);
 			}else if(userRole == "ADMINISTRATOR"){
 				getAllUsers();
-				getTopicAllEdits(topic, subforum);
+				getAllSubforums();
+				getTopicAllEditsAndMore(topic, subforum);
 			}else if(userRole == "MODERATOR" || user == author){
 				for(var i=0; i< moderators.length; i++){
 					if(moderators[i] === user){
@@ -199,6 +201,18 @@ $(function(){
 		}
 	});
 });
+
+function getAllSubforums(){
+	$.ajax({
+		url: 'rest/subforums/onlyNames',
+		type: 'GET',
+		contentType: 'application/json; charset=UTF-8',
+		async: false,
+		success : function(data){
+			subforums = data;
+		}		
+	});
+}
 
 function getAllUsers(){
 	$.ajax({
@@ -268,12 +282,10 @@ function getTopic(topic, subforum){
 }
 
 function prepareUsers(users){
-	var data = users.substring(1, users.length-1);
-	data = data.split(",");
-	for(var i=0; i< data.length; i++){
-		data[i] = data[i].substring(1, data[i].length-1);
+	var data = [];
+	for(var i=0; i< users.length; i++){
+		data.push(users[i].username);
 	}
-	
 	return data;
 }
 
@@ -293,15 +305,71 @@ function getTopicAllEdits(topic, subforum){
 				$("input#topicTitle").val(data.title);
 				$("input#topicTitle").prop("readonly", true);
 				$("input#author").val(data.author);
-				var complete = prepareUsers(allUsers);
-				$("#authorAuto").autocomplete({
-					source: complete
-				});
 				$("#topicDate").datepicker({
 					dateFormat: 'dd/mm/yy'
 				});
 				$("#topicDate").val(data.creationDate);
-				$("#authorAuto").val(data.author);
+				if(data.type == "TEXT"){
+					$("#optionsText").prop("checked", true);
+					$(".divForImage").addClass("hidden");
+					$(".divForLink").addClass("hidden");
+					$("#topicContentText").removeClass("hidden");
+					$("#topicContentLabel").removeClass("hidden");
+					$("#topicContentText").val(data.content);
+				}else if(data.type == "LINK"){
+					$("#optionsLink").prop("checked", true);
+					$(".divForLink").removeClass("hidden");
+					$(".divForImage").addClass("hidden");
+					$("#topicContentText").addClass("hidden");
+					$("#topicContentLabel").addClass("hidden");
+					$("#topicContentLink").val(data.content);
+				}else if(data.type == "PHOTO"){
+					$("#optionsImage").prop("checked", true);
+					$(".divForImage").removeClass("hidden");
+					$(".divForLink").addClass("hidden");
+					$("#topicContentText").addClass("hidden");
+					$("#topicContentLabel").addClass("hidden");
+					$("#previewTopicImage").attr("src", data.content);
+				}
+				$(".createTopic").attr("id", "edit");
+				$("#modalNewTopic").modal('show');
+			}else {
+				toastr.error("Error occured. Please try again");
+				return;
+			}
+		}, 
+		error: function(xhr, textStatus, errorThrown) {
+			toastr.error('Error!  Status = ' + xhr.status);
+			return false;
+		}
+	});
+}
+
+function getTopicAllEditsAndMore(topic, subforum){
+	$.ajax({
+		url: 'rest/topics/loadTopic/' + subforum,
+		type: 'POST',
+		data: topic,
+		contentType: 'application/json; charset=UTF-8',
+		success: function(data){
+			if(data){				
+				$(".creationDateDiv").removeClass("hidden");
+				$(".subforumDiv").removeClass("hidden");
+				$(".authorsDiv").removeClass("hidden");
+				$("#editTopicTitle").removeClass("hidden");
+				$("#newTopicTitle").addClass("hidden");
+				$("input#subforum").val(data.subforum);
+				$("input#topicTitle").val(data.title);
+				$("input#topicTitle").prop("readonly", true);
+				$("input#author").val(data.author);				
+				$("#topicDate").datepicker({
+					dateFormat: 'dd/mm/yy'
+				});
+				$("#topicSubforum").autocomplete({
+					source : subforums
+				});
+				$("#topicDate").val(data.creationDate);
+				$("#topicSubforum").val(data.subforum);
 				if(data.type == "TEXT"){
 					$("#optionsText").prop("checked", true);
 					$(".divForImage").addClass("hidden");
@@ -392,7 +460,22 @@ function uploadTopicImage(data){
 
 function makeTextTopicObject(edit) {
 	var title = $("input#topicTitle").val();
-	var subforum = $("#subforum").val();
+	var author =  $("#author").val();
+	var date = "";
+	var subforum = "";
+	if($(".creationDateDiv").hasClass("hidden")){
+		date = $("#date").val();
+	}else {
+		date = $("#topicDate").val();
+	}
+	
+	if($(".subforumDiv").hasClass("hidden")){
+		subforum = $("input#subforum").val();
+	}else {
+		subforum = $("#topicSubforum").val();
+	}
+	
+	var text = $("#topicContentText").val();
 	
 	if(!edit){
 		checkTopicUnique(title, subforum);
@@ -401,17 +484,6 @@ function makeTextTopicObject(edit) {
 			return false;
 		}
 	}
-	var author = "";
-	var date = "";
-	if($(".creationDateDiv").hasClass("hidden")){
-		author = $("#author").val();
-		date = $("#date").val();
-	}else {
-		author = $("#authorAuto").val();
-		date = $("#topicDate").val();
-	}	
-	
-	var text = $("#topicContentText").val();
 	var topic = new Object();
 	topic['title'] = title;
 	topic['content'] = text;
@@ -423,8 +495,20 @@ function makeTextTopicObject(edit) {
 
 function makeImageTopicObject(edit) {
 	var title = $("input#topicTitle").val();
-	console.log("ovo je title " + title);
-	var subforum = $("#subforum").val();
+	var subforum = "";
+	var author =  $("#author").val();
+	var date = "";
+	if($(".creationDateDiv").hasClass("hidden")){
+		date = $("#date").val();
+	}else {
+		date = $("#topicDate").val();
+	}
+	if($(".subforumDiv").hasClass("hidden")){
+		subforum = $("input#subforum").val();
+	}else {
+		subforum = $("#topicSubforum").val();
+	}
+	var src = newSrc;
 	
 	if(!edit){
 		checkTopicUnique(title, subforum);
@@ -433,17 +517,6 @@ function makeImageTopicObject(edit) {
 			return false;
 		}
 	}
-	
-	var author = "";
-	var date = "";
-	if($(".creationDateDiv").hasClass("hidden")){
-		author = $("#author").val();
-		date = $("#date").val();
-	}else {
-		author = $("#authorAuto").val();
-		date = $("#topicDate").val();
-	}	
-	var src = newSrc;
 	var topic = new Object();
 	topic['title'] = title;
 	topic['content'] = src;
@@ -454,10 +527,21 @@ function makeImageTopicObject(edit) {
 }
 
 function makeLinkTopicObject(edit) {
-	var title = $("input#topicTitle").val();
-	console.log("ovo je title " + title);
-	
-	var subforum = $("#subforum").val();
+	var title = $("input#topicTitle").val();	
+	var subforum = "";
+	var text = $("#topicContentLink").val();
+	var author = $("#author").val();
+	var date = "";
+	if($(".creationDateDiv").hasClass("hidden")){
+		date = $("#date").val();
+	}else {
+		date = $("#topicDate").val();
+	}
+	if($(".subforumDiv").hasClass("hidden")){
+		subforum = $("input#subforum").val();
+	}else {
+		subforum = $("#topicSubforum").val();
+	}
 	
 	if(!edit){
 		checkTopicUnique(title, subforum);
@@ -466,17 +550,6 @@ function makeLinkTopicObject(edit) {
 			return false;
 		}
 	}
-	
-	var text = $("#topicContentLink").val();
-	var author = "";
-	var date = "";
-	if($(".creationDateDiv").hasClass("hidden")){
-		author = $("#author").val();
-		date = $("#date").val();
-	}else {
-		author = $("#authorAuto").val();
-		date = $("#topicDate").val();
-	}	
 	var topic = new Object();
 	topic['title'] = title;
 	topic['content'] = text;
