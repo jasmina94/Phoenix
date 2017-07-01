@@ -408,5 +408,19 @@ public class UserService {
 		}
 	}
 	
+	@GET
+	@Path("/getUser/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUser(@Context HttpServletRequest request, @PathParam("username") String username) throws JsonParseException, JsonMappingException, IOException{
+		Users users = new Users(ctx.getRealPath(""));
+		for(User u : users.getRegisteredUsers()){
+			if(u.getUsername().toLowerCase().equals(username.toLowerCase())){
+				return mapper.writeValueAsString(u);
+			}
+		}
+		return mapper.writeValueAsString("");
+	}
+	
 	
 }

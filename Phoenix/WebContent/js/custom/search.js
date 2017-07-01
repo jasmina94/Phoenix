@@ -72,6 +72,22 @@ $(function(){
 		searchTopic(JSON.stringify(obj));
 	});
 	
+	$(document).on("click", "#applyUser", function(){
+		$(".resultUsers").empty();
+		$(".resultSubforums").empty();
+		$(".resultSubforums").addClass("hidden");
+		$(".resultTopics").empty();
+		$(".resultTopics").addClass("hidden");
+		emptySubforumSearch();
+		emptyTopicSearch();
+		var username = $("#userByUsername").val();
+		if(username === ""){
+			toastr.warning("Please insert at username for user search.");
+			return false;
+		}
+		searchUser(username);
+	});
+	
 	$(document).on("click", "#resetUser", function(){
 		emptyUserSearch();
 	});
@@ -115,24 +131,23 @@ $(function(){
 });
 
 function emptyAllSearches(){
-	$("#subByTitle").val("");
-	$("#subByDescr").val("");
-	$("#subByRespMod").val("");
-	$("#topByTitle").val("");
-	$("#topByContent").val("");
-	$("#topByAuthor").val("");
-	$("#topBySub").val("");
-	$("#userByUsername").val("");
+	emptyUserSearch();
+	emptySubforumSearch();
+	emptyTopicSearch();
 }
 
 function emptyUserSearch(){
 	$("#userByUsername").val("");
+	$(".resultUsers").empty();
+	$(".resultUsers").addClass("hidden");
 }
 
 function emptySubforumSearch(){
 	$("#subByTitle").val("");
 	$("#subByDescr").val("");
 	$("#subByRespMod").val("");
+	$(".resultSubforums").empty();
+	$(".resultSubforums").addClass("hidden");
 }
 
 function emptyTopicSearch(){
@@ -140,6 +155,8 @@ function emptyTopicSearch(){
 	$("#topByContent").val("");
 	$("#topByAuthor").val("");
 	$("#topBySub").val("");
+	$(".resultTopics").empty();
+	$(".resultTopics").addClass("hidden");
 }
 
 
@@ -213,7 +230,34 @@ function searchTopic(topic){
 				$(".resultTopics").removeClass("hidden");
 				$(".resultTopics").append(makeTopicsList(data));
 			}
-			
+		}
+	});
+}
+
+function searchUser(username){
+	$.ajax({
+		url: 'rest/users/getUser/' + username,
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		success: function(data){
+			if(data != ""){
+				$(".resultUsers").empty();
+				$(".resultUsers").removeClass("hidden");
+				$(".resultUsers").append("<div style='padding-left:10px;padding-top:10px;'>" +
+						"<p>Username: " + data.username + "</p>" +
+						"<p>Name: "+ data.firstname + "</p>"+
+						"<p>Lastname: " + data.lastname + "</p>" + 
+						"<p>Email: " + data.email + "</p>" +
+						"<p>Phone: " + data.phone + "</p>" +
+						"<p>Member since: " + data.registrationDate + "</p>" +
+						"<p>Role: " + data.role + "</p>" +
+						"<p>Send message: <a href='#' class='msgUser' id='" + data.username + "'><span class='glyphicon glyphicon-envelope'></span></a></p></div>");
+			}else {
+				$(".resultUsers").empty();
+				$(".resultUsers").removeClass("hidden");
+				$(".resultUsers").append("<p style='text-align:center;font-style:italic'>Sorry! There are no users with this username.<p>");
+			}
 		}
 	});
 }
