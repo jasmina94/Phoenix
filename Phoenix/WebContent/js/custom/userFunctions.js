@@ -29,7 +29,7 @@ $(function(){
 		var subforum = id[2];
 		$(".userPanel").addClass("hidden");
 		$(".topicsPanel").show();
-		var topicObj = findTopic(topic, subforum);
+		var topicObj = findTopicMy(topic, subforum);
 		var content = new ContentGrid();
 		content.showTopicWithComments(topicObj);
 		$("body").animate({
@@ -59,7 +59,7 @@ $(function(){
 	});
 });
 
-function findTopic(topic, subforum){
+function findTopicMy(topic, subforum){
 	var object = [];
 	for(var i=0; i <savedTopics.length; i++){
 		if(savedTopics[i].title === topic && savedTopics[i].subforum === subforum){

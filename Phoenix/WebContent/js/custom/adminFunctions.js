@@ -1,6 +1,10 @@
 var allModerators = [];
 var allUsers = [];
 var subforum = "";
+var follSubs = [];
+var userVotes = [];
+var savedComments1 = [];
+var savedTopics1 = [];
 
 $(function(){
 	//ADMIN EVENTS	
@@ -44,7 +48,52 @@ $(function(){
 	$(document).on("click", ".deleteEntity", function(){
 		var id = $(this).attr("id");
 		deleteEntity(id);
-	});	
+	});
+	
+	$(document).on("click", ".followSubforums1", function(){
+		showFollowingSubforums1();
+		buildFollowingSubforumList1(follSubs);
+	});
+	
+	$(document).on("click", ".userVotes1", function(){
+		showUserVotes1();
+		buildVotesContent1(userVotes);
+	});
+	
+	$(document).on("click", ".savedEntities1", function(){
+		showSavedEntities1();
+		buildSavedContent1(savedTopics1, savedComments1);
+	});
+	
+	$(document).on("click", ".directTopic1", function(){
+		showSavedEntities1();
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var topic = id[0];
+		var subforum = id[1];
+		$(".adminPanel").addClass("hidden");
+		$(".topicsPanel").show();
+		var topicObj = findTopic1(topic, subforum);
+		var content = new ContentGrid();
+		content.showTopicWithComments(topicObj);	
+	});
+	
+	$(document).on("click", ".directComment1", function(){
+		showSavedEntities1();
+		var id = $(this).attr("id");
+		id = id.split("?");
+		var commentId = id[0];
+		var topic = id[1];
+		var subforum = id[2];
+		$(".adminPanel").addClass("hidden");
+		$(".topicsPanel").show();
+		var topicObj = findTopic1(topic, subforum);
+		var content = new ContentGrid();
+		content.showTopicWithComments(topicObj);
+		$("body").animate({
+	        scrollTop: $("#" + commentId).offset().top
+	    }, 500);
+	});
 	
 	$(document).on("click", ".removeModerator", function(){
 		var moderator = $(this).attr("id");
@@ -662,4 +711,260 @@ function getAllReports(){
 			toastr.error('Error!  Status = ' + xhr.status);
 		}
 	});
+}
+
+function showFollowingSubforums1(){
+	var user = checkIfUserIsLoggedIn();
+	if(user === ""){
+		location.reload();
+	}else {
+		$.ajax({
+			url: 'rest/users/subforums',
+			type: 'GET',
+			contentType : "application/json; charset=UTF-8",
+			async: false,
+			success: function(data){
+				if(data.length != 0){
+					follSubs = data;
+				}else {
+					follSubs = [];
+				}
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+			}
+		});
+	}
+}
+
+function buildFollowingSubforumList1(subforums){
+	var $panel = $("#adminPanelBody");
+	$panel.show();
+	$panel.empty();
+	$panel.removeClass("hidden");
+	
+	$panel.append("<h4>Subforums you follow</h4><br/>");	
+	if(subforums.length == 0){
+		$panel.append("<h5>You haven't followed any subforum yet!</h5>");
+	}else {
+		$panel.append(makeSubforumList1(subforums));
+	}
+}
+
+function makeSubforumList1(subforums){
+	var $wrapper = $("<div>");
+	
+	$.each(subforums, function(index, subforum){
+		$wrapper.append("<div class='media' style='padding-left:10px'>"+
+					"<div class='media-left media-top'>" +
+					"<a href='#'><img class='media-object showTopics' id='" + subforum.name + "' src='"+ subforum.icon + "' width='32' height='32'></a> " +
+					"</div>" +
+					"<div class='media-body'>" + 
+					"<h4 class='media-heading showTopics' id='"+ subforum.name + "'>" + subforum.name + "</h4>" +
+					"<p>" + subforum.details + "</p>" +
+					"<p>Moderator: " + "<a href='#' class='msgUser' id='"+ subforum.responsibleModerator + "'>" + subforum.responsibleModerator + "</a></p>" +
+					"<div><a href='#' data-toggle='modal' data-target='#modalDetails'" +
+					"id='"+index + "' class='detailsLink'>Details</a></div><br/>"+	
+					"<a href='#' class='followSubforum' id='" + subforum.name + "'>Follow</a></div>"+
+					"<hr></div>");
+	});
+	
+	return $wrapper;
+}
+
+
+function showUserVotes1(){
+	var user = checkIfUserIsLoggedIn();
+	if(user === ""){
+		location.reload();
+	}else {
+		$.ajax({
+			url: 'rest/users/votes',
+			type: 'GET',
+			contentType : "application/json; charset=UTF-8",
+			async: false,
+			success: function(data){
+				if(data.length != 0){
+					userVotes = data;
+					return;
+				}else {
+					userVotes = [];
+					return;
+				}
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+			}
+		});
+	}
+}
+
+function buildVotesContent1(votes){
+	var $panel = $("#adminPanelBody");
+	$panel.show();
+	$panel.empty();
+	$panel.removeClass("hidden");
+	
+	$panel.append("<h4>Your likes and dislikes</h4><br/>");	
+	if(votes.length == 0){
+		$panel.append("<h5>You haven't like nor dislike any topic yet!</h5>");
+	}else {
+		$panel.append(makeVotesList(votes));
+	}
+}
+
+function makeVotesList(votes){
+	var $wrapper = $("<div>");
+	var $table = $("<table>");
+	var $header = $("<thead>");
+	var $body = $("<tbody>");
+	
+	$table.addClass("reportsTable");
+	
+	$header.append("<tr>" +
+			"<th>Type</th>" +
+			"<th>Topic/Comment</th>" + 
+			"<th>For topic </th>");
+	
+	for(var i=0; i<votes.length; i++){
+		var vote = votes[i];
+		if(vote.type && vote.forComment){
+			$body.append("<tr>" +
+					"<td><span class='glyphicon glyphicon-thumbs-up'></span></td>" +
+					"<td><a href='#' class='showVoteComment' id='" + vote.votingCommentId + "'>Comment</a></td>" +
+					"<td>"+ vote.votingTopicTitle + " [" + vote.topicSubforumName + "]</td>");		
+		}
+		if(vote.type && !vote.forComment){
+			$body.append("<tr>" +
+					"<td><span class='glyphicon glyphicon-thumbs-up'></span></td>" +
+					"<td><a href='#' class='showVoteTopic' id='" + vote.votingTopicTitle + "?" + vote.topicSubforumName + "'>Topic</a></td>" +
+					"<td>"+ vote.votingTopicTitle + " [" + vote.topicSubforumName + "]</td>");
+		}
+		if(!vote.type && vote.forComment){
+			$body.append("<tr>" +
+					"<td><span class='glyphicon glyphicon-thumbs-down'></span></td>" +
+					"<td><a href='#' class='showVoteComment' id='" + vote.votingCommentId + "'>Comment</a></td>" +
+					"<td>"+ vote.votingTopicTitle + " [" + vote.topicSubforumName + "]</td>");
+		}
+		if(!vote.type && !vote.forComment){
+			$body.append("<tr>" +
+					"<td><span class='glyphicon glyphicon-thumbs-down'></span></td>" +
+					"<td><a href='#' class='showVoteTopic' id='" + vote.votingTopicTitle + "?" + vote.topicSubforumName + "'>Topic</a></td>" +
+					"<td>"+ vote.votingTopicTitle + " [" + vote.topicSubforumName + "]</td>");
+		}
+	}
+	
+	$table.append($header);
+	$table.append($body);
+	$wrapper.append($table);
+	
+	return $wrapper;
+}
+
+function showSavedEntities1(){
+	var user = checkIfUserIsLoggedIn();
+	if(user === ""){
+		location.reload();
+	}else {
+		$.ajax({
+			url: 'rest/users/getSavedTopics',
+			type: 'GET',
+			contentType : "application/json; charset=UTF-8",
+			async: false,
+			success: function(data){
+				if(data.length != 0){
+					savedTopics1 = data;
+				}else {
+					savedTopics1 = [];
+				}
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+			}
+		});
+		$.ajax({
+			url: 'rest/users/getSavedComments',
+			type: 'GET',
+			contentType : "application/json; charset=UTF-8",
+			async: false,
+			success: function(data){
+				if(data.length != 0){
+					savedComments1 = data;
+				}else {
+					savedComments1 = [];
+				}
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				toastr.error('Error!  Status = ' + xhr.status);
+			}
+		});
+	}
+}
+
+
+function buildSavedContent1(topics, comments){
+	var $panel = $("#adminPanelBody");
+	$panel.show();
+	$panel.empty();
+	$panel.removeClass("hidden");
+	
+	$panel.append("<h4>Saved topics</h4></br/>");	
+	if(topics.length == 0){
+		$panel.append("<h5>You haven't save any topic yet!</h5>");
+	}else {
+		$panel.append(makeTopicsList1(topics));
+	}
+	
+	$panel.append("<hr/>")
+	
+	$panel.append("<h4>Saved comments</h4><br/>");
+	if(comments.length == 0){
+		$panel.append("<h5>You haven't save any comment yet!</h5>");
+	}else {
+		$panel.append(makeCommentsList1(comments));
+	}
+}
+
+function makeTopicsList1(topics){
+	var $wrapper = $("<div>");
+	var $list = $("<ul>");
+	
+	for(var i=0; i<topics.length; i++){
+		var topic = topics[i];
+		$list.append("<li><a href='#' class='directTopic1' id='"+ topic.title + "?" + topic.subforum + "'>" + topic.title + "</a> [subforum: " + topic.subforum + "]</li>");
+	}
+	
+	$wrapper.append($list);
+	
+	return $wrapper;
+}
+
+function makeCommentsList1(comments){
+	var $wrapper = $("<div>");
+	var $list = $("<ul>");
+	
+	for(var i=0; i<comments.length; i++){
+		var comment = comments[i];
+		if(!comment.deleted){
+			$list.append("<li><a href='#' class='directComment1' id='"+ comment.id + "?" + comment.topic + "?" + comment.subforum + "'>" + comment.content + "</a> [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
+		}else {
+			$list.append("<li style='text-decoration: line-through'>comment deleted [topic: " + comment.topic + " subforum: " + comment.subforum + "]</li>");
+		}
+		
+	}
+	
+	$wrapper.append($list);
+	
+	return $wrapper;
+}
+
+function findTopic1(topic, subforum){
+	var object = [];
+	for(var i=0; i <savedTopics1.length; i++){
+		if(savedTopics1[i].title === topic && savedTopics1[i].subforum === subforum){
+			object = savedTopics1[i];
+			break;
+		}
+	}
+	return object;
 }

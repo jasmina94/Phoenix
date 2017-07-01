@@ -161,6 +161,7 @@ function buildView(){
 	$("#userPanelBody").removeClass("hidden");
 	$("#userPanelBody").show();
 	$("#userPanelBody").empty();
+	$("#userPanelBody").append("<h4 style='text-align:center;padding-bottom:10px;'>Subforums</h4>");
 	$("#userPanelBody").append(subforumsControls());
 	$("#userPanelBody").append("<br/>");
 	$("#userPanelBody").append("<h4 style='text-align:center;padding-bottom:10px;'>Reports</h4>");
@@ -169,7 +170,7 @@ function buildView(){
 
 function subforumsControls(){
 	if(subforums.length == 0){
-		return $("<p>There are no subforums you are responsible for.");
+		return $("<p style='text-align:center'>There are no subforums you are responsible for.</p>");
 	}
 	
 	var $div = $("<div>");
@@ -205,7 +206,7 @@ function subforumsControls(){
 
 function reportsControls(){
 	if(reportsOnTopics.length == 0){
-		return $("<p>There are no reports to process.</p>");
+		return $("<p style='text-align:center'>There are no reports to process.</p>");
 	}
 	var $table = $("<table>");
 	

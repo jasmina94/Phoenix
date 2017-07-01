@@ -33,6 +33,8 @@ function ContentGrid(){
 		$oneTopicPanel.hide();
 		$(".userPanel").hide();
 		$(".searchPanel").addClass("hidden");
+		$(".userPanel").addClass("hidden");
+		$(".adminPanel").addClass("hidden");
 		$topicsPanel.show();
 		
 		var $topicsPanelBody = $("#topicsPanelBody").empty();
@@ -139,6 +141,10 @@ function ContentGrid(){
 		$jumbotron.hide();
 		$subforumsPanel.hide();
 		$topicsPanel.hide();
+		$(".userPanel").hide();
+		$(".searchPanel").addClass("hidden");
+		$(".userPanel").addClass("hidden");
+		$(".adminPanel").addClass("hidden");
 		$oneTopicPanel.show();
 		
 		var $topicPanelHeader = $("#oneTopicHeader").empty();

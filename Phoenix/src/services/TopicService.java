@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import beans.Comment;
 import beans.Comments;
 import beans.Subforum;
+import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
@@ -678,5 +679,28 @@ public class TopicService {
 		}
 	}
 	
-	
+	@GET
+	@Path("/recommend/{username}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String recommend(@Context HttpServletRequest request, @PathParam("username") String username) throws JsonParseException, JsonMappingException, IOException{
+		ArrayList<Topic> list = new ArrayList<>();
+		Topics allTopics = new Topics(ctx.getRealPath(""));
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(!user.getUsername().equals(username)){
+			return mapper.writeValueAsString("");
+		}else {
+			ArrayList<Topic> following = user.getFollowedTopics();
+			for(Topic tt : following){
+				for(Topic t : allTopics.getTopics()){
+					if(tt.getSubforum().equals(t.getSubforum()) || tt.getAuthor().equals(t.getAuthor()) || tt.getContent().toLowerCase().contains(t.getContent().toLowerCase())){
+						if(!tt.getTitle().equals(t.getTitle())){
+							list.add(t);
+						}
+					}
+				}
+			}			
+			return mapper.writeValueAsString(list);
+		}
+	}
 }
