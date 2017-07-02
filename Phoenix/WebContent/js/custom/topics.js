@@ -29,6 +29,7 @@ $(function(){
 			$("#topicContentLabel").removeClass("hidden");
 			$(".divForLink").addClass("hidden");
 			$(".divForImage").addClass("hidden");
+			$("input#topicTitle").val("");
 			$("input#topicTitle").prop("readonly", false);
 			$("#modalNewTopic").modal('show');
 		}
@@ -181,7 +182,7 @@ $(function(){
 			return false;
 		} else {
 			if(userRole == "USER" && user == author){
-				getTopic(topic, subforum);
+				getTopic1(topic, subforum);
 			}else if(userRole == "ADMINISTRATOR"){
 				getAllUsers();
 				getAllSubforums();
@@ -230,7 +231,7 @@ function getAllUsers(){
 	});
 }
 
-function getTopic(topic, subforum){
+function getTopic1(topic, subforum){
 	$.ajax({
 		url: 'rest/topics/loadTopic/' + subforum,
 		type: 'POST',

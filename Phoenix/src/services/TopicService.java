@@ -2,6 +2,8 @@ package services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +18,11 @@ import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import beans.Comment;
 import beans.Comments;
 import beans.Subforum;
-import beans.Subforums;
 import beans.Topic;
 import beans.Topics;
 import beans.User;
@@ -121,12 +121,14 @@ public class TopicService {
 		}
 
 		if (success) {
+			String empty = "";
 			User user = (User) request.getSession().getAttribute("loggedUser");
 			Comment newComment = new Comment();
 			newComment.setContent(comment);
 			newComment.setTopic(topic);
 			newComment.setSubforum(subforum);
-			newComment.setAuthor(user.getUsername());			
+			newComment.setAuthor(user.getUsername());
+			newComment.setParentComment(empty);
 			
 			Topics allTopics = (Topics) ctx.getAttribute("allTopics");
 			for(Topic t : allTopics.getTopics()){
@@ -311,7 +313,7 @@ public class TopicService {
 		
 		if(success){
 			if(!edit){
-				Topic newTopic = new Topic(subforum, title, TopicType.TEXT, author, content);
+				Topic newTopic = new Topic(subforum, title, TopicType.LINK, author, content);
 				allTopics.getTopics().add(newTopic);
 			}else {
 				for(Topic t: allTopics.getTopics()){
@@ -665,7 +667,9 @@ public class TopicService {
 	public String getList(@Context HttpServletRequest request, @PathParam("username") String username) throws IOException{
 		ArrayList<Topic> list = new ArrayList<>();
 		User user = (User) request.getSession().getAttribute("loggedUser");
-		if(!user.getUsername().equals(username)){
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else if(!user.getUsername().equals(username)){
 			return mapper.writeValueAsString("");
 		}else {
 			ArrayList<Subforum> following = user.getFollowedSubforums();
@@ -697,16 +701,44 @@ public class TopicService {
 			return mapper.writeValueAsString("");
 		}else {
 			ArrayList<Topic> following = user.getFollowedTopics();
-			for(Topic tt : following){
-				for(Topic t : allTopics.getTopics()){
-					if(tt.getSubforum().equals(t.getSubforum()) || tt.getAuthor().equals(t.getAuthor()) || tt.getContent().toLowerCase().contains(t.getContent().toLowerCase())){
-						if(!tt.getTitle().equals(t.getTitle())){
-							list.add(t);
+			if(following.size() != 0){
+				for(Topic tt : following){
+					for(Topic t : allTopics.getTopics()){
+						if(tt.getSubforum().equals(t.getSubforum()) || tt.getAuthor().equals(t.getAuthor()) 
+								|| tt.getContent().toLowerCase().contains(t.getContent().toLowerCase())){
+							if(!tt.getTitle().equals(t.getTitle())){
+								list.add(t);
+							}
 						}
 					}
 				}
-			}			
+				list = removeDuplicates(list);
+			}else {
+				ArrayList<Subforum> followfSubs = user.getFollowedSubforums();
+				if(followfSubs.size() != 0){
+					for(Subforum s : followfSubs){
+						for(Topic t : allTopics.getTopics()){
+							if(t.getSubforum().equals(s.getName())){
+								list.add(t);
+							}
+						}
+					}
+				}
+			}
 			return mapper.writeValueAsString(list);
 		}
+	}
+	
+	private ArrayList<Topic> removeDuplicates(ArrayList<Topic> topics){
+		ArrayList<Topic> topicsToReturn = new ArrayList<>();
+		final Set<Topic> setToReturn = new HashSet();
+		final Set<Topic> helper = new HashSet();
+		for(Topic t : topics){
+			if(!helper.add(t)){
+				setToReturn.add(t);
+			}
+		}
+		topicsToReturn.addAll(setToReturn);
+		return topicsToReturn;
 	}
 }

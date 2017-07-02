@@ -90,9 +90,6 @@ $(function(){
 });
 
 function removeModerators(values, subforum){
-	console.log(values);
-	console.log(subforum);
-	console.log(JSON.stringify(values));
 	$.ajax({
 		url: 'rest/subforums/removeModerators/' + subforum,
 		type: 'POST',

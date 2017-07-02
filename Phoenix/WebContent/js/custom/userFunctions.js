@@ -1,6 +1,8 @@
 var savedTopics = [];
 var savedComments = [];
 var userVotes = [];
+var topicOnComment = null;
+
 
 $(function(){
 	$(document).on("click", ".savedEntities", function(){
@@ -29,9 +31,9 @@ $(function(){
 		var subforum = id[2];
 		$(".userPanel").addClass("hidden");
 		$(".topicsPanel").show();
-		var topicObj = findTopicMy(topic, subforum);
+		findTopicBasedOnComment(topic, subforum, commentId);
 		var content = new ContentGrid();
-		content.showTopicWithComments(topicObj);
+		content.showTopicWithComments(topicOnComment);
 		$("body").animate({
 	        scrollTop: $("#" + commentId).offset().top
 	    }, 500);
@@ -68,6 +70,19 @@ function findTopicMy(topic, subforum){
 		}
 	}
 	return object;
+}
+
+function findTopicBasedOnComment(topic, subforum, commentId){
+	$.ajax({
+		url: 'rest/comments/getTopic/' + commentId,
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			topicOnComment = data;
+		}
+	});
 }
 
 function showSavedEntities(){

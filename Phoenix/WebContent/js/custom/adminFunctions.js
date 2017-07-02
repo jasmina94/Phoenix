@@ -5,6 +5,7 @@ var follSubs = [];
 var userVotes = [];
 var savedComments1 = [];
 var savedTopics1 = [];
+var topicOnComment1 = null;
 
 $(function(){
 	//ADMIN EVENTS	
@@ -35,19 +36,19 @@ $(function(){
 		getTopic(topic, subforum);
 	});
 	
-	$(document).on("click", ".rejectReport", function(){
+	$(document).on("click", ".rejectReport1", function(){
 		var id = $(this).attr("id");
-		rejectReport(id);
+		rejectReport1(id);
 	});
 	
-	$(document).on("click", ".warnAuthors", function(){
+	$(document).on("click", ".warnAuthors1", function(){
 		var id = $(this).attr("id");
-		warnAuthors(id);
+		warnAuthors1(id);
 	});
 	
-	$(document).on("click", ".deleteEntity", function(){
+	$(document).on("click", ".deleteEntity1", function(){
 		var id = $(this).attr("id");
-		deleteEntity(id);
+		deleteEntity1(id);
 	});
 	
 	$(document).on("click", ".followSubforums1", function(){
@@ -87,9 +88,9 @@ $(function(){
 		var subforum = id[2];
 		$(".adminPanel").addClass("hidden");
 		$(".topicsPanel").show();
-		var topicObj = findTopic1(topic, subforum);
+		findTopicBasedOnComment1(topic, subforum, commentId);
 		var content = new ContentGrid();
-		content.showTopicWithComments(topicObj);
+		content.showTopicWithComments(topicOnComment1);
 		$("body").animate({
 	        scrollTop: $("#" + commentId).offset().top
 	    }, 500);
@@ -263,6 +264,19 @@ function findSubforum(moderator){
 	});
 }
 
+function findTopicBasedOnComment1(topic, subforum, commentId){
+	$.ajax({
+		url: 'rest/comments/getTopic/' + commentId,
+		type: 'GET',
+		dataType: 'json',
+		contentType: 'application/json; charset=UTF-8;',
+		async: false,
+		success: function(data){
+			topicOnComment1 = data;
+		}
+	});
+}
+
 function getAllUsers(){
 	$.ajax({
 		url: 'rest/users/all',
@@ -278,7 +292,7 @@ function getAllUsers(){
 	});
 }
 
-function deleteEntity(reportId){
+function deleteEntity1(reportId){
 	$.ajax({
 		url: 'rest/reports/delete/' + reportId,
 		type: 'POST',
@@ -287,7 +301,7 @@ function deleteEntity(reportId){
 		success: function(data){
 			if(data.length != 0){
 				for(var i=0; i< data.length; i++){
-					sendNotification(data[i]);
+					sendNotification1(data[i]);
 				}
 				getAllReports();
 				toastr.success("Deleted unappropriate content. Content author and report author notified!");
@@ -300,7 +314,7 @@ function deleteEntity(reportId){
 	});
 }
 
-function warnAuthors(reportId){
+function warnAuthors1(reportId){
 	$.ajax({
 		url: 'rest/reports/warn/' + reportId,
 		type: 'POST',
@@ -309,7 +323,7 @@ function warnAuthors(reportId){
 		success: function(data){
 			if(data.length != 0){
 				for(var i=0; i< data.length; i++){
-					sendNotification(data[i]);
+					sendNotification1(data[i]);
 				}
 				getAllReports();
 				toastr.success("Entity author and report author will be warned!");
@@ -325,7 +339,7 @@ function warnAuthors(reportId){
 	});
 }
 
-function rejectReport(reportId){
+function rejectReport1(reportId){
 	$.ajax({
 		url: 'rest/reports/reject/' + reportId,
 		type: 'POST',
@@ -333,7 +347,7 @@ function rejectReport(reportId){
 		dataType: "json",
 		success: function(data){
 			if(data != ""){
-				sendNotification(data);
+				sendNotification1(data);
 				getAllReports();
 				toastr.success("Successfully rejected report! User " + data.receiver + " will be notified about rejection.");
 				return true;
@@ -348,7 +362,7 @@ function rejectReport(reportId){
 	});
 }
 
-function sendNotification(notification){
+function sendNotification1(notification){
 	$.ajax({
 		url: 'rest/notify/create',
 		type: 'POST',
@@ -633,64 +647,75 @@ function showReports(data){
 
 
 function makeReportTable(data) {
-	var $table = $("<table>");
-	
-	$table.addClass("reportsTable");
-	
-	var $header = $("<thead>");
-	var $body = $("<tbody>");
-	
-	$header.append("<tr>" +
-			"<th>Status</th>" +
-			"<th>Date </th>" +
-			"<th>Author </th>" +
-			"<th>Entity </th>" +
-			"<th>Content </th>"+
-			"<th>&nbsp;</th>" +
-			"<th>&nbsp;</th>" + 
-			"<th>&nbsp;</th></tr>");
-	
-	for(var i=0; i < data.length; i++){
-		var report = data[i];
-		if(report.status === "PENDING"){
-			if(report.commentId != ""){
-				$body.append("<tr>" +
-						"<td>" + report.status + "</td>"+
-						"<td>" + report.date + "</td>"+
-						"<td>" + report.reporter + "</td>" +
-						"<td><a href='#' class='previewComment' id='"+ report.commentId + "'>Comment</a></td>" +
-						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
-						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
-			}else if(report.topicTitle != ""){
-				$body.append("<tr>" +
-						"<td>" + report.status + "</td>"+
-						"<td>" + report.date + "</td>"+
-						"<td>" + report.reporter + "</td>" +
-						"<td><a href='#' class='previewTopic' id='"+ report.topicTitle +"?" + report.subforum + "'>Topic " + report.topicTitle + "</a></td>" +
-						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
-						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
-			} else {
-				$body.append("<tr>" +
-						"<td>" + report.status + "</td>"+
-						"<td>" + report.date + "</td>"+
-						"<td>" + report.reporter + "</td>" +
-						"<td><a href='#' class='previewSubforum' id='"+ report.subforum + "'>Subforum " + report.subforum + "</a></td>" +
-						"<td>" + report.content + "</td>"+
-						"<td><a href='#' class='deleteEntity' id='" + report.id + "'>Delete entity</a></td>" +
-						"<td><a href='#' class='warnAuthors' id='" + report.id + "'>Warn authors</a></td>"+
-						"<td><a href='#' class='rejectReport' id='" + report.id + "'>Reject</a></td></tr>");
-			}
+	var flags = [];
+	for(var i=0; i< data.length; i++){
+		if(data[i].status === "PENDING"){
+			flags.push(data[i]);
 		}
 	}
 	
-	$table.append($header);
-	$table.append($body);
-	
-	return $table;	
+	if(flags.length != 0){
+		var $table = $("<table>");
+		
+		$table.addClass("reportsTable");
+		
+		var $header = $("<thead>");
+		var $body = $("<tbody>");
+		
+		$header.append("<tr>" +
+				"<th>Status</th>" +
+				"<th>Date </th>" +
+				"<th>Author </th>" +
+				"<th>Entity </th>" +
+				"<th>Content </th>"+
+				"<th>&nbsp;</th>" +
+				"<th>&nbsp;</th>" + 
+				"<th>&nbsp;</th></tr>");
+		
+		for(var i=0; i < data.length; i++){
+			var report = data[i];
+			if(report.status === "PENDING"){
+				if(report.commentId != ""){
+					$body.append("<tr>" +
+							"<td>" + report.status + "</td>"+
+							"<td>" + report.date + "</td>"+
+							"<td>" + report.reporter + "</td>" +
+							"<td><a href='#' class='previewComment' id='"+ report.commentId + "'>Comment</a></td>" +
+							"<td>" + report.content + "</td>"+
+							"<td><a href='#' class='deleteEntity1' id='" + report.id + "'>Delete entity</a></td>" +
+							"<td><a href='#' class='warnAuthors1' id='" + report.id + "'>Warn authors</a></td>"+
+							"<td><a href='#' class='rejectReport1' id='" + report.id + "'>Reject</a></td></tr>");
+				}else if(report.topicTitle != ""){
+					$body.append("<tr>" +
+							"<td>" + report.status + "</td>"+
+							"<td>" + report.date + "</td>"+
+							"<td>" + report.reporter + "</td>" +
+							"<td><a href='#' class='previewTopic' id='"+ report.topicTitle +"?" + report.subforum + "'>Topic " + report.topicTitle + "</a></td>" +
+							"<td>" + report.content + "</td>"+
+							"<td><a href='#' class='deleteEntity1' id='" + report.id + "'>Delete entity</a></td>" +
+							"<td><a href='#' class='warnAuthors1' id='" + report.id + "'>Warn authors</a></td>"+
+							"<td><a href='#' class='rejectReport1' id='" + report.id + "'>Reject</a></td></tr>");
+				} else {
+					$body.append("<tr>" +
+							"<td>" + report.status + "</td>"+
+							"<td>" + report.date + "</td>"+
+							"<td>" + report.reporter + "</td>" +
+							"<td><a href='#' class='previewSubforum' id='"+ report.subforum + "'>Subforum " + report.subforum + "</a></td>" +
+							"<td>" + report.content + "</td>"+
+							"<td><a href='#' class='deleteEntity1' id='" + report.id + "'>Delete entity</a></td>" +
+							"<td><a href='#' class='warnAuthors1' id='" + report.id + "'>Warn authors</a></td>"+
+							"<td><a href='#' class='rejectReport1' id='" + report.id + "'>Reject</a></td></tr>");
+				}
+			}
+		}
+		
+		$table.append($header);
+		$table.append($body);
+		
+		return $table;	
+	}else {
+		return $("<p stlye='font-style:italic'>No more reports with status 'PENDING'.</p>");
+	}
 }
 
 function getAllReports(){
@@ -698,6 +723,7 @@ function getAllReports(){
 		url: 'rest/reports/all',
 		type: 'GET',
 		contentType : "application/json; charset=UTF-8",
+		async: false,
 		success: function(data){
 			if(data.length == 0){
 				toastr.success("No reports to proccess!");

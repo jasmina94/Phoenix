@@ -13,7 +13,7 @@ $(function(){
 		$(".jumbotron").hide();
 		$(".startPanel").addClass("hidden");
 		$(".userPanel").addClass("hidden");
-		$(".adminPanel").adClass("hidden");
+		$(".adminPanel").addClass("hidden");
 		$(".resultSubforums").empty();
 		$(".resultSubforums").addClass("hidden");
 		$(".resultTopics").empty();

@@ -5,6 +5,8 @@ package services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -137,30 +139,41 @@ public class ReportService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getModeratorsReports(@Context HttpServletRequest request, @PathParam("username") String moderator) throws IOException{
 		boolean success = true;
-		ArrayList<Report> reports = new ArrayList<>();
+		Set<Report> reports = new HashSet();
+		Set<Report> help = new HashSet<>();
+		ArrayList<Report> ret = new ArrayList<>();
 		User user = (User)request.getSession().getAttribute("loggedUser");
 		if(user == null || !user.getRole().equals(Role.MODERATOR)){
 			success = false;
 		}
 		if(success){
 			Subforums subforums = new Subforums(ctx.getRealPath(""));
-			String subforum = "";
+			ArrayList<String> subforumsResponsible = new ArrayList<>();
 			for(Subforum s : subforums.getSubforums()){
 				if(s.getResponsibleModerator().equals(moderator)){
-					subforum = s.getName();
+					subforumsResponsible.add(s.getName());
 				}
 			}
 			
 			Reports allReports = new Reports(ctx.getRealPath(""));
-			for(Report r : allReports.getReports()){
-				if(r.getSolver().equals(ReportSolver.BOTH) && r.getSubforum().equals(subforum)
-						&& !r.getTopicTitle().isEmpty() && r.getStatus().equals(ReportStatus.PENDING)){
-					reports.add(r);
+			for(String s : subforumsResponsible){
+				for(Report r : allReports.getReports()){
+					if(r.getSolver().equals(ReportSolver.BOTH) && r.getSubforum().equals(s)
+							&& !r.getTopicTitle().isEmpty() && r.getStatus().equals(ReportStatus.PENDING)){
+						if(help.add(r)){
+							reports.add(r);
+						}
+					}else if(r.getSolver().equals(ReportSolver.BOTH) && r.getSubforum().isEmpty() &&
+							r.getTopicTitle().isEmpty() && r.getStatus().equals(ReportStatus.PENDING)){
+						if(help.add(r)){
+							reports.add(r);
+						}
+					}
 				}
 			}
+			ret.addAll(reports);
 		}
-		
-		return mapper.writeValueAsString(reports);
+		return mapper.writeValueAsString(ret);
 	}
 	
 	@POST

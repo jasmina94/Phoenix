@@ -255,4 +255,32 @@ public class CommentService {
 			return mapper.writeValueAsString(content);
 		}
 	}
+	
+	@GET
+	@Path("/getTopic/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String topic(@Context HttpServletRequest request, @PathParam("id") String commentId) throws JsonParseException, JsonMappingException, IOException{
+		User user = (User) request.getSession().getAttribute("loggedUser");
+		if(user == null){
+			return mapper.writeValueAsString("");
+		}else {
+			String topicName = "", subforumName = "";
+			Comments comments = new Comments(ctx.getRealPath(""));
+			for(Comment c : comments.getComments()){
+				if(c.getId().equals(commentId)){
+					topicName = c.getTopic();
+					subforumName = c.getSubforum();
+					break;
+				}
+			}
+			Topics topics = new Topics(ctx.getRealPath(""));
+			for(Topic t : topics.getTopics()){
+				if(t.getTitle().equals(topicName) && t.getSubforum().equals(subforumName)){
+					return mapper.writeValueAsString(t);
+				}
+			}
+			return mapper.writeValueAsString("");
+		}
+	}
 }
