@@ -1,42 +1,46 @@
 [
     {
-        "content": "fsfsdfdsfs",
-        "date": "17/06/2017",
-        "commentId": "",
-        "topicTitle": "",
-        "subforum": "Greece",
-        "reporter": "jass94",
-        "status": "PENDING",
-        "solver": "ADMIN"
-    },
-    {
-        "content": "Jass ovde reportujeee",
-        "date": "17/06/2017",
-        "commentId": "",
-        "topicTitle": "",
-        "subforum": "Greece",
-        "reporter": "jass94",
-        "status": "PENDING",
-        "solver": "ADMIN"
-    },
-    {
-        "content": "baalalfa",
-        "date": "17/06/2017",
+        "id": "ef3f8ecb-0cfc-432d-b0e4-13bb8e01127e",
+        "content": "Why is this subforum empty?",
+        "date": "02/07/2017",
         "commentId": "",
         "topicTitle": "",
         "subforum": "General",
         "reporter": "jass94",
-        "status": "PENDING",
+        "status": "ACCEPTED",
         "solver": "ADMIN"
     },
     {
-        "content": "ffdfsdfs",
-        "date": "17/06/2017",
+        "id": "43c49630-17b0-4e8a-be5e-681694538695",
+        "content": "Report for Pera.",
+        "date": "02/07/2017",
         "commentId": "",
+        "topicTitle": "Zlatibor hiking tours",
+        "subforum": "Serbia",
+        "reporter": "mika",
+        "status": "REJECTED",
+        "solver": "BOTH"
+    },
+    {
+        "id": "055cc904-8a24-4ea4-9f1b-cfee06324aa3",
+        "content": "Report za odgovornog",
+        "date": "02/07/2017",
+        "commentId": "001",
         "topicTitle": "",
-        "subforum": "General",
+        "subforum": "",
         "reporter": "jass94",
-        "status": "PENDING",
-        "solver": "ADMIN"
+        "status": "ACCEPTED",
+        "solver": "BOTH"
+    },
+    {
+        "id": "2e811dd1-318e-4cbf-8526-bebd6d005b4d",
+        "content": "Comment abuse.",
+        "date": "02/07/2017",
+        "commentId": "003",
+        "topicTitle": "",
+        "subforum": "",
+        "reporter": "jass94",
+        "status": "REJECTED",
+        "solver": "BOTH"
     }
 ]

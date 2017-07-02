@@ -1,0 +1,38 @@
+[
+    {
+        "id": "c47907d7-6037-4c3b-b25f-0b461f5a616c",
+        "content": "Your report about subforum General is accepted and it's author will be warned!",
+        "receiver": "jass94",
+        "seen": true
+    },
+    {
+        "id": "fbf6c919-ce8c-4f13-b534-44c2a8687a7a",
+        "content": "Your entity subforum General is reported. Please consider changing it content. It's not appropriate.",
+        "receiver": "moderator",
+        "seen": true
+    },
+    {
+        "id": "a7eebfc2-583f-4fe0-87f3-8b7e0fe11243",
+        "content": "Your report about topic Zlatibor hiking tours on subforum Serbia is rejected.",
+        "receiver": "mika",
+        "seen": true
+    },
+    {
+        "id": "6b0d84dd-762e-49bb-a006-573f4c07307e",
+        "content": "Your report about comment with id 001 is accepted and it's author will be warned!",
+        "receiver": "jass94",
+        "seen": true
+    },
+    {
+        "id": "031134cb-4db2-4280-9535-15876bb66c80",
+        "content": "Your entity comment with id 001 is reported. Please consider changing it content. It's not appropriate.",
+        "receiver": "mika",
+        "seen": true
+    },
+    {
+        "id": "2eaed47e-7690-43af-963d-07e480b4d04d",
+        "content": "Your report about comment with id 003 is rejected.",
+        "receiver": "jass94",
+        "seen": true
+    }
+]

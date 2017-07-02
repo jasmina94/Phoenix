@@ -1,0 +1,37 @@
+[
+    {
+        "id": "5cf999f0-04c0-4dcd-89bc-64e8b2b7a024",
+        "sender": "mika",
+        "receiver": "moderator",
+        "content": "Hey whats up?",
+        "seen": true
+    },
+    {
+        "id": "a620551c-6177-470d-835f-06bc971309e0",
+        "sender": "moderator",
+        "receiver": "mika",
+        "content": "Nothing special. With you? :)",
+        "seen": true
+    },
+    {
+        "id": "c18296c3-92bb-4c62-936e-a3813d43d905",
+        "sender": "jass94",
+        "receiver": "moderator",
+        "content": "Hello moderator how are you?",
+        "seen": true
+    },
+    {
+        "id": "0d53d42e-9961-4ea4-897a-ced2f2a35c51",
+        "sender": "admin",
+        "receiver": "admin",
+        "content": "Message",
+        "seen": true
+    },
+    {
+        "id": "a6a426a0-68bd-4ce5-bbcf-faa90cff8745",
+        "sender": "jass94",
+        "receiver": "mika",
+        "content": "Hi",
+        "seen": true
+    }
+]

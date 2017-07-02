@@ -4,7 +4,7 @@
         "title": "Interesting things to see in Solun",
         "type": "TEXT",
         "author": "moderator",
-        "content": "I am visiting Solun in 10 days. What I shouln't miss. Pleace help.",
+        "content": "I am visiting Solun in 10 days. What I shouln't miss. Pleace help.\nDodajem neki sadrzaj.Dodajem jos sadrzaja.Jooooos.",
         "creationDate": "23/05/2017",
         "likes": 1,
         "dislikes": 0,
@@ -12,23 +12,23 @@
             {
                 "id": "001",
                 "topic": "Interesting things to see in Solun",
-                "subforum": null,
-                "author": "jass94",
+                "subforum": "Greece",
+                "author": "ILoveSerbia",
                 "commentDate": "27/05/2017",
                 "parentComment": "",
                 "subComments": [
                     "003"
                 ],
-                "content": "Ovde izmeni tekst",
+                "content": "Izmena.",
                 "likes": 0,
                 "dislikes": 0,
-                "edited": true,
+                "edited": false,
                 "deleted": false
             },
             {
                 "id": "002",
                 "topic": "Interesting things to see in Solun",
-                "subforum": null,
+                "subforum": "Greece",
                 "author": "ILoveSerbia",
                 "commentDate": "27/05/2017",
                 "parentComment": "",
@@ -42,26 +42,14 @@
             {
                 "id": "003",
                 "topic": "Interesting things to see in Solun",
-                "subforum": null,
+                "subforum": "Greece",
                 "author": "ILoveSerbia",
                 "commentDate": "27/05/2017",
                 "parentComment": "001",
-                "subComments": [],
+                "subComments": [
+                    "8c3039be-ea16-49a0-ac6d-fa51ddc30f7c"
+                ],
                 "content": "Nothing smarter to say?",
-                "likes": 0,
-                "dislikes": 0,
-                "edited": false,
-                "deleted": false
-            },
-            {
-                "id": "623d143f-2ba4-4138-a6f4-58c310f5589d",
-                "topic": "Interesting things to see in Solun",
-                "subforum": "Greece",
-                "author": "jass94",
-                "commentDate": "13/06/2017",
-                "parentComment": null,
-                "subComments": [],
-                "content": "Novi reply",
                 "likes": 0,
                 "dislikes": 0,
                 "edited": false,
@@ -81,12 +69,71 @@
         "comments": []
     },
     {
-        "subforum": "Serbia",
-        "title": "Belgrade night life",
-        "type": "PHOTO",
+        "subforum": "Greece",
+        "title": "Rhodos",
+        "type": "LINK",
+        "author": "pera",
+        "content": "https://www.youtube.com/watch?v=-77dJ5EpZHM",
+        "creationDate": "02/07/2017",
+        "likes": 0,
+        "dislikes": 0,
+        "comments": []
+    },
+    {
+        "subforum": "Europe",
+        "title": "Paris",
+        "type": "TEXT",
         "author": "jass94",
-        "content": "../PhoenixBase/images/topics/1.png",
-        "creationDate": "23/05/2017",
+        "content": "What is best time of year to visit Paris? Also, what part of the city you recommend for searchin accomodation?",
+        "creationDate": "02/07/2017",
+        "likes": 0,
+        "dislikes": 0,
+        "comments": []
+    },
+    {
+        "subforum": "Serbia",
+        "title": "Danube in Serbia",
+        "type": "PHOTO",
+        "author": "mika",
+        "content": "../PhoenixBase/images/topics/2.jpg",
+        "creationDate": "02/07/2017",
+        "likes": 0,
+        "dislikes": 0,
+        "comments": [
+            {
+                "id": "11fa554b-f04c-477d-bd66-dd3c7900294c",
+                "topic": "Danube in Serbia",
+                "subforum": "Serbia",
+                "author": "mika",
+                "commentDate": "02/07/2017",
+                "parentComment": "",
+                "subComments": [],
+                "content": "What you think?",
+                "likes": 0,
+                "dislikes": 0,
+                "edited": false,
+                "deleted": false
+            }
+        ]
+    },
+    {
+        "subforum": "Serbia",
+        "title": "Novi Sad",
+        "type": "TEXT",
+        "author": "pera",
+        "content": "What are your impressions about Novi Sad and Exit festival? Are you comming?",
+        "creationDate": "02/07/2017",
+        "likes": 0,
+        "dislikes": 0,
+        "comments": []
+    },
+    {
+        "subforum": "Serbia",
+        "title": "Admin topic",
+        "type": "PHOTO",
+        "author": "admin",
+        "content": "../PhoenixBase/images/topics/5.jpg",
+        "creationDate": "02/07/2017",
         "likes": 0,
         "dislikes": 0,
         "comments": []

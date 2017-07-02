@@ -1,7 +1,7 @@
 [
     {
         "username": "moderator",
-        "password": "user",
+        "password": "moderator",
         "firstname": "Jasmine",
         "lastname": "Smith",
         "role": "MODERATOR",
@@ -10,28 +10,95 @@
         "registrationDate": "19/05/2017",
         "followedSubforums": [],
         "followedTopics": [],
-        "followedComments": [],
+        "followedComments": [
+            {
+                "id": "fdc3b791-0ace-40fc-a14e-7a303fd1c6eb",
+                "topic": "Topic test",
+                "subforum": "Test",
+                "author": "moderator",
+                "commentDate": "02/07/2017",
+                "parentComment": null,
+                "subComments": [],
+                "content": "Write comments.",
+                "likes": 0,
+                "dislikes": 0,
+                "edited": false,
+                "deleted": false
+            }
+        ],
         "votes": [
             {
-                "type": false,
-                "forComment": true,
-                "votingCommentId": "39e991b6-8eb3-4cc3-bf7d-2d51ed730bcf",
-                "votingTopicTitle": "Interesting things to see in Solun",
-                "topicSubforumName": "Greece"
+                "type": true,
+                "forComment": false,
+                "votingCommentId": "",
+                "votingTopicTitle": "Topic test",
+                "topicSubforumName": "Test"
             }
         ]
     },
     {
-        "username": "moderator1",
-        "password": "user1",
-        "firstname": "Jasmine1",
-        "lastname": "Smith1",
+        "username": "pera",
+        "password": "pera",
+        "firstname": "Petar",
+        "lastname": "Petrovic",
         "role": "MODERATOR",
-        "email": "jsmith@gmail.com",
+        "email": "pera@gmail.com",
         "phone": "222333",
         "registrationDate": "19/05/2017",
         "followedSubforums": [],
         "followedTopics": [],
+        "followedComments": [],
+        "votes": []
+    },
+    {
+        "username": "mika",
+        "password": "mika",
+        "firstname": "Mika",
+        "lastname": "Mikic",
+        "role": "USER",
+        "email": "mika@gmail.com",
+        "phone": "222333",
+        "registrationDate": "19/05/2017",
+        "followedSubforums": [],
+        "followedTopics": [
+            {
+                "subforum": "Serbia",
+                "title": "Danube in Serbia",
+                "type": "PHOTO",
+                "author": "mika",
+                "content": "../PhoenixBase/images/topics/2.jpg",
+                "creationDate": "02/07/2017",
+                "likes": 0,
+                "dislikes": 0,
+                "comments": [
+                    {
+                        "id": "11fa554b-f04c-477d-bd66-dd3c7900294c",
+                        "topic": "Danube in Serbia",
+                        "subforum": "Serbia",
+                        "author": "mika",
+                        "commentDate": "02/07/2017",
+                        "parentComment": null,
+                        "subComments": [],
+                        "content": "What you think?",
+                        "likes": 0,
+                        "dislikes": 0,
+                        "edited": false,
+                        "deleted": false
+                    }
+                ]
+            },
+            {
+                "subforum": "Serbia",
+                "title": "Zlatibor hiking tours",
+                "type": "TEXT",
+                "author": "jass94",
+                "content": "I'm in love with hiking. What is the best hiking tour on Zlatibor? Is there any touristic info desk for info?",
+                "creationDate": "23/05/2017",
+                "likes": 0,
+                "dislikes": 0,
+                "comments": []
+            }
+        ],
         "followedComments": [],
         "votes": []
     },
@@ -45,8 +112,37 @@
         "phone": "111222",
         "registrationDate": "17/05/2017",
         "followedSubforums": [],
-        "followedTopics": [],
-        "followedComments": [],
+        "followedTopics": [
+            {
+                "subforum": "Greece",
+                "title": "Rhodos",
+                "type": "LINK",
+                "author": "pera",
+                "content": "https://www.youtube.com/watch?v=-77dJ5EpZHM",
+                "creationDate": "02/07/2017",
+                "likes": 0,
+                "dislikes": 0,
+                "comments": []
+            }
+        ],
+        "followedComments": [
+            {
+                "id": "001",
+                "topic": "Interesting things to see in Solun",
+                "subforum": "Greece",
+                "author": "mika",
+                "commentDate": "27/05/2017",
+                "parentComment": "",
+                "subComments": [
+                    "003"
+                ],
+                "content": "Izmena.",
+                "likes": 0,
+                "dislikes": 0,
+                "edited": false,
+                "deleted": false
+            }
+        ],
         "votes": []
     },
     {
@@ -58,28 +154,48 @@
         "email": "jass94@hotmail.com",
         "phone": "123456",
         "registrationDate": "23/05/2017",
-        "followedSubforums": [],
+        "followedSubforums": [
+            {
+                "name": "Serbia",
+                "details": "Forum for general discussion about turism in Serbia. Read about nature, accommodation, best places to visit and see in Serbia.",
+                "icon": "images/serbia.png",
+                "rules": [
+                    "Do not flame or inslut other members.",
+                    "Do not bypass any filters.",
+                    "Do not post personally identifiable information.",
+                    "Do not post a spam.",
+                    "All forum posts must be written in English."
+                ],
+                "responsibleModerator": "ILoveSerbia",
+                "allModerators": [
+                    "moderator",
+                    "ILoveSerbia"
+                ]
+            },
+            {
+                "name": "General",
+                "details": "Forum for general discussion about traveling. You can find informations about visas, transport, organization, recommendations and etc. Also can find helpful tips for online booking accommodation.",
+                "icon": "images/general.png",
+                "rules": [
+                    "Do not flame or inslut other members.",
+                    "Do not bypass any filters.",
+                    "Do not post personally identifiable information.",
+                    "Do not post a spam.",
+                    "All forum posts must be written in English."
+                ],
+                "responsibleModerator": "moderator",
+                "allModerators": [
+                    "moderator"
+                ]
+            }
+        ],
         "followedTopics": [],
         "followedComments": [],
         "votes": [
             {
                 "type": true,
                 "forComment": false,
-                "votingCommentId": null,
-                "votingTopicTitle": "Interesting things to see in Solun",
-                "topicSubforumName": "Greece"
-            },
-            {
-                "type": true,
-                "forComment": true,
-                "votingCommentId": "001",
-                "votingTopicTitle": "Interesting things to see in Solun",
-                "topicSubforumName": "Greece"
-            },
-            {
-                "type": true,
-                "forComment": true,
-                "votingCommentId": "6bd19b4a-27d0-4685-8b64-5921f197192b",
+                "votingCommentId": "",
                 "votingTopicTitle": "Interesting things to see in Solun",
                 "topicSubforumName": "Greece"
             },
@@ -89,34 +205,6 @@
                 "votingCommentId": "002",
                 "votingTopicTitle": "Interesting things to see in Solun",
                 "topicSubforumName": "Greece"
-            },
-            {
-                "type": true,
-                "forComment": true,
-                "votingCommentId": "ade9e23f-b1ee-48b5-a471-86d310bd5579",
-                "votingTopicTitle": "Interesting things to see in Solun",
-                "topicSubforumName": "Greece"
-            },
-            {
-                "type": true,
-                "forComment": true,
-                "votingCommentId": "f299c313-f312-4d90-b84b-5e778aee4a67",
-                "votingTopicTitle": "Proba",
-                "topicSubforumName": "General"
-            },
-            {
-                "type": true,
-                "forComment": true,
-                "votingCommentId": "5711f767-4793-4ab1-8074-60815a667e7a",
-                "votingTopicTitle": "Proba",
-                "topicSubforumName": "General"
-            },
-            {
-                "type": false,
-                "forComment": true,
-                "votingCommentId": "0fb235fa-b4dd-4e77-bd09-6ed4abfedbba",
-                "votingTopicTitle": "Proba",
-                "topicSubforumName": "General"
             }
         ]
     },
